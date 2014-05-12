@@ -50,7 +50,7 @@
 \numberwithin{equation}{section}															% Equationnumbering: section.eq#
 \numberwithin{figure}{section}																% Figurenumbering: section.fig#
 \numberwithin{table}{section}																% Tablenumbering: section.tab#
-
+\usepackage[parfill]{parskip}
 
 %%% Title	
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
@@ -62,25 +62,74 @@
         STFC Rutherford Appleton Laboratory\\
         \texttt{samuel.jackson@stfc.ac.uk}
 }
-\date{}
+\date{\today}
 
 %%% Begin document
 \begin{document}
 \maketitle
 \clearpage
 \tableofcontents
-\clearpage
-\section{Introduction to Mantid}
+\section{Introduction}
+Mantid (http://www.mantidproject.org/) is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
-\section{Brief Introduction to Neutron Scattering}
+Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the SNS facility at Oakridge USA. Recently additional partners from the ILL and PSI have also contributed.
 
-\section{Introduction to Indirect Inelastic Data Analysis with Mantid}
+The project is currently still under heavy development and provides regular incremental releases for evaluation and feedback from instrument scientists and users in general and is therefore constantly evolving with each release. Until recently, Mantid operated on a three month release cycle. This has now been changed to so that the project releases every four months, with a longer emphasis on the testing and integration phase of development.
 
-\section{Structure and Hierarchy}
+Up until now the indirect inelastic section of Mantid has largely been based off of the the existing MODES application which in turn was based on OpenGenie\cite{wshowells2010}. The majority of the functionality has now been integrated into the Mantid framework in form or another and we are now beginning to reach a point where we can expand the functionality offered further.
 
-\section{Planning for the future}
+This document aims to give an overview of the current stage of development for the indirect inelastic section of the application as it currently exists, beginning with an introduction the relevant background material and progressing to the outline the existing system. We then provide a weak outline of suggested directions for further development in the near future.
 
+\section{A Brief Introduction to Neutron Scattering}
+Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms\cite{rpynn2008}. The equation for calculating the change in energy is known as the energy conservation equation as is given by:
 
-\section{References}
+\begin{equation}
+\hbar\omega = E_i - E_f
+\end{equation}
 
+where $\hbar\omega$ is energy transfer, $E_i$ is the incident energy and $E_f$ is the final energy\cite{hschober2009}.
+
+%\section{Indirect Inelastic Data Analysis with Mantid}
+%\subsection{Convert To Energy}
+%\subsubsection{Energy Transfer}
+%\subsubsection{Calibration}
+%\subsubsection{Diagnostics}
+%\subsubsection{Transmission}
+%\subsubsection{$S(Q,\omega)$}
+%\subsubsection{Moments}
+%
+%\subsection{Indirect Data Analysis}
+%\subsubsection{ElWin}
+%\subsubsection{MSD Fit}
+%\subsubsection{Fury}
+%\subsubsection{FuryFit}
+%\subsubsection{ConvFit}
+%\subsubsection{Calculate Corrections}
+%\subsubsection{Apply Corrections}
+%
+%\subsection{Indirect Bayes}
+%\subsubsection{ResNorm}
+%\subsubsection{Quasi}
+%\subsubsection{Stretch}
+%\subsubsection{JumpFit}
+%
+%\subsection{Indirect Diffraction}
+%
+%\subsection{Indirect Simulation}
+%\subsection{Indirect Load ASCII}
+%
+%\section{Structure and Hierarchy}
+%
+%%\section{Planning for the future}
+%%\subsection{Conversion of routines into workflow algorithms}
+%%\subsection{Better automated test coverage}
+%%\subsection{Improved GUI structure and design}
+%%\subsection{GUI support for VESUVIO}
+%%\subsection{nMOLDYN integration into Mantid}
+%%\subsection{Conversion of remaining Fortran routines}
+%%\subsection{Better support for other facilities}
+%%\subsection{Multiple scattering support}
+
+\bibliographystyle{plain}
+\bibliography{refs}
 \end{document}
