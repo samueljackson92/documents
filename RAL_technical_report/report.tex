@@ -51,6 +51,8 @@
 \numberwithin{figure}{section}																% Figurenumbering: section.fig#
 \numberwithin{table}{section}																% Tablenumbering: section.tab#
 \usepackage[parfill]{parskip}
+\usepackage{float}
+\usepackage{graphicx}
 
 %%% Title	
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
@@ -81,13 +83,35 @@ Up until now the indirect inelastic section of Mantid has largely been based off
 This document aims to give an overview of the current stage of development for the indirect inelastic section of the application as it currently exists, beginning with an introduction the relevant background material and progressing to the outline the existing system. We then provide a weak outline of suggested directions for further development in the near future.
 
 \section{A Brief Introduction to Neutron Scattering}
-Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms\cite{rpynn2008}. The equation for calculating the change in energy is known as the energy conservation equation as is given by:
+Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. In a neutron scattering experiment, a beam of neutrons is produced at a source (such as the one provided by ISIS) and directed to the various instruments attached to the beam line. These neutrons then scatter from the sample placed in the instrument. The angle and energy at which scattered neutrons are detected can then be used to deduce the structure and dynamics of the sample.
 
-\begin{equation}
+There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms\cite{rpynn2008}. The equation for calculating the change in energy is known as the energy conservation equation as is given by:
+
+\begin{equation*}
 \hbar\omega = E_i - E_f
-\end{equation}
+\end{equation*}
 
-where $\hbar\omega$ is energy transfer, $E_i$ is the incident energy and $E_f$ is the final energy\cite{hschober2009}.
+where $\hbar\omega$ is energy transfer to the sample, $E_i$ is the incident energy and $E_f$ is the final energy\cite{hschober2009}.
+
+% insert a single centred image into a LaTeX document.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/Inelastic-neutron-scattering-basics.png}
+\caption{Diagram of the basic principle of an inelastic neutron scattering experiment. $E_i$ is the incident energy, $E_f$ is the final energy.}
+\label{fig:indirect-inelastic-diagram}
+\end{figure}
+
+In a time-of-flight (TOF) experiment, values for the incident and final energy can be calculated from the parameters of the neutron flight path in an instrument as shown in figure xx and is given by the equation:
+
+\begin{equation*}
+E_f = \frac{1}{2}mv^2 = \frac{1}{2}m ( L_2 / t_2 ) ^2 
+\end{equation*}
+
+Using the above formula it is easy to see that the energy transfer equation can be rewritten in terms of the instrument parameters as:
+
+\begin{equation*}
+\hbar\omega = E_i - E_f = \frac{1}{2}m_n[(L_1 / t_1-t_2)^2 - (L_1/t_2)^2]
+\end{equation*}
 
 %\section{Indirect Inelastic Data Analysis with Mantid}
 %\subsection{Convert To Energy}
