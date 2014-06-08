@@ -1,0 +1,110 @@
+%%% LaTeX Template
+%%% This template can be used for both articles and reports.
+%%%
+%%% Copyright: http://www.howtotex.com/
+%%% Date: February 2011
+
+%%% Preamble
+\documentclass[paper=a4, fontsize=11pt]{scrartcl}	% Article class of KOMA-script with 11pt font and a4 format
+
+\usepackage[english]{babel}															% English language/hyphenation
+\usepackage[protrusion=true,expansion=true]{microtype}				% Better typography
+\usepackage{amsmath,amsfonts,amsthm}										% Math packages
+\usepackage[pdftex]{graphicx}														% Enable pdflatex
+%\usepackage{color,transparent}													% If you use color and/or transparency
+\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}	% Custom captions under/above floats
+\usepackage{epstopdf}																	% Converts .eps to .pdf
+\usepackage{subfig}																		% Subfigures
+\usepackage{booktabs}																	% Nicer tables
+
+
+%%% Advanced verbatim environment
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\DefineShortVerb{\|}								% delimiter to display inline verbatim text
+
+
+%%% Custom sectioning (sectsty package)
+\usepackage{sectsty}								% Custom sectioning (see below)
+\allsectionsfont{%									% Change font of al section commands
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+%	\hspace{15pt}%									% Uncomment for indentation
+	}
+
+\sectionfont{%										% Change font of \section command
+	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
+	\sectionrule{0pt}{0pt}{-5pt}{0.8pt}%	% Horizontal rule below section
+	}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}														% No page header
+\fancyfoot[C]{\thepage}										% Pagenumbering at center of footer
+\renewcommand{\headrulewidth}{0pt}				% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}															% Equationnumbering: section.eq#
+\numberwithin{figure}{section}																% Figurenumbering: section.fig#
+\numberwithin{table}{section}																% Tablenumbering: section.tab#
+\usepackage[parfill]{parskip}
+\usepackage{url}
+
+%%% Title	
+\title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
+		\huge \strut Industrial Year Report\strut \\
+		\Large \bfseries \strut Software Developer at STFC,  Rutherford Appleton Laboratory \strut
+}
+\author{ 									\usefont{OT1}{bch}{m}{n}
+        Samuel Jackson\\		\usefont{OT1}{bch}{m}{n}
+		University Of Aberystwyth\	\usefont{OT1}{bch}{m}{n}
+        Computer Science Department\\
+        \texttt{slj11@aber.ac.uk}
+}
+\date{\today}
+
+%%% Begin document
+\begin{document}
+\maketitle
+\clearpage
+\tableofcontents
+\clearpage
+\section{Introduction}
+This report details the industrial placement undertaken by the me as part of the year in industry required for qualification of the Software Engineering MEng qualification. The position of the placement was a junior role as part of the Mantid data analysis framework development team based at the ISIS facility at Rutherford Appleton Laboratory in Harwell, Oxfordshire, owned by the Science and Technologies Facilities Council (STFC) for the duration of a one year contract of employment. This position was then extended by an additional two months to continue with existing and new project commitments.
+
+ISIS is a world leading neutron and muon scattering facility. The facility operates a 800 MeV proton synchrotron which acts as a source of neutrons for spectroscopy\cite{website:isis-website}. Neutron spectroscopy can be used to probe the structure and dynamics of materials at a truly fundamental level.
+
+The Mantid project aims to provide a single, unified application for the analysis of neutron and muon scattering facilities such as ISIS \cite{website:mantid-website}. The project is primarily developed by two teams of developers, one based at ISIS and one at the Spallation Neutron Source (SNS) at Oakridge laboratory in Tennessee, USA. While the author primarily worked within the development team based at ISIS, developers are generally also attached to a specific scientific group within the facility. In the author's case this was the ISIS Molecular Spectroscopy group (MSG) which specializes in indirect inelastic and quasielastic neutron scattering for condensed matter science \cite{website:msg-website} and thus much of the work done was carried out in relation to the needs and requirements of the MSG.
+
+\section{Organisational Environment}
+\subsection{Organisation of STFC}
+The Science and Technologies Facilities Council is a UK government funded body that carries out a wide variety of scientific research across a multitude of disciplines including particle physics, nuclear physics, space science and engineering, medical and biological sciences, and computational science. 
+
+While the organisation is funded by the government, it is classified as a non-governmental body which acts as an umbrella organisation for an array of facilities based across the UK. These include (but are not limited to) the central laser facility, diamond light source, ISIS neutron source and RAL space based at Rutherford Appleton Laboratory in Oxfordshire, the Daresbury Laboratory located in Cheshire and the Chilbolton Observatory based in Hampshire. 
+
+The organisation has its head office located at Polaris House, Swindon, Wiltshire and is headed by the Chief Executive John Womersley. The purpose of STFC is to control the general overall management of the facilities under its control, in particular it is responsible for allocating budgetary and staffing allowances and liaising between government departments, particularly the department for business, innovation and skills.
+
+\subsection{Organisation of ISIS Neutron Source}
+ISIS Neutron source is a project that is owned, operated and funded by the STFC. The organisational hierarchy of ISIS is headed by the director Prof. Robert McGreevy and several division heads for individual functional areas within ISIS such as the diffraction, spectroscopy and support, experimental operations, instrumentation, design, and accelerator divisions.
+
+ISIS is also split into a number of research, operations, and experimental support groups. The computing group, of which the Mantid project is a part of, falls into the experimental support group and is technically a part of the scientific computing group which also includes the ICAT data catalogue which manages the data collected from sample runs on the instruments for future analysis.
+
+While this description provides an overview of how the staffing of ISIS can be divided, in practice there tends to be a lot of cross over between sections of the organisation depending on a employees skills and responsibilities. For example, while I was employed as part of the scientific computing group, my line manager and senior manager were both members of the molecular spectroscopy research group whose interests I was responsible for within Mantid.
+
+\subsection{Organisation of the Mantid Project Development Team}
+The Mantid development project is a subset of the scientific computing group. The Mantid group is headed by a single project manager (Nick Draper) who is based at ISIS where the project first started and is resposible for the overall management and direction of the project. The project is split into two teams, one based at ISIS and one at the SNS in Oakridge, Tennessee. Both teams consist of a single lead developer and several senior developers who oversee the major technical developments and help to guide and manage the rest of the development team. Within Mantid, the project manager and the majority of the senior developers are actually contractors from Tessella Ltd, based in Abingdon, Oxfordshire. The rest of the development team are directly employed by ISIS and STFC.
+
+\subsection{My Position within Mantid}
+
+\section{Technical and Application Environments}
+\subsection{A Brief Introduction to Neutron Scattering}
+We are aware that the reader is unlikely to be familiar with the basic principles of neutron scattering experiments. Subsequently it is difficult to describe the organisation of the technical aspects of the project without some prior background knowledge of the subject. Here we aim to provide the reader with an extremely brief overview of very fundamentals of neutron scattering  with particular attention to indirect inelastic spectroscopy. For a more detailed discussion the principals presented here we recommend the excellent primer by Robert Pynn \cite{rpynn2008}.
+
+\section{Description of Job Role}
+\section{Evaluation of Placement}
+\bibliographystyle{plain}
+\bibliography{refs}
+\end{document}
