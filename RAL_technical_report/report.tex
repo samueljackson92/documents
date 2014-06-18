@@ -239,9 +239,24 @@ After data has been reduced using the convert to energy or diffraction reduction
 \subsubsection{ElWin}
 The ElWin (elastic window) program is used to perform elastic window scans by integrating over the energy range of a reduced file and is based on the routine of the same name that was originally provided as part of the MODES package. As with most all routines in the Indirect Data Analysis interface, the ElWin is implemented as a collection of free standing functions in IndirectDataAnalysis.py. Internally, this routine uses Mantid's ElasticWindow algorithm. This algorithm does most of the heavy lifting, while the script provided in IndirectInelastic.py pre and post processes the data. The elastic window algorithm converts the spectrum axis of the input workspace to units of $Q$ and $Q^2$. Both of these workspaces are then transposed so they are easier to visualise. Optionally, this routine can also remove a background using a second range.
 
-The ElWin routine will attempt to output processed workspaces with units in Kelvin on the x-axis of the  providing that data about the temperature of the run is available as in the sample logs of the workspace (which are optionally loaded as part of energy transfer reduction). If this information is not available, the routine will use the run number of each sample for the units on the x-axis. If the workspaces have units of temperature, the routine can also optionally output the *_elf workspace normalised by the lowest temperature.
+The ElWin routine will attempt to output processed workspaces with units in Kelvin on the x-axis of the  providing that data about the temperature of the run is available as in the sample logs of the workspace (which are optionally loaded as part of energy transfer reduction). If this information is not available, the routine will use the run number of each sample for the units on the x-axis. If the workspaces have units of temperature, the routine can also optionally output the \**\_elf workspace normalised by the lowest temperature.
 
 The $Q^2$ output for ElWin is used as the input to the MSDFit routine described in the following section.
+
+\subsubsection{MSDFit}
+The MSD fit routine is used to calculate the mean squared displacement from the $Q^2$ workspace output from ElWin. In essence this routine performs a linear fit to every spectrum in the workspace using the algorithm PlotPeakByLogValue. However the routine also performs some additional operations to transform the fitting parameters form a table workspace to a matrix workspace.
+
+This routine produces a group workspace contain the linear fits to each spectrum and a workspace for each of the parameters of the fit to each spectrum transposed into a matrix workspace.
+
+\subsubsection{Fury}
+The Fury program is used to perform a fast Fourier transform on a reduced workspace in order to calculate the intermediate scattering function $I(Q,t)$. The routine can handle converting multiple workspaces at once, but is currently only set-up to handle the interface to convert one reduced sample at a time.
+
+The routine first converts the resolution workspace before converting each of the samples and dividing by the converted resolution. In order to convert to the intermediate scattering function all of the workspaces must have the same x range and the same regular binning in order for the conversion to work. Therefore the rebin parameters provided by the user must satisfy these conditions. The workspace is then integrated to a separate workspace. The original workspace is then converted to point data in preparation for running the fast Fourier transform algorithm.
+
+The algorithm used in called ExtractFTTSpectrum which runs Mantid's FFT algorithm to on each spectrum in the workspace which outputs the modulus positive frequencies of the transform in the corresponding spectrum. The transformed sample workspaces are then divided by the transformed resolution workspace. The upper half of the transform is then crop off of the workspace to get rid of excess noise from the transform and then optionally saved to a nexus file.
+
+\subsubsection{FuryFit}
+FuryFit provides a fit routine for the output of Fury offering a variety of decaying exponential functions. Similarly to MSDFit, the routine uses the PlotPeakByLogValue algorithm to sequentially fit each spectrum with the parameters.
 
 \subsection{Indirect Data Analysis}
 
