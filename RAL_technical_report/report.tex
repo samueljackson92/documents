@@ -253,16 +253,53 @@ The Fury program is used to perform a fast Fourier transform on a reduced worksp
 
 The routine first converts the resolution workspace before converting each of the samples and dividing by the converted resolution. In order to convert to the intermediate scattering function all of the workspaces must have the same x range and the same regular binning in order for the conversion to work. Therefore the rebin parameters provided by the user must satisfy these conditions. The workspace is then integrated to a separate workspace. The original workspace is then converted to point data in preparation for running the fast Fourier transform algorithm.
 
-The algorithm used in called ExtractFTTSpectrum which runs Mantid's FFT algorithm to on each spectrum in the workspace which outputs the modulus positive frequencies of the transform in the corresponding spectrum. The transformed sample workspaces are then divided by the transformed resolution workspace. The upper half of the transform is then crop off of the workspace to get rid of excess noise from the transform and then optionally saved to a nexus file.
+The algorithm used is called ExtractFTTSpectrum which runs Mantid's FFT algorithm to on each spectrum in the workspace which outputs the modulus positive frequencies of the transform in the corresponding spectrum. The transformed sample workspaces are then divided by the transformed resolution workspace. The upper half of the transform is then crop off of the workspace to get rid of excess noise from the transform and then optionally saved to a nexus file.
 
 \subsubsection{FuryFit}
-FuryFit provides a fit routine for the output of Fury offering a variety of decaying exponential functions. Similarly to MSDFit, the routine uses the PlotPeakByLogValue algorithm to sequentially fit each spectrum with the parameters.
+FuryFit provides a fit routine for the output of Fury offering a variety of decaying exponential functions. Similarly to MSDFit, the routine uses the Fit and PlotPeakByLogValue algorithms to sequentially fit each spectrum with the parameters.
 
-\subsection{Indirect Data Analysis}
+The FuryFit code actually consists of two routines which are very similar and which could be merged in future release of Mantid called FuryFitSeq and FuryFitMult which perform a sequential fit and a multi domain fit respectively. Both routines works by executing a function string which is dynamically created in the GUI code for FuryFit, but FuryFitMult first wraps the input function with a MultiDomain composite function. FuryFitMult is only executed when the user has chosen to constrain the $\beta$ parameter for a stretched exponential fit across all $Q$.
 
+Both of these routines convert the table of fitting parameters created from Fit (or PlotPeakByLogValue) into a matrix workspace using the same code as used by MSDFit.
 
-\subsubsection{GUI Overview}
-\label{subsubsec:IDA-GUI-Overview}
+\subsubsection{ConvFit}
+The ConvFit routine is used to perform a convolution fit to the workspaces. Again, this routine follows a similar procedure to both the MSDFit and FuryFit routines. A fit function with the options the user has selected are gathered from the user interface and a string representing the function to be fitted is passed to the PlotPeakByLogValue algorithm to perform a sequential fit.
+
+The functions fitted are a $\delta$-function, one or two Lorentzians or a combination of both which are then convolved with the user supplied resolution workspace. The type of background can also be selected from a choice of Fixed Flat (flat background without the intercept tied to the user supplied value), Fit Flat (flat background with the intercept unconstrained), and Fit Linear (unconstrained linear background). Optionally a temperature correction can be applied to the Lorentzians.
+
+As with the other FuryFit, ConvFit will convert the input workspace to elastic $Q$ first before performing the fit, and converts the output table of fit parameters to a matrix workspace. If a $\delta$function was used the elastic incoherent structure factor (EISF) is calculated from the resulting table of parameters.
+
+\subsubsection{Calculate Corrections}
+Calculate Corrections is used to create a group workspace of absorption corrections from known parameters of the sample and can used in an experiment which can be applied to a reduced workspace using the Apply Corrections routine (see section \ref{subsubsec:apply-corrections}). This routine supports both flat plate and cylindrical geometries.
+
+The code for calculating corrections for a cylindrical geometry is has been ported into Mantid using the F2Py package directly from it's previous incarnation as the Acorn routine in the MODES package. This allows a python script run the Fortran code without it being converted to python code. Unfortunately the downside to this is that F2Py cannot be packaged into the installer for any platform outside of Windows. The code for flat plate corrections was ported in Mantid as part of release 3.2.
+
+In depth discussion on the exact methods of calculating the absorption factors for flat plate and cylindrical geometries can be found in Carlile \cite{ccarlile1974} and the ATLAS manual \cite{aksoper1989} respectively.
+
+The python code underlying the interface of calculate corrections and responsible for liaising between the Fortran and C++ GUI code is (unlike the other routines described in this section) stored in a separate file called IndirectAbsCor.py. This is to keep F2Py import call separate from the rest of the data analysis code, so the other interfaces can be used on platforms other than Windows.
+
+Regardless of the geometry used, the Python/Fortran code calculates four arrays for each spectrum in the sample workspace each of which are collected into four resulting output workspaces with the suffixes \textit{ass}, \textit{assc}, \textit{acsc}, and \textit{acc} which loosely corresponds to the formalism described in Paalman and Pings \cite{hhpaalman1962}. These stand for:
+
+\begin{itemize}
+\item \textbf{Ass} - Attenuation factor for scattering in the sample and attenuation in the sample.
+\item \textbf{Assc} - Attenuation factor for scattering in the sample and attenuation in the sample plus container.
+\item \textbf{Acsc} - Attenuation factor for scattering in the container and attenuation in the sample plus container.
+\item \textbf{Acc} - Attenuation factor for scattering in the container and attenuation in the container.
+\end{itemize}
+
+If a workspace representing the container is not supplied by the user, then all workspaces except the \**\_ass workspace will just contain zeros.
+
+\subsubsection{Apply Corrections}
+\label{subsubsec:apply-corrections}
+
+Apply Corrections provides a complementary routine to the calculate corrections routine described in the preceding section. Apply corrections has two modes of applying corrections to a sample. The first and simplest method is to just take a run of the container for the sample and subtract it from the sample itself. The second uses the corrections calculated from the calculate corrections routine and applies them to the sample \& can workspaces. A detailed activity diagram of the two modes of execution are shown in diagram
+
+In the former mode of operation if the energy ranges of the sample and container do not match the user gets offered the choice of rebinning the can to match the sample in which case the routine uses the RebinToWorkspace algorithm. After the sample has been corrected, it will use the ConvertSpectrumAxis algorithm to convert the resulting corrected sample to units elastic Q.
+
+In the latter mode of operation, the routine first converts both the sample and container to units of wavelength. Then for spectrum in the sample and can (if supplied), perform a quadratic fit (using the standard Mantid Fit algorithm) to the corresponding spectrum in each of the members of the group workspace of absorption corrections. The coefficients from this fit are then supplied as parameters to the PolynomialCorrection algorithm. The resulting workspaces are then stitch back together using the ConjoinWorkspaces algorithm and the corrected can is then subtracted from the sample workspace as in simpler mode of apply correction. The output from function is output both in units of energy transfer and elastic Q.
+
+\subsection{GUI Overview}
+\label{subsec:IDA-GUI-Overview}
 %\subsubsection{ElWin}
 %\subsubsection{MSD Fit}
 %\subsubsection{Fury}
