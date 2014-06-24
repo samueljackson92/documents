@@ -298,17 +298,18 @@ In the former mode of operation if the energy ranges of the sample and container
 
 In the latter mode of operation, the routine first converts both the sample and container to units of wavelength. Then for spectrum in the sample and can (if supplied), perform a quadratic fit (using the standard Mantid Fit algorithm) to the corresponding spectrum in each of the members of the group workspace of absorption corrections. The coefficients from this fit are then supplied as parameters to the PolynomialCorrection algorithm. The resulting workspaces are then stitch back together using the ConjoinWorkspaces algorithm and the corrected can is then subtracted from the sample workspace as in simpler mode of apply correction. The output from function is output both in units of energy transfer and elastic Q.
 
-\subsection{GUI Overview}
-\label{subsec:IDA-GUI-Overview}
-%\subsubsection{ElWin}
-%\subsubsection{MSD Fit}
-%\subsubsection{Fury}
-%\subsubsection{FuryFit}
-%\subsubsection{ConvFit}
-%\subsubsection{Calculate Corrections}
-%\subsubsection{Apply Corrections}
-%
+\subsubsection{GUI Overview}
+\label{subsubsec:IDA-GUI-Overview}
+The Indirect Data Analysis user interface follows a similar design structure to the Convert To Energy interface but is more modular. The interface is composed of a single which handles the common aspects between all tabs on the interface, which is simply called Indirect Data Analysis, and a collection of classes for each tab on the interface which inherit from a common base class similar to the C2ETab class in the convert to energy GUI and handle the specific implementation details of the corresponding tab.
+
+As with the convert to energy interface, the layout of the entire GUI is defined in a single XML file which each of the classes in the GUI have a reference too. As of release 3.2 the Indirect Data Analysis interface consists of seven tabs; namely: ElWin, MSDFit, Fury, FuryFit, ConvFit, Calculate Corrections, and Apply Corrections. Each of these have a single class which inherits from a base class called IDATab where the common logic between individual classes is stored. 
+
 \subsection{Indirect Bayes}
+The Indirect Bayes interface provides a collection of routines for performing model and parameter selection using Bayesian methods. These routines are, like those in proceeding sections, based on those from MODES. The ResNorm, Quasi, and Stretch routines described in the following sections are all imported into Mantid using the F2Py package directly from the original Fortran code. In future releases of Mantid it is hoped that these routines will be converted into proper C++ or Python algorithms in line with the main concepts of Mantid.
+
+\subsubsection{ResNorm}
+Creates a group workspace with the
+
 \subsubsection{GUI Overview}
 \label{subsubsec:Bayes-GUI-Overview}
 %\subsubsection{ResNorm}
