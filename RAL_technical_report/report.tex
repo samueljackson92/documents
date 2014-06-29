@@ -88,8 +88,18 @@ This document aims to give an overview of the current stage of development for t
 
 
 \section{Indirect Geometry Instruments}
+Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VEUSVIO instruments at ISIS are those in which the incident beam is polychromatic and crystal analysers are used to determine the final energy.
+
 
 \section{Theory}
+Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. In a neutron scattering experiment, a beam of neutrons is produced at a source (such as the one provided by ISIS) and directed to the various instruments attached to the beam line. These neutrons then scatter from the sample placed in the instrument. The angle and energy at which scattered neutrons are detected can then be used to deduce the structure and dynamics of the sample.
+
+There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms\cite{rpynn2008}.
+
+
+\subsection{Data Reduction Theory}
+Before data analysis can begin, the raw data collected from the instrument must be converted to an instrument independent function that describes the proportion of incident neutrons scattered with a given momentum and energy transfer known as $S(\mathbf{Q},\omega)$. Obviously, in order to calculate $S(\mathbf{Q},\omega)$ the quantities of \textbf{Q} (wavevector transfer) and $\omega$ (energy transfer) must be derived.
+
 \mbox{ }\\
 \begin{figure}[H]
 \centering
@@ -110,11 +120,38 @@ Which can also be written in terms of the distance between sample and detector (
 \Delta E = E_i - E_f = \frac{1}{2}m_n[(L_1 / t_1-t_2)^2 - (L_1/t_2)^2]
 \end{equation}
 
-This is the fundamental principle behind the reduction routine described in the following section.
-%\section{A Brief Introduction to Neutron Scattering}
-%Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. In a neutron scattering experiment, a beam of neutrons is produced at a source (such as the one provided by ISIS) and directed to the various instruments attached to the beam line. These neutrons then scatter from the sample placed in the instrument. The angle and energy at which scattered neutrons are detected can then be used to deduce the structure and dynamics of the sample.
-%
-%There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms\cite{rpynn2008}.
+Momentum transfer \textbf{Q}, is defined as the difference between the final and incident wave vectors.
+
+\begin{equation}
+\mathbf{Q} = k_f - k_i
+\end{equation}
+
+Where $k_i$ and $k_f$ are the incident and final wave vectors. The magnitude of \textbf{Q} is defined as:
+
+\begin{equation}
+Q^2 = k_i^2 + k_f^2 - 2k_ik_fcos 2\theta
+\end{equation}
+
+$S(\mathbf{Q}, \omega)$ can then be defined in relation to the density of states ($Z(\omega)$) of a molecule through the following equation:
+
+\begin{equation}
+S(\mathbf{Q}, \omega) = \Sigma_j \frac{b_j}{M_j}^2Q^2 < u_j >^2 e^{-2W}\frac{Z(\omega)}{\hbar\omega}
+\end{equation}
+
+Where $b_j$ is the neutron scattering length of the atom, $M_j$ is the mass of the atom, $< u_j >$ is the amplitude of vibration of each atom, and $e^{-2W}$ is the Debye-Waller factor \cite{smukhopadhyay2014}  to correct for thermal energy in which $W$ is equal to:
+
+\begin{equation}
+W = \frac{1}{2} < u^2_{MSD} > Q^2
+\end{equation}
+
+\subsection{Data Analysis Theory}
+In reality, the $S(\mathbf{Q}, \omega)$ cannot be directly measured by experiment because of the resolution of the instrument. Instead, the quantity measured from the instrument (denoted $I(\mathbf{Q}, \omega)$) which is convolution between the scattering function and the instrument resolution:
+
+\begin{equation}
+I(\mathbf{Q}, \omega) = S(\mathbf{Q}, \omega) \otimes R(\mathbf{Q}, \omega)
+\end{equation}
+
+These can then be separated through the deconvolution of the two functions. The typical way to do this is through fitting the appropriate model to the convoluted data and is the purpose of the ConvFit interface described in later sections which provides a least-squares fit of the convolution of  the measured data and the resolution.
 
 \section{Data Reduction with Mantid}
 Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and the Iris Data Analysis (IDA) package\cite{wshowells2010}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
