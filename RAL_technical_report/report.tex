@@ -120,7 +120,7 @@ Which can also be written in terms of the distance between sample and detector (
 \Delta E = E_i - E_f = \frac{1}{2}m_n[(L_1 / t_1-t_2)^2 - (L_1/t_2)^2]
 \end{equation}
 
-Momentum transfer \textbf{Q}, is defined as the difference between the final and incident wave vectors.
+This is the basic theory behind the convert to energy reduction routine described in section \ref{sec:energy-transfer}. Momentum transfer \textbf{Q}, is defined as the difference between the final and incident wave vectors.
 
 \begin{equation}
 \mathbf{Q} = k_f - k_i
@@ -152,6 +152,22 @@ I(\mathbf{Q}, \omega) = S(\mathbf{Q}, \omega) \otimes R(\mathbf{Q}, \omega)
 \end{equation}
 
 These can then be separated through the deconvolution of the two functions. The typical way to do this is through fitting the appropriate model to the convoluted data and is the purpose of the ConvFit interface described in later sections which provides a least-squares fit of the convolution of  the measured data and the resolution.
+
+An alternative method of deconvolution of the scattering and resolution functions is through the intermediate scattering function, denoted $I(\mathbf{Q}, t)$ which is proportional to the Fourier transform of the scattering and resolution functions:
+
+\begin{equation}
+I(\mathbf{Q}, t) = S(\mathbf{Q}, t) \times R(\mathbf{Q}, t)
+\end{equation}
+
+As the resolution of the instrument is known, the intermediate scattering function can be divided by the resolution and back transformed to obtain the scattering function. This method has the advantage in that the form of the function does not have to be assumed as in ConvFit, but the back transformation from $S(\mathbf{Q}, t)$ to the true scattering function is problematic due to the phase problem \cite{dssivia2011} and the propagation of statistical errors \cite{}. The Fury routine provides an interface to perform a Fourier transform on the measured data and resolution, but does not provide an automated back transformation because of the aforementioned issues.
+
+An alternative method to model fitting is the use of Bayesian methods to select the best model for the data based on a choice of possible functions. One method described by Sivia \cite{dssivia1992} selects the most likely choice of model from sum of a $\delta$-function and zero or more Lorentzians convolved with the resolution function of the instrument: 
+
+\begin{equation}
+I(\epsilon) = [A_0\delta(\epsilon) + \Sigma_{j=0}^N A_j \frac{w_j}{\pi(\epsilon^2 + w_j^2)}] \otimes R(\epsilon)
+\end{equation}
+
+where $\epsilon$ is the energy transfer, $I$ is the data, $A_j$ are the amplitudes of the Lorentzians and $W_j$ are the HWHMs. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function
 
 \section{Data Reduction with Mantid}
 Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and the Iris Data Analysis (IDA) package\cite{wshowells2010}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
@@ -477,7 +493,7 @@ There are two types of algorithms in Mantid. Normal algorithms are simply ones w
 \item As of release 3.2 the ability to track the history of a work flow algorithm and it's child algorithms has been added, allowing scientists to see exactly what operations have been performed on a workspace since it entered Mantid.
 \end{itemize}
 
-Energy transfer reduction and diffraction reduction are both prime candidates for work flow algorithms. Neither of these routines actually perform any real direct manipulation of the workspaces they reduce themselves, but delegate all of the operations to existing Mantid algorithms within the reduction steps. Converting this would be a delicate and large job, but not necessarily difficult. The basic outline of both reductions is already documented in diagrams \ref{fig:c2e-energy-transfer-activity-diagram} and \ref{•} respectively. This, along with the actual code (which is reasonably we documented and formatted) should be enough for an easy transition to a work flow algorithm for each type of reduction.
+Energy transfer reduction and diffraction reduction are both prime candidates for work flow algorithms. Neither of these routines actually perform any real direct manipulation of the workspaces they reduce themselves, but delegate all of the operations to existing Mantid algorithms within the reduction steps. Converting this would be a delicate and large job, but not necessarily difficult. The basic outline of both reductions is already documented in diagrams \ref{fig:c2e-energy-transfer-activity-diagram} and \ref{} respectively. This, along with the actual code (which is reasonably we documented and formatted) should be enough for an easy transition to a work flow algorithm for each type of reduction.
 
 Some of the large reduction steps would also benefit from being converted to work flow algorithms in there own right, particularly the reduction steps which are larger and shared between both reducer classes. Prime examples would be the LoadData and HandleMonitor steps which both complex enough that they could be converted to work flow algorithms.
 
@@ -508,7 +524,7 @@ Future development should aim to unify this repeatability structure into a using
 \item Algorithm instantiation, execution and error handling code.
 \end{itemize}
 
-A refactored GUI class hierarchy could look something like diagram \ref{•}. This shows that all of the interface windows share a common abstract base class, as do all of the tabs. More specific abstract base classes then implement the more specific functionality which is required by the interface until reaching the concrete base class which contains the exact details of setting up, validating and running a specific routine.
+A refactored GUI class hierarchy could look something like diagram \ref{}. This shows that all of the interface windows share a common abstract base class, as do all of the tabs. More specific abstract base classes then implement the more specific functionality which is required by the interface until reaching the concrete base class which contains the exact details of setting up, validating and running a specific routine.
 
 Furthermore, to expand on the last bullet point above, the interface currently executes the python routines by creating a string of python code with the calls to each routine and all of the parameters it requires and then executes it. This approach is both fiddly and error prone. It is easy to build a string which is not formatted correctly in some subtle way which leads to broken options and code paths.
 
