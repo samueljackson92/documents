@@ -96,7 +96,6 @@ Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and 
 \label{fig:instrument-energy-range}
 \end{figure}
 
-
 IRIS and OSIRIS share the N6 beamline in target station 1 at the ISIS facility. Both instruments are fed via curved guides from the source moderator. Two choppers positioned at 10m and 6.3m from the instruments define the incident wavelength band and prevent frame overlap \cite{smukhopadhyay2014}. TOSCA is located on the N4 beamline in ISIS target station 1 with a incident flight path of 17m and also has a chopper on the incoming beamline to prevent overlap and remove fast neutrons \cite{colognesi2002tosca}. VESUVIO is located on the S2 beamline and has an incident flight path of 11.005m \cite{mayers2011calibration}.
 
 The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is determined by the reflections from analyser crystals by means of Bragg scattering. IRIS and OSIRIS both have pyrolytic graphite crystal analysers with reflection planes 002 and 004 delivering a final energy of $E_f$=1.845 and 7.38 meV respectively \cite{adams2001iris}\cite{telling2008osiris}. This design leads to a resolution of 17.5 and 54.5 $\mu$eV for the 002 and 004 reflections on IRIS and 25 and 99 $\mu$eV on OSIRIS. IRIS additionally has a mica (muscovite or fluorinated) crystal analyser bank with reflections 002, 004, and 006, and $E_f$ corresponding to 0.207, 0.826, and 1.86 meV respectively which provide better resolutions of 11$\mu$eV (006), 4.5$\mu$eV (004) and
@@ -347,10 +346,34 @@ The calibration section of the convert to energy interface can be used to create
 As mentioned, the calibration interfaces can also create resolution files for later use in data analysis. This routine, like many within the indirect section of many, is separate from the reducer-reduction step  framework and just a python function which is executed with parameters supplied from the interface. To create the resolution file, the routine first takes the vanadium run supplied on the calibration interface and converts it to energy using the energy transfer reducer described in section \ref{sec:energy-transfer}, but sets the detector mapping use all detectors and will sum multiple run if multiple runs are used. It then, like calibration, calculates a flat background from a range supplied by the user, rebins it according to the parameters specified for the instrument, and optionally saves the workspace to file.
 
 \subsection{Diagnostics}
-The diagnostics routine provides an integration on a run over a specified time-of-flight range. This routine loads the raw file and a calibration file (if requested) and integrates the resulting workspaces. If two ranges are requested, the second range is used to calculate a flat background and remove this from the data before integrating. Finally, the integrated workspace is then transposed to make it easier to visualise.
+The diagnostics routine (called Slice in IndirectEnergyConversion.py, named after the older routine from MODES \cite{wshowells2010}) provides an integration on a run over a specified time-of-flight range. This routine loads the raw file and a calibration file (if requested) and integrates the resulting workspaces. If two ranges are requested, the second range is used to calculate a flat background and remove this from the data before integrating. Finally, the integrated workspace is then transposed to make it easier to visualise.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{img/uml/activity_diagrams/Diagnostics_activity.png}
+\caption{Activity diagram showing an activity diagram for the Transmission routine.}
+\label{fig:c2e-diagnostics-activity-diagram}
+\end{figure}
+
+This takes a list of raw files with time-of-flight data in them as input along with an optional calibration file created from the routine described in the previous section. The slice routine begins by loading input files and the calibration file if supplied. If a calibration workspace is supplied, it is cropped to remove the monitors and match the range of the input raw file.
+
+For each sample workspace input is cropped to the desired number of spectra and divided by the calibration workspace if it exists. The workspace is then integrated across the supplied time range. If two ranges are given, the second range is used to remove a flat background prior to the integration using CalculateFlatBackground. Finally, the resulting workspace is transposed using the algorithm of the same name.
 
 \subsection{Transmission}
 The transmission routine is a simple program to calculate the measured transmission of a sample using the incident and transmission monitors. Using a run of both the sample and the can, monitors from each  raw file are extracted and converted to units of wavelength. The transmission monitor is then normalised by the incident monitor in each run over the common wavelength range. Finally, the sample is divided by the can to give the sample transmission as a function of wavelength.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/Transmission_activity.png}
+\caption{Activity diagram showing an activity diagram for the Transmission routine.}
+\label{fig:c2e-transmission-activity-diagram}
+\end{figure}
+
+The procedure for doing this using the Mantid API is shown in the activity diagram \ref{fig:c2e-transmission-activity-diagram}. The routine assumes that the first two spectra in a raw file are the monitors (as is generally the case for ISIS indirect instruments) where the first is the incident monitor and the second is the transmission monitor. It also loads the third spectrum in the raw file (which should be actual detector data) to use as a reference time range. 
+
+If the first value on the detectors x axis matches the corresponding value on the incident monitor it simply converts the monitor workspace to units of wavelength. If it does not match the monitor must first be unwrapped using the UnwrapMonitor algorithm with the a hard coded parameter for the flight path of 38.76. Then it corrects the join wavelength for the UnwrapMonitor algorithm by removing the bins at the join with a linear interpolation method the uses the FFTSmooth algorithm to smooth the whole workspace. It then crops the incident monitor to the shortest wavelength of the two monitors and rebins the second monitor to match. The transmission monitor is then divided by the incident monitor.
+
+This procedure is repeated for both the sample and the can file provided by the user. After the monitors for both the sample and can have been converted the sample tranmission monitor is then divided by the can transmission monitor. Finally, a group workspace containing the sample transmission monitor, can transmission monitor, and sample transmission monitor with can removed is created.
 
 \subsection{$S(Q,w)$}
 In this interface, reduced files created as part of an energy transfer reduction can be converted to $S(Q,w)$. The Mantid framework has a collection of three algorithms that are used to convert a workspace from energy transfer to $S(Q,w)$ depending on the choice of rebinning to use. The mapping between $S(Q,w)$ algorithms and the rebin types are given in table \ref{table:sofqw-algorithms}. The code running an $S(Q,w)$ conversion is entirely contained within the Indirect interface where it dynamically builds a string of python code that is then executed. Optionally, the user many rebin the workspace in energy before hand. In this case, the routine simply calls the rebin algorithm with given parameters.
@@ -409,7 +432,7 @@ The instrument parameters used in reduction are defined in files called \seqspli
 \centering
 \includegraphics[width=0.9\textwidth]{img/uml/activity_diagrams/DiffractionReduction_activity.png}
 \caption{Activity diagram showing the flow of the Diffraction Reduction in release 3.2. Steps outside of swim lanes are individual algorithms that are not part of a reduction step.}
-\label{fig:c2e-class-diagram}
+\label{fig:diffraction-class-diagram}
 \end{figure}
 
 \begin{itemize}
@@ -439,7 +462,7 @@ This algorithm takes a list of samples and a list of vanadium runs and an old st
 \centering
 \includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/OSIRISDiffractionReduction_activity.png}
 \caption{Activity diagram showing the flow of the OSIRIS Diffraction Reduction in release 3.2.}
-\label{fig:c2e-class-diagram}
+\label{fig:OSIRISdiffraction-class-diagram}
 \end{figure}
 
 \begin{itemize}
@@ -460,6 +483,7 @@ This algorithm takes a list of samples and a list of vanadium runs and an old st
 The corresponding interface for diffraction reduction is called Indirect Diffraction. Unlike the other interfaces in the Indirect collection, the structure of this interface is just a single class with a single UI file defining the layout. Each instrument has either the option of running in Diff Spec or Diff Only mode (TOSCA and VESUVIO only have diff spec mode) and as described in the previous section OSIRIS has a different reduction routine in the case of diff only mode. This is reflected in the interface when the user selects the appropriate option. The GUI changes the way the interface looks by checking the instrument parameter files for the currently selected instrument and reflection.
 
 \section{Data Analysis with Mantid}
+
 After data has been reduced using the convert to energy or diffraction reduction routines described in the previous section the reduced data needs to be analysed. In the indirect section of Mantid, there are two major collections of data analysis scripts that are currently in place. The first  and most important are those included in the Indirect Data Analysis interface which provide a variety of different fit functions and transforms the can be performed on reduced data. The second collection of routines are accessible via the Indirect Bayes interface. This provides a collection of routines that can be used to infer fitting parameters using Bayesian model selection techniques which are complementary to the routines in Indirect Data Analysis.
 
 The majority of the code for data analysis scripts can be found in the file IndirectDataAnalysis.py with the Inelastic script folder of the Mantid installation, with the exception of Calculate Corrections which is in a file called IndirectAbsCor.py. For the Bayesian fitting programs, the code is stored in the file IndirectBayes.py, with the exception of JumpFit which is stored in IndirectJumpFit.py both of which are in the Inelastic scripts folder.
@@ -473,7 +497,7 @@ The elastic window algorithm converts the spectrum axis of the input workspace t
 \centering
 \includegraphics[width=0.6\textwidth]{img/uml/activity_diagrams/ElWin_activity.png}
 \caption{Activity diagram for the ElWin routine.}
-\label{fig:instrument-energy-range}
+\label{fig:elwin-acticity-diagram}
 \end{figure}
 
 The ElWin routine proceeds by first sorting the list of workspace names supplied as input. As there is an unofficial naming convention in the indirect inelastic section of Mantid where the names include the run number, this should produce a list with the smallest run number first.
@@ -496,7 +520,7 @@ The Fury program is used to perform a fast Fourier transform on a reduced worksp
 \centering
 \includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/Fury_activity.png}
 \caption{Activity diagram for the Fury routine.}
-\label{fig:instrument-energy-range}
+\label{fig:fury-activity-diagram}
 \end{figure}
 
 
@@ -514,7 +538,15 @@ Both of these routines convert the table of fitting parameters created from Fit 
 \subsection{ConvFit}
 The ConvFit routine is used to perform a convolution fit to the workspaces. Again, this routine follows a similar procedure to both the MSDFit and FuryFit routines. A fit function with the options the user has selected are gathered from the user interface and a string representing the function to be fitted is passed to the PlotPeakByLogValue algorithm to perform a sequential fit.
 
-The functions fitted are a $\delta$-function, one or two Lorentzians or a combination of both which are then convolved with the user supplied resolution workspace. The type of background can also be selected from a choice of Fixed Flat (flat background without the intercept tied to the user supplied value), Fit Flat (flat background with the intercept unconstrained), and Fit Linear (unconstrained linear background). Optionally a temperature correction can be applied to the Lorentzians.
+The functions fitted are a $\delta$-function, one or two Lorentzians or a combination of both which are then convolved with the user supplied resolution workspace. The type of background can also be selected from a choice of Fixed Flat (flat background without the intercept tied to the user supplied value), Fit Flat (flat background with the intercept unconstrained), and Fit Linear (unconstrained linear background). Optionally a temperature correction can be applied to the Lorentzians. The temperature correction is defined as:
+
+\begin{equation}
+f(x) = (\frac{x \cdot 11.606}{t}) / [1 - exp(-\frac{x \cdot 11.606}{t})]
+\end{equation}
+
+Where $t$ is the user supplied value for the temperature in kelvin, $x$ is the value in energy transfer at a given point in the workspace and 11.606 is the conversion factor from units of meV to K. Each Lorentzian is multiplied by this factor then convolved with the resolution.
+
+The final composite function is represented as a string that the Mantid fit algorithm can interpret. This function string is generated within the GUI code for ConvFit and then passed to the underlying python routine.
 
 As with the other FuryFit, ConvFit will convert the input workspace to elastic $Q$ first before performing the fit, and converts the output table of fit parameters to a matrix workspace. If a $\delta$-function was used the elastic incoherent structure factor (EISF) is calculated from the resulting table of parameters.
 
@@ -562,7 +594,7 @@ The Indirect Data Analysis user interface follows a similar design structure to 
 \centering
 \includegraphics[width=0.7\textwidth]{img/uml/class_diagrams/IDA_structure.png}
 \caption{Class diagram for the Indirect Data Analysis GUI.}
-\label{fig:instrument-energy-range}
+\label{fig:IDA-class-diagram}
 \end{figure}
 
 As with the convert to energy interface, the layout of the entire GUI is defined in a single XML file which each of the tab objects in the GUI system have a reference too. As of release 3.2 the Indirect Data Analysis interface consists of seven tabs; namely: ElWin, MSDFit, Fury, FuryFit, ConvFit, Calculate Corrections, and Apply Corrections. Each of these have a single class which inherits from a base class called IDATab where the common logic shared between tabs for setting up the tabs, drawing to the mini plot, and loading a nexus file, among other things, is stored.
@@ -579,7 +611,9 @@ In future releases of Mantid it is hoped that these routines will be converted i
 ResNorm is used to create a group normalisation workspace which can be input to Quasi (described in the next section). It normalises the input data using the instrument resolution by fitting. A group normalisation may also be done by grouping Q values where the resolution is stretched using a stretch factor. The routine produces two group workspaces with the suffixes \**\_ResNorm and \**\_ResNorm\_Fit respectively. The ResNorm group workspace contains two workspaces with the suffixes intensity and stretch. The intensity workspace contains the intensity normalisation factor and stretch contains a stretch factor for the width of the supplied resolution file. The ResNorm\_Fit group workspace contains the fits to each spectrum in the workspace.
 
 \subsection{Quasi}
-The Quasi routine provides a model selection algorithm using Bayesian methods to choose the number of lorentzian components present in the input data \cite{dssivia1992} and was originally known as Quasi Lines in the old MODES package. This routine takes a sample to fit to and a resolution file created in the convert to energy interface and optionally a resolution normalisation file created in ResNorm (see the previous section). This program can run either by fitting a $\delta$-function plus a sum of Lorentzians or a single stretched exponential. There are three Fortran modules which are used depending on the input. The QLres module fits a sum of Lorentzians. If the resolution file contains more than one spectrum, then the QLdata module is used and any ResNorm file supplied is ignored. Finally if the choice of fitting a stretched exponential is used the QLse module is used. Each of these modules share very similar code which is duplicated and modified slightly to suit the specifics of the implementation.
+The Quasi routine provides a model selection algorithm using Bayesian methods to choose the number of lorentzian components present in the input data \cite{dssivia1992} and was originally known as Quasi Lines in the old MODES package. This routine takes a sample to fit to and a resolution file created in the convert to energy interface and optionally a resolution normalisation file created in ResNorm (see the previous section). This program can run either by fitting a $\delta$-function plus a sum of Lorentzians or a single stretched exponential.
+
+There are three Fortran modules used depending on the input. The QLres module fits a sum of Lorentzians. If the resolution file contains more than one spectrum, then the QLdata module is used and any ResNorm file supplied is ignored. Finally if the choice of fitting a stretched exponential is used the QLse module is used. Each of these modules share very similar code which is duplicated and modified slightly to suit the specifics of the implementation.
 
 Inside the fitting routine it first refines the parameters for the $\delta$-function, linear background, energy range offset and thereby estimates probability of the absence of quasielastic components in data. It then refines the parameters for one, two and three Lorentzian components successively \cite{dssivia1992}.
 
@@ -600,9 +634,9 @@ JumpFit provides very simple routine for fitting the width parameters fitted to 
 \begin{tabular}{ l l l}
 Function & Function Definition & Default Parameter Values \\ \hline
 Chudley-Elliot &  $\Gamma(Q) = (1 - sin(Ql)/Ql)/\tau$ & $\tau = 1.0/QMax, L=1.5$\\ \hline
-Hall-Ross & $\Gamma(Q) = (1-exp(-l*Q^2))/\tau$ & $\tau = 1.0/QMax, L=1.5$ \\ \hline
-Fick & \parbox{6cm}{$\Gamma(Q) = D*Q^2$ \\ where $D=<l^2>*Q^2/6*\tau$} & $D = \Delta y / \Delta x^2$\\ \hline
-Teixeira Water & \parbox{6cm}{$\Gamma(Q) = D*Q^2/(1 + D*Q^2*\tau)$ \\ where $D=<l^2>*Q^2/6*\tau$} & $\tau = 1.0/QMax, L=1.5$ \\ \hline
+Hall-Ross & $\Gamma(Q) = (1-exp(-lQ^2))/\tau$ & $\tau = 1.0/QMax, L=1.5$ \\ \hline
+Fick & \parbox{6cm}{$\Gamma(Q) = DQ^2$ \\ where $D=<l^2>/6\tau$} & $D = \Delta y / \Delta x^2$\\ \hline
+Teixeira Water & \parbox{6cm}{$\Gamma(Q) = DQ^2/(1 + DQ^2\tau)$ \\ where $D=<l^2>/6\tau$} & $\tau = 1.0/QMax, L=1.5$ \\ \hline
 \end{tabular}
 \caption{JumpFit function names, definitions, and default parameter values.}
 \label{table:jumpfit-functions}
@@ -657,7 +691,7 @@ There are two types of algorithms in Mantid. Normal algorithms are simply ones w
 \item As of release 3.2 the ability to track the history of a work flow algorithm and it's child algorithms has been added, allowing scientists to see exactly what operations have been performed on a workspace since it entered Mantid.
 \end{itemize}
 
-Energy transfer reduction and diffraction reduction are both prime candidates for work flow algorithms. Neither of these routines actually perform any real direct manipulation of the workspaces they reduce themselves, but delegate all of the operations to existing Mantid algorithms within the reduction steps. Converting this would be a delicate and large job, but not necessarily difficult. The basic outline of both reductions is already documented in diagrams \ref{fig:c2e-energy-transfer-activity-diagram} and \ref{} respectively. This, along with the actual code (which is reasonably we documented and formatted) should be enough for an easy transition to a work flow algorithm for each type of reduction.
+Energy transfer reduction and diffraction reduction are both prime candidates for work flow algorithms. Neither of these routines actually perform any real direct manipulation of the workspaces they reduce themselves, but delegate all of the operations to existing Mantid algorithms within the reduction steps. Converting this would be a delicate and large job, but not necessarily difficult. The basic outline of both reductions is already documented in diagrams \ref{fig:c2e-energy-transfer-activity-diagram} and \ref{fig:diffraction-class-diagram} respectively. This, along with the actual code (which is reasonably we documented and formatted) should be enough for an easy transition to a work flow algorithm for each type of reduction.
 
 Some of the large reduction steps would also benefit from being converted to work flow algorithms in there own right, particularly the reduction steps which are larger and shared between both reducer classes. Prime examples would be the LoadData and HandleMonitor steps which both complex enough that they could be converted to work flow algorithms.
 
@@ -678,14 +712,14 @@ Additionally, more system tests need to be added to more extensively cover some 
 \label{subsec:GUI-Improvements}
 All of the interfaces for Indirect data reduction and analysis shared common themes in the design of the interface (except Diffraction, mostly due to its simplicity). All of them share the same basic layout following the format: one tab for each routines, input files at the top of the window, parameters in the middle and a mini plot if required, output options at the bottom followed by the run button.
 
-Having a consistent feel across all interfaces is extremely important in making it easy for users to learn to use the software \cite{cwickens2004} and there is plenty that could be done to improve this within the existing GUI. However, a more pertinent issue, and one that should be tackled first is the repetition of common code both between interfaces and between individual tabs. Notice that the class diagrams in he GUI overviews in sections \ref{subsec:c2e-gui-overview}, \ref{subsubsec:Bayes-GUI-Overview}, and \ref{subsubsec:IDA-GUI-Overview} are share a very similar structure.
+Having a consistent feel across all interfaces is extremely important in making it easy for users to learn to use the software and there is plenty that could be done to improve this within the existing GUI. However, a more pertinent issue, and one that should be tackled first is the repetition of common code both between interfaces and between individual tabs. Notice that the class diagrams in he GUI overviews in sections \ref{subsec:c2e-gui-overview}, \ref{subsubsec:Bayes-GUI-Overview}, and \ref{subsubsec:IDA-GUI-Overview} are share a very similar structure.
 
 Future development should aim to unify this repeatability structure into a using a single common class hierarchy with abstract base classes sharing functionality that is shared between all of the interfaces. This would include, for example:
 
 \begin{itemize}
 \item Mini plot set-up, drawing, updating and management routines.
 \item Common file loading and pre-processing calls.
-\item Algorithm instantiation, execution and error handling code.
+\item Algorithm instantiation, execution, and error handling code.
 \end{itemize}
 
 \begin{figure}[H]
@@ -695,7 +729,9 @@ Future development should aim to unify this repeatability structure into a using
 \label{fig:indirect-gui-proposed}
 \end{figure}
 
-A refactored GUI class hierarchy could look something like diagram \ref{fig:indirect-gui-proposed}. This shows that all of the interface windows share a common abstract base class, as do all of the tabs. More specific abstract base classes then implement the more specific functionality which is required by the interface until reaching the concrete base class which contains the exact details of setting up, validating and running a specific routine.
+A refactored GUI class hierarchy could look something like diagram \ref{fig:indirect-gui-proposed}. This shows that all of the interface classes share a common abstract base class. More specific abstract base classes then implement functionality which is dependant upon what is contained within the interface (e.g. a mini plot) until reaching the concrete base class which contains the exact details of setting up, validating and running a specific routine. This allows us to shared the common code that has already been written multiple times throughout the various interfaces. 
+
+The GUI window itself is a abstract base single class with a single interface file. All of the indirect GUIs follow the same pattern: tabs for each routine with a run, help, and manage directories buttons at the bottom of the window. The name and specific settings of the window can be then be implemented using a concrete derived class for each individual interface.
 
 Furthermore, to expand on the last bullet point above, the interface currently executes the python routines by creating a string of python code with the calls to each routine and all of the parameters it requires and then executes it. This approach is both fiddly and error prone. It is easy to build a string which is not formatted correctly in some subtle way which leads to broken options and code paths.
 
