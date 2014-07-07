@@ -168,7 +168,7 @@ Where $b_j$ is the neutron scattering length of the atom, $M_j$ is the mass of t
 W = \frac{1}{2} < u^2_{MSD} > Q^2
 \end{equation}
 
-And $< u^2_{MSD} >$ is the mean squared displacement of the scattering atom.
+And $< u^2_{MSD} >$ is the mean squared displacement of the scattering atom. The mean squared displacement is the quantity that is analysed using the MSDFit routine described in section \ref{subsubsec:msdfit}.
 
 \subsubsection{Diffraction Reduction}
 In the case of diffraction experiments, there is no need to convert to energy transfer or $S(\mathbf{Q}, \omega)$. Instead, the results are converted from the raw time-of-flight data to $d$-spacing, the distance between the planes in a lattice. Results are calculated using known parameters of the instrument via the time-of-flight equation and Bragg's law. Diffraction experiments may be run either on there own or in parallel with spectroscopy.
@@ -544,6 +544,7 @@ The ElasticWindow algorithm is then executed on the sample. Optionally two range
 Finally, a third workspace is created from the two output from the ElasticWindow algorithm with units of Kelvin on the x axis vs. momentum transfer on the y axis. This uses the value for temperature loaded from the sample logs at the start of the routine. If the option is selected, the temperature workspace is normalised by the lowest temperature in the workspace.
 
 \subsubsection{MSDFit}
+\label{subsubsec:msdfit}
 The MSD fit routine is used to calculate the mean squared displacement from the $Q^2$ workspace output from ElWin. In essence this routine performs a linear fit to every spectrum in the workspace using the algorithm PlotPeakByLogValue. However the routine also performs some additional operations to transform the fitting parameters form a table workspace to a matrix workspace.
 
 This routine produces a group workspace contain the linear fits to each spectrum and a workspace for each of the parameters of the fit to each spectrum transposed into a matrix workspace.
