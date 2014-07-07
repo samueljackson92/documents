@@ -726,12 +726,32 @@ The run button at the bottom of the screen is used to perform a single fit to th
 \end{figure}
 
 \subsection{An Example of Advanced Data Analysis}
-The Bayesian fitting routines also operate on the reduced data create from Indirect Convert to Energy. Using an example reduced workspace from the IRIS instrument we can run the ResNorm program to generate a normalisation group workspace as shown in screen shot \ref{}. As with other interfaces, the mini plot shows the first spectrum in the workspace and can be used to select the range used for binning. The resolution workspace is one that has been generated from the Calibration tab on the Convert to Energy interface (see section \ref{subsec:c2e-calibration}).
+The Bayesian fitting routines also operate on the reduced data create from Indirect Convert to Energy. Using an example reduced workspace from the IRIS instrument we can run the ResNorm program to generate a normalisation group workspace as shown in screen shot \ref{fig:iris-bayes-resnorm}. As with other interfaces, the mini plot shows the first spectrum in the workspace and can be used to select the range used for binning. The resolution workspace is one that has been generated from the Calibration tab on the Convert to Energy interface (see section \ref{subsec:c2e-calibration}).
 
-The Quasi routine offers a complementary alternative to the ConvFit routine. The workspace output from ResNorm can be used as input to the Quasi routine. Like the ConvFit routine this takes both a reduced sample and resolution file. The model to be fitted can be configured using the various options for the background and type of peak before running. Figure \ref{} shows an example of using the interface in release 3.2.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{img/iris-bayes-resnorm.png}
+\caption{Screen shot of using the ResNorm interface in release 3.2.}
+\label{fig:iris-bayes-resnorm}
+\end{figure}
 
-As a final example, shown in figure \ref{}, the workspace of parameters output from Quasi can be used as direct input to the JumpFit routine. This automatically finds the width parameters within the workspace and allows the user to select which one to fit. The user can choose between any of the models defined for diffusion. Future releases hope to add support using a custom function string as the model for fitting. The fit is automatically updated on the mini plot and output as workspaces for the fit, parameters and normalized covariance matrix.
+The Quasi routine offers a complementary alternative to the ConvFit routine. The workspace output from ResNorm can be used as input to the Quasi routine. Like the ConvFit routine this takes both a reduced sample and resolution file. The model to be fitted can be configured using the various options for the background and type of peak before running. Figure \ref{fig:iris-bayes-quasi} shows an example of using the interface in release 3.2.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{img/iris-bayes-quasi.png}
+\caption{Fitting a model to some reduced data from IRIS using the Quasi interface.}
+\label{fig:iris-bayes-quasi}
+\end{figure}
+
+As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace of parameters output from Quasi can be used as direct input to the JumpFit routine. This automatically finds the width parameters within the workspace and allows the user to select which one to fit. The user can choose between any of the models defined for diffusion. Future releases hope to add support using a custom function string as the model for fitting.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/iris-bayes-jumpfit.png}
+\caption{Using JumpFit on the output from the Quasi interface.}
+\label{fig:iris-bayes-jumpfit}
+\end{figure}
 
 
 \section{Simulation}
