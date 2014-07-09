@@ -78,16 +78,16 @@
 \section{Introduction}
 Mantid (http://www.mantidproject.org) is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
-Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the SNS facility at Oakridge USA. Recently additional partners from the ILL and PSI have also contributed.
+Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the SNS facility at Oak Ridge, Tennessee, USA. Recently additional partners from the ILL and PSI have also contributed.
 
 The project is currently still under heavy development and provides regular incremental releases for evaluation and feedback from instrument scientists and users in general and is therefore constantly evolving with each release. Until recently, Mantid operated on a three month release cycle. This has now been changed to so that the project releases every four months, with a longer emphasis on the testing and integration phase of development.
 
 Up until now the indirect geometry section of Mantid has largely been based off of the the existing MODES application which in turn was based on OpenGenie \cite{wshowells2010} and the IRIS Data Analysis package \cite{wshowells1996}. The majority of the functionality has now been integrated into the Mantid framework in one form or another and we are now beginning to reach a point where we can expand the existing functionality further.
 
-This document aims to give an overview of the current stage of development for the indirect geometry section of the application as it currently exists in as much detail as possible to provide a historical snapshot of the progress so far. The remainder of the document then provides a weak outline of suggested directions for further development in the future.
+This document aims to give an overview of the current stage of development for the indirect geometry section of the application as it currently exists in as much detail as possible to provide a historical snapshot of the progress so far. The remainder of the document then provides a weak outline of suggested directions for future development.
 
 \section{Indirect Geometry Instruments}
-Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VESUVIO spectrometers at ISIS are those in which the incident beam is polychromatic and crystal analysers are typically used to determine the final energy. Together these instruments cover a broad energy range. IRIS and OSIRIS operate in a low energy range of up to -0.4 to 0.4 meV (depending on the analyser used) with TOSCA covering the 0 to 500 meV range and VESUVIO operating at high energies of 5 - 150 eV. Diagram \ref{fig:instrument-energy-range} compares the energy range covered by the indirect geometry instruments at ISIS.
+Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VESUVIO spectrometers at ISIS are those in which the incident beam is polychromatic and crystal analysers are typically used to determine the final energy. Together these instruments cover a broad energy range. IRIS and OSIRIS operate in a low energy range of up to -0.4 to 0.4 meV (depending on the analyser used) with TOSCA covering the 0 to 500 meV range and VESUVIO operating at high energies of 5 - 150 eV. Diagram \ref{fig:instrument-energy-range} compares the energy range covered by the indirect geometry instruments at ISIS and the applicable techniques at each energy range.
 
 \begin{figure}[H]
 \centering
@@ -98,8 +98,8 @@ Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and 
 
 IRIS and OSIRIS share the N6 beamline in target station 1 at the ISIS facility. Both instruments are fed via curved guides from the source moderator. Two choppers positioned at 10m and 6.3m from the instruments define the incident wavelength band and prevent frame overlap \cite{smukhopadhyay2014}. TOSCA is located on the N4 beamline in ISIS target station 1 with a incident flight path of 17m and also has a chopper on the incoming beamline to prevent overlap and remove fast neutrons \cite{colognesi2002tosca}. VESUVIO is located on the S2 beamline and has an incident flight path of 11.005m \cite{mayers2011calibration}.
 
-The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is determined by the reflections from analyser crystals by means of Bragg scattering. IRIS and OSIRIS both have pyrolytic graphite crystal analysers with reflection planes 002 and 004 delivering a final energy of $E_f$=1.845 and 7.38 meV respectively \cite{adams2001iris}\cite{telling2008osiris}. This design leads to a resolution of 17.5 and 54.5 $\mu$eV for the 002 and 004 reflections on IRIS and 25 and 99 $\mu$eV on OSIRIS. IRIS additionally has a mica (muscovite or fluorinated) crystal analyser bank with reflections 002, 004, and 006, and $E_f$ corresponding to 0.207, 0.826, and 1.86 meV respectively which provide better resolutions of 11$\mu$eV (006), 4.5$\mu$eV (004) and
-1.2$\mu$eV (002) compared to graphite at the cost of intensity. Recently, OSIRIS has recently had an upgrade expanding the operational energy range to -0.25 to 25 meV with the pyrolytic graphite analyser with reflection 002. The primary setting for both instruments is graphite 002. TOSCA has just a pyrolytic graphite analyser with 002 reflection \cite{colognesi2002tosca} and achieves a resolution of roughly 1.25\% of the measured energy transfer \cite{parker2003tosca}.
+The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is determined by the reflections from analyser crystals by means of Bragg scattering. IRIS and OSIRIS both have pyrolytic graphite crystal analysers with reflection planes 002 and 004 delivering a final energy of $E_f$=1.845 and 7.38 meV respectively \cite{adams2001iris}\cite{telling2008osiris}. This design leads to a resolution of 17.5 and 54.5 $\mu$eV for the 002 and 004 reflections on IRIS and 25 and 99 $\mu$eV on OSIRIS. IRIS additionally has a mica (muscovite or fluorinated) crystal analyser bank with reflections 002, 004, and 006, and $E_f$ corresponding to 0.207, 0.826, and 1.86 meV respectively which provide better resolutions (at the cost of intensity) of 11$\mu$eV (006), 4.5$\mu$eV (004) and
+1.2$\mu$eV (002) compared to graphite. Recently, OSIRIS has had an upgrade which expands the operational energy range to -0.25 to 25 meV with the pyrolytic graphite analyser with reflection 002. The primary setting for both instruments is graphite with reflection 002. TOSCA has just a pyrolytic graphite analyser with 002 reflection \cite{colognesi2002tosca} and achieves a resolution of roughly 1.25\% of the measured energy transfer \cite{parker2003tosca}.
 
 VESUVIO operates on the principle of neutron Compton scattering and uses a pair of gold foils which can be moved into different positions for use with the foil cycling technique described in \cite{schooneveld2006foil} which produces a neutron absorption resonance at 4.9 eV, emitting a $\gamma$-ray cascade which is detected by the instrument's Yttrium Aluminium Perovskite $\gamma$-ray detectors \cite{mayers2010user}.
 
@@ -120,9 +120,10 @@ Before data analysis can begin, the raw data collected from the instrument must 
 \label{fig:instrument-setup}
 \end{figure}
 
-In order to convert the raw data collected from the instrument from time-of-flight measurements to energy transfer the routine uses known parameters about the instrument as illustrated in figure \ref{fig:instrument-setup}. The raw time-of-flight data is recorded in microseconds and can be calculated using the parameters of the instrument with the time-of-flight equation:
+In order to convert the raw data collected from the instrument from time-of-flight measurements to energy transfer the routine uses known parameters about the instrument as illustrated in figure \ref{fig:instrument-setup}. The raw time-of-flight data is recorded in counts per microsecond and can be calculated using the parameters of the instrument with the time-of-flight equation:
 
 \begin{equation}
+\label{eq:time-of-flight}
 t = \frac{L_1}{V_1} + \frac{L_2}{V_2}
 \end{equation}
 
@@ -135,6 +136,7 @@ E_f = \frac{1}{2}m_{n}v^2 = \frac{1}{2}m_{n} ( L_2 / t_2 ) ^2
 Which can also be written in terms of the distance between sample and detector ($L_2$) and the corresponding time-of-flight over this distance ($t_2$). To calculate the transfer of energy knowledge of the flight path between the moderator and sample ($L_1$) and the time of flight over this distance ($t_1$) can be used to calculate the incident energy using equation above. In indirect geometry instruments, the final energy is fixed by the crystal analysers which filters any neutrons with wavelengths not satisfying the Bragg condition:
 
 \begin{equation}
+\label{eq:braggs-law}
 \lambda = 2dsin(\theta)
 \end{equation}
 
@@ -171,7 +173,7 @@ W = \frac{1}{2} < u^2_{MSD} > Q^2
 And $< u^2_{MSD} >$ is the mean squared displacement of the scattering atom. The mean squared displacement is the quantity that is analysed using the MSDFit routine described in section \ref{subsubsec:msdfit}.
 
 \subsubsection{Diffraction Reduction}
-In the case of diffraction experiments, there is no need to convert to energy transfer or $S(\mathbf{Q}, \omega)$. Instead, the results are converted from the raw time-of-flight data to $d$-spacing, the distance between the planes in a lattice. Results are calculated using known parameters of the instrument via the time-of-flight equation and Bragg's law. Diffraction experiments may be run either on there own or in parallel with spectroscopy.
+In the case of diffraction experiments, there is no need to convert to energy transfer or $S(\mathbf{Q}, \omega)$. Instead, the results are converted from the raw time-of-flight data to $d$-spacing, the distance between the planes in a lattice. Results are calculated using known parameters of the instrument via the time-of-flight equation (equation \ref{eq:time-of-flight}) and Bragg's law (equation \ref{eq:braggs-law}). Diffraction experiments may be run either on their own or in parallel with spectroscopy.
 
 \subsection{Data Analysis Theory}
 
@@ -192,7 +194,7 @@ In theory, these can then be separated through the deconvolution of the two func
 \item The final case is when $R(\mathbf{Q}, \omega)$ does not have a simple functional form, and so must be convoluted numerically with the $S(\mathbf{Q}, \omega)$.
 \end{itemize}
 
-The typical way to handle the latter case is through fitting the appropriate model to the convoluted data and is the purpose of the ConvFit interface described in later sections which provides a least-squares fit of the convolution of  the measured data and the resolution.
+The typical way to handle the latter case is through fitting the appropriate model to the convoluted data and is the purpose of the ConvFit interface described in section \ref{subsubsec:convfit} which provides a least-squares fit to the convolution of the measured data and the resolution.
 
 An alternative method of deconvolution of the scattering and resolution functions is through the intermediate scattering function, denoted $I(\mathbf{Q}, t)$ which is proportional to the Fourier transform of the scattering and resolution functions:
 
@@ -209,7 +211,7 @@ An alternative method to model fitting is the use of Bayesian methods to select 
 I(\epsilon) = [A_0\delta(\epsilon) + \Sigma_{j=0}^N A_j \frac{w_j}{\pi(\epsilon^2 + w_j^2)}] \otimes R(\epsilon)
 \end{equation}
 
-where $\epsilon$ is the energy transfer, $I$ is the data, $A_j$ are the amplitudes of the Lorentzians and $W_j$ are the HWHMs ($\Gamma$). An extension of this method replaces the sum of Lorentzians with a single stretched exponential function with the form:
+where $\epsilon$ is the energy transfer, $I$ is the data, $A_j$ are the amplitudes of the Lorentzians and $W_j$ are the HWHMs ($\Gamma$). Using this method, the number of Lorentzians is iteratively varied and the optimum number selected as the final model. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function with the form:
 
 \begin{equation}
 I(\epsilon) = [\delta(\epsilon) + e^{2(\sigma k)^\beta}] \otimes R(\epsilon)
@@ -273,11 +275,11 @@ The scattering cross section for the sample can the be calculated as:
 There are two routines in Mantid which perform these corrections. Calculate Corrections calculates the attenuation parameters $A_{i,j}$, while Apply Corrections uses them to calculate $\Sigma_s$ based on the geometry as described here.
 
 \section{Data Reduction with Mantid}
-Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and the Iris Data Analysis (IDA) package\cite{wshowells2010}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
+Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and IRIS Data Analysis (IDA) packages \cite{wshowells2010}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
 
-The Convert to Energy interface provides the initial entry point for data into Mantid for indirect inelastic instruments. The functionality of this interface is currently also shared with the direct instruments, although a separation of the interfaces is planned in future releases.
+The Convert to Energy interface provides the initial entry point for data into Mantid for indirect instruments. The functionality of this interface is currently also shared with the direct instruments, although a separation of the interfaces is planned in future releases.
 
-The code for data  reduction programs are primarily stored in the Inelastic scripts folder of the Mantid installation (\textit{Installation Directory/Mantid/scripts/Inelastic}). The energy conversion reducer is in a file called inelastic\_indirect\_reducer.py while the diffraction reducer is in IndirectDiffractionReduction.py. The reduction steps used by both are in inelastic\_indirect\_reduction\_steps.py. The generic reducer class is stored in the reduction folder (\textit{Installation Directory/Mantid/scripts/reduction}). Miscellaneous energy reduction routines are stored in IndirectEnergyConversion.py which is also in the inelastic scripts folder.
+The code for data  reduction programs are primarily stored in the inelastic scripts folder of the Mantid installation (\textit{\textless Installation Directory\textgreater /Mantid/scripts/Inelastic}). The energy conversion reducer is in a file called inelastic\_indirect\_reducer.py while the diffraction reducer is in IndirectDiffractionReduction.py. The reduction steps used by both are in inelastic\_indirect\_reduction\_steps.py. The generic reducer class is stored in the reduction folder (\textit{\textless Installation Directory\textgreater/Mantid/scripts/reduction}). Miscellaneous energy reduction routines are stored in IndirectEnergyConversion.py which is also in the inelastic scripts folder.
 
 \subsection{Convert To Energy}
 \subsubsection{Energy Transfer}
@@ -293,7 +295,7 @@ The structure of the underlying energy transfer reduction routine is based on th
 \label{fig:reducer-structure-diagram}
 \end{figure}
 
-Figure \ref{fig:reducer-structure-diagram} shows the class structure of indirect reducers and a subset of the reduction steps that are defined for inelastic energy reduction. In indirect data analysis we have two concrete reducer objects. One for energy conversion (IndirectReducer) and one for diffraction reduction (MSGDiffractionReduction). This section will just focus on the IndirectReducer. For discussion on diffraction reduction see section \ref{subsec:indirect-diffraction}.
+Figure \ref{fig:reducer-structure-diagram} shows the class structure of indirect reducers and a subset of the reduction steps that are defined for indirect energy reduction. In indirect data analysis we have two concrete reducer objects. One for energy conversion (IndirectReducer) and one for diffraction reduction (MSGDiffractionReduction). This section will just focus on the IndirectReducer. For discussion on diffraction reduction see section \ref{subsec:indirect-diffraction}.
 
 The IndirectReducer object defines what steps should be executed as part of a reduction work-flow and is the point at which the parameters gather from the user interface are passed to the program. After setting up the each reduction step with the relevant parameters, the reducer then iterates over the list of steps and executes each one in turn on the sample run to be reduced. Reducer objects also have the option to define a preprocessing function which is only executed once regardless of the number of runs being processed. The MSGReducer, which is the superclass of both the IndirectReducer and the MSGDiffractionReducer, uses this to execute the loading step to get the sample run(s) to be reduced into memory before continuing with the rest of the reduction on a per run basis.
 
@@ -304,38 +306,38 @@ The IndirectReducer object defines what steps should be executed as part of a re
 \label{fig:c2e-energy-transfer-activity-diagram}
 \end{figure}
 
-The steps involved in energy transfer reduction are shown in activity diagram \ref{fig:c2e-energy-transfer-activity-diagram} along with the major operations performed within each step and the flow of the execution of the reduction. The responsibility of each of the steps are as follows:
+The steps involved in energy transfer reduction are shown in activity diagram \ref{fig:c2e-energy-transfer-activity-diagram} along with the major operations performed within each step and the flow of execution for the reduction. The responsibility of each of the steps are as follows:
 
 \begin{itemize}
-\item \textbf{Load Data} - The load data step loads each individual sample runs from file using the correct loader for the currently selected instrument. If the option is selected, it will also attempt to load the logs for the runs as well. If the current instrument has the parameter Workflow.ChopDataIfGreaterThan defined as in its instrument parameter file (IPF), the reduction step splits the data into multiple frames using the ChopData algorithm. The routine will then extract the monitor from the loaded workspace and crop the workspace to the desired detector range. If the sum option is checked the runs will be merged into a single workspace and averaged, otherwise subsequent steps are executed on each run individually.
+\item \textbf{Load Data} - The load data step loads each individual sample run from file using the correct loader for the currently selected instrument. If the option is selected, it will also attempt to load the logs for the runs as well. If the current instrument has the parameter Workflow.ChopDataIfGreaterThan defined  in its instrument parameter file (IPF), the reduction step splits the data into multiple frames using the ChopData algorithm. The routine will then extract the monitor from the loaded workspace and crop the workspace to the desired detector range. If the sum option is checked the runs will be merged into a single workspace and averaged, otherwise subsequent steps are executed on each run individually.
 
-\item \textbf{Handle Monitor} - Next the reducer prepares the monitors for correction later. This involves rebinning the monitor according to the step size defined the the IPF If. Next it will unwrap the monitor, if required, using the UnwrapMonitors algorithm to convert the workspace to have common bins within the maximum wavelength range given a reference flightpath between source, sample and first detector. It then tidies up the monitor by removing the bin at the joining wavelength and smooths it Using FFTSmooth. Finally it converts the units of the workspace to wavelength, performs an exponential correction for the thickness, attenuation and area of the monitor and scales it if a scaling factor is defined in the IPF.
+\item \textbf{Handle Monitor} - Next the reducer prepares the monitors for correction in a later step. This involves rebinning the monitor according to the step size defined the IPF. Next it will unwrap the monitor, if required, using the UnwrapMonitors algorithm to convert the workspace to have common bins within the maximum wavelength range given a reference flightpath between source, sample and the first detector. It then tidies up the monitor by removing the bin at the joining wavelength and smooths it Using FFTSmooth. Finally it converts the units of the workspace to wavelength, performs an exponential correction for the thickness, attenuation, and area of the monitor and scales it if a scaling factor is defined in the IPF.
 
-\item \textbf{Background Operations} - This step simply calculates a flat background for the detectors data if parameters are defined for the background range and calculates the mean of the bins in this range before dividing by the width of the x range.
+\item \textbf{Background Operations} - This step simply calculates a flat background for the detector data if parameters are defined for the background range by calculating the mean of the bins in this range before dividing by the width of the x range.
 
-\item \textbf{Apply Calibration} - If a calibration file was supplied as a parameter for the reduction, the reducer will divide the workspace by the calibration run at this point. This just uses the standard Mantid Divide algorithm.
+\item \textbf{Apply Calibration} - If a calibration file was supplied as a parameter to the reduction, the reducer will divide the workspace by the calibration run at this point. This just uses the standard Mantid Divide algorithm.
 
-\item \textbf{Correct By Monitor} - The reducer then corrects the workspace by the preprocessed monitor by converting the units to wavelength then rebinning it to and dividing it by the monitor.
+\item \textbf{Correct By Monitor} - The reducer then corrects the workspace by the preprocessed monitor by converting the units to wavelength then rebinning it to, then dividing it by, the monitor.
 
-\item \textbf{Convert To Energy} - The conversion of the workspace to units of energy is then performed and multiplied by ki / kf , to transform the differential scattering cross section into a dynamic structure factor. The workspace is then rebinned according to the user defined rebin string.
+\item \textbf{Convert To Energy} - The conversion of the workspace to units of energy is then performed and multiplied by $k_i / k_f$ , to transform the differential scattering cross section into a dynamic structure factor. The workspace is then rebinned according to the user defined rebin string if one was supplied.
 
-\item \textbf{Detailed Balance} - The detailed balance step converts performs an exponential correction on the data if a temperature parameter was defined by the user.
+\item \textbf{Detailed Balance} - The detailed balance step performs an exponential correction on the data if a temperature parameter was defined by the user. This uses the ExponentialCorrection algorithm.
 
 \item \textbf{Scaling} - This step will scale the workspace by an arbitrary factor supplied by the user.
 
-\item \textbf{Fold Data} - If the data was split into multiple frames during the loading step, the fold data step is performed. The individual frames are merged back into a single workspace and the workspace is scaled by averaging the contributions of each individual frame across the x range.
+\item \textbf{Fold Data} - If the data was split into multiple frames during the loading step, the fold data step is performed. The individual frames are merged back into a single workspace (using the MergRuns algorithm) and the workspace is scaled by averaging the contributions of each individual frame across the x range.
 
-\item \textbf{Convert To $Cm^{-1}$} - If the option was selected, the workspace is convert to units of wavenumber.
+\item \textbf{Convert To $Cm^{-1}$} - If the option was selected, the workspace is converted to units of wavenumber.
 
-\item \textbf{Saving} - If any save options were selected, the reduced workspace is saved in the desired format.
+\item \textbf{Saving} - If any save options were selected, the reduced workspace is saved in the desired formats.
 \item \textbf{Naming} - Finally, the reduced workspace is renamed according to the instrument-analyser-refection convention used in Mantid indirect inelastic.
 \end{itemize}
 
-Note that the instrument parameters used in energy transfer reduction are defined in files called \seqsplit{instrument\_name\_Parameters.xml} and \seqsplit{ instrument\_name\_analyser\_reflection\_Parameters.xml} where the instrument name, analyser, and reflection are replaced by the actual values used (e.g. IRIS\_graphite\_002\_Parameters.xml and are kept in the instrument directory within the Mantid installation directory.
+Note that the instrument parameters used in energy transfer reduction are defined in files called \seqsplit{\textless instrument\_name\textgreater\_Parameters.xml} and \seqsplit{\textless instrument\_name\textgreater\_\textless analyser\textgreater\_\textless reflection\textgreater\_Parameters.xml} where the instrument name, analyser, and reflection are replaced by the actual values used (e.g. IRIS\_graphite\_002\_Parameters.xml) and are kept in the instrument folder within the Mantid installation directory.
 
 \subsubsection{Calibration}
 \label{subsec:c2e-calibration}
-The calibration section of the convert to energy interface can be used to create calibration and resolution files using vanadium sample runs which can be used as part of data reduction and analysis. Calibration workspaces are generated by creating an executing a single reduction step object  (without creating a reducer object) called CreateCalibrationWorkspace. The procedure for generating a single calibration step is to load the runs, and if there is more then one of them merge them and scale the output workspace by a factor of $1/\,number\,of\,runs$. It then calculates a flat background based on a background range supplied by the user. The routine then integrates over the peak range (again, supplied by the user) and scales the resulting workspace. An activity diagram for the routine is shown in figure \ref{fig:c2e-calibration-activity-diagram}.
+The calibration section of the convert to energy interface can be used to create calibration and resolution files using vanadium sample runs which are used as part of data reduction and analysis. Calibration workspaces are generated by creating an executing a single reduction step object  (without creating a reducer object) called CreateCalibrationWorkspace. The procedure for generating a single calibration step is to load the runs, and if there is more then one of them merge them and scale the output workspace by a factor of $1/\,number\,of\,runs$. It then calculates a flat background based on a background range supplied by the user. The routine then integrates over the peak range (again, supplied by the user) and scales the resulting workspace. An activity diagram for the routine is shown in figure \ref{fig:c2e-calibration-activity-diagram}.
 
 \begin{figure}[H]
 \centering
@@ -344,10 +346,10 @@ The calibration section of the convert to energy interface can be used to create
 \label{fig:c2e-calibration-activity-diagram}
 \end{figure}
 
-As mentioned, the calibration interfaces can also create resolution files for later use in data analysis. This routine, like many within the indirect section of many, is separate from the reducer-reduction step  framework and just a python function which is executed with parameters supplied from the interface. To create the resolution file, the routine first takes the vanadium run supplied on the calibration interface and converts it to energy using the energy transfer reducer described in section \ref{sec:energy-transfer}, but sets the detector mapping use all detectors and will sum multiple run if multiple runs are used. It then, like calibration, calculates a flat background from a range supplied by the user, rebins it according to the parameters specified for the instrument, and optionally saves the workspace to file.
+As mentioned, the calibration interface can also create resolution files for later use in data analysis. This routine, like many within the indirect code base, is separate from the reducer-reduction step  framework and just a python function which is executed with parameters supplied from the interface. To create the resolution file, the routine first takes the vanadium run supplied on the calibration interface and converts it to energy using the energy transfer reducer described in section \ref{sec:energy-transfer}, but sets the detector mapping use all detectors and will sum multiple run if multiple runs are used. It then, like calibration, calculates a flat background from a range supplied by the user, rebins it according to the parameters specified for the instrument, and optionally saves the workspace to file.
 
 \subsubsection{Diagnostics}
-The diagnostics routine (called Slice in IndirectEnergyConversion.py, named after the older routine from MODES \cite{wshowells2010}) provides an integration on a run over a specified time-of-flight range. This routine loads the raw file and a calibration file (if requested) and integrates the resulting workspaces. If two ranges are requested, the second range is used to calculate a flat background and remove this from the data before integrating. Finally, the integrated workspace is then transposed to make it easier to visualise.
+The diagnostics routine (called Slice in IndirectEnergyConversion.py, named after the older routine from MODES \cite{wshowells2010}) provides an integration over a specified time-of-flight range. This routine loads the raw file and a calibration file (if requested) and integrates the resulting workspaces. If two ranges are requested, the second range is used to calculate a flat background and remove this from the data before integrating. Finally, the integrated workspace is then transposed to make it easier to visualise.
 
 \begin{figure}[H]
 \centering
@@ -356,12 +358,10 @@ The diagnostics routine (called Slice in IndirectEnergyConversion.py, named afte
 \label{fig:c2e-diagnostics-activity-diagram}
 \end{figure}
 
-This takes a list of raw files with time-of-flight data in them as input along with an optional calibration file created from the routine described in the previous section. The slice routine begins by loading input files and the calibration file if supplied. If a calibration workspace is supplied, it is cropped to remove the monitors and match the range of the input raw file.
-
-For each sample workspace input is cropped to the desired number of spectra and divided by the calibration workspace if it exists. The workspace is then integrated across the supplied time range. If two ranges are given, the second range is used to remove a flat background prior to the integration using CalculateFlatBackground. Finally, the resulting workspace is transposed using the algorithm of the same name.
+The slice routine begins by loading input files and the calibration file if supplied. If a calibration workspace is supplied, it is cropped to remove the monitors and match the range of the input raw file. For each sample workspace input is cropped to the desired number of spectra and divided by the calibration workspace if it exists. The workspace is then integrated across the supplied time range. If two ranges are given, the second range is used to remove a flat background prior to the integration using CalculateFlatBackground. Finally, the resulting workspace is transposed using the algorithm of the same name.
 
 \subsubsection{Transmission}
-The transmission routine is a simple program to calculate the measured transmission of a sample using the incident and transmission monitors. Using a run of both the sample and the can, monitors from each  raw file are extracted and converted to units of wavelength. The transmission monitor is then normalised by the incident monitor in each run over the common wavelength range. Finally, the sample is divided by the can to give the sample transmission as a function of wavelength.
+The transmission routine is a simple program used to calculate the measured transmission of a sample using the incident and transmission monitors. Using a run of both the sample and the can, monitors from each  raw file are extracted and converted to units of wavelength. The transmission monitor is then normalised by the incident monitor in each run over the common wavelength range. Finally, the sample is divided by the can to give the sample transmission as a function of wavelength.
 
 \begin{figure}[H]
 \centering
@@ -374,7 +374,7 @@ The procedure for doing this using the Mantid API is shown in the activity diagr
 
 If the first value on the detectors x axis matches the corresponding value on the incident monitor it simply converts the monitor workspace to units of wavelength. If it does not match the monitor must first be unwrapped using the UnwrapMonitor algorithm with the a hard coded parameter for the flight path of 38.76. Then it corrects the join wavelength for the UnwrapMonitor algorithm by removing the bins at the join with a linear interpolation method the uses the FFTSmooth algorithm to smooth the whole workspace. It then crops the incident monitor to the shortest wavelength of the two monitors and rebins the second monitor to match. The transmission monitor is then divided by the incident monitor.
 
-This procedure is repeated for both the sample and the can file provided by the user. After the monitors for both the sample and can have been converted the sample tranmission monitor is then divided by the can transmission monitor. Finally, a group workspace containing the sample transmission monitor, can transmission monitor, and sample transmission monitor with can removed is created.
+This procedure is repeated for both the sample and the can file provided by the user. After the monitors for both the sample and can have been converted the sample transmission monitor is then divided by the can transmission monitor. Finally, a group workspace containing the sample transmission monitor, can transmission monitor, and sample transmission monitor with can removed is created.
 
 \subsubsection{$S(Q,w)$}
 \label{subsec:sofqw}
