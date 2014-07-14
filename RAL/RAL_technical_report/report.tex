@@ -205,21 +205,9 @@ I(\mathbf{Q}, t) = S(\mathbf{Q}, t) \times R(\mathbf{Q}, t)
 As the resolution of the instrument is known, the intermediate scattering function can be divided by the resolution and back transformed to obtain the scattering function. This method has the advantage in that the form of the function does not have to be assumed as in ConvFit, but the back transformation from $S(\mathbf{Q}, t)$ to the true scattering function is problematic due to the phase problem \cite{dssivia2011} and the propagation of statistical errors \cite{wild1977measurement}. The Fury routine provides an interface to perform a Fourier transform on the measured data and resolution, but does not provide an automated back transformation because of the aforementioned issues.
 
 \subsubsection{Bayesian Analysis}
-An alternative method to model fitting is the use of Bayesian methods to select the best model for the data based on a choice of possible functions. One method described by Sivia \cite{dssivia1992} selects the most likely choice of model from sum of a $\delta$-function and zero or more Lorentzians convolved with the resolution function of the instrument: 
+An alternative method to model fitting is the use of Bayesian methods to select the best model for the data based on a choice of possible functions. One method described by Sivia \cite{dssivia1992} selects the most likely choice of model from sum of a $\delta$-function and zero or more Lorentzians convolved with the resolution function of the instrument. Using this method, the number of Lorentzians is iteratively varied and the optimum number selected as the final model. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function. For each group of spectra, the best value for the $\beta$ and $\Gamma$ parameters is obtained \cite{wshowells2010}. This model can be used to fit the shape resulting from polymer samples \cite{wshowells1996}\cite{higgins1977observation}\cite{higgins1977q}, and is the basis behind the Stretch program described in section \ref{subsec:stretch}.
 
-\begin{equation}
-I(\epsilon) = [A_0\delta(\epsilon) + \Sigma_{j=0}^N A_j \frac{w_j}{\pi(\epsilon^2 + w_j^2)}] \otimes R(\epsilon)
-\end{equation}
-
-where $\epsilon$ is the energy transfer, $I$ is the data, $A_j$ are the amplitudes of the Lorentzians and $W_j$ are the HWHMs ($\Gamma$). Using this method, the number of Lorentzians is iteratively varied and the optimum number selected as the final model. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function with the form:
-
-\begin{equation}
-I(\epsilon) = [\delta(\epsilon) + e^{2(\sigma k)^\beta}] \otimes R(\epsilon)
-\end{equation}
-
-Which is fitted along with a $\delta$-function. For each group of spectra, the best value for the $\beta$ and $\Gamma$ parameters is obtained \cite{wshowells2010}. This model can be used to fit the shape resulting from polymer samples \cite{wshowells1996}\cite{higgins1977observation}\cite{higgins1977q},  and is the basis behind the Stretch program described in section \ref{subsec:stretch}.
-
-From the selected model diffusion can be interpreted. This is typically done by modelling jump diffusion where it is assumed an atom remains at a given site for a length of time before moving rapidly to a new site in a time that is negligible to the time spent being stationary. There are several different models for diffusion depending on the application. The Chudley-Elliott form assumes the atom jumps from one point to its nearest neighbour site $l$ distance away in a Bravis lattice \cite{chudley1961neutron} and has the form:
+From the width parameters of the selected model diffusion can be interpreted. This is typically done by modelling jump diffusion where it is assumed an atom remains at a given site for a length of time before moving rapidly to a new site in a time that is negligible to the time spent being stationary. There are several different models for diffusion depending on the application. The Chudley-Elliott form assumes the atom jumps from one point to its nearest neighbour site $l$ distance away in a Bravis lattice \cite{chudley1961neutron} and has the form:
 
 \begin{equation}
 \Gamma(Q) = (\hbar/\pi t) \cdot (1 - sin(Ql)/Ql)/\tau
