@@ -668,7 +668,7 @@ Teixeira Water & \parbox{6cm}{$\Gamma(Q) = DQ^2/(1 + DQ^2\tau)$ \\ where $D=<l^2
 
 \subsubsection{Indirect Data Analysis GUI Overview}
 \label{subsubsec:IDA-GUI-Overview}
-The Indirect Data Analysis user interface follows a similar design structure to the Convert To Energy interface but is more modular. The interface is composed of a single parent class for the window which sets up and manages all tabs on the interface and is simply called Indirect Data Analysis. A collection of classes for each tab on the interface which inherit from a common base class, similar to the C2ETab class in the convert to energy GUI, are composed with the window class to handle the specific implementation details of each corresponding tab.
+The Indirect Data Analysis user interface follows a similar design structure to the Convert To Energy interface but is more modular. The interface is composed of a single parent class for the window which sets up and manages all tabs on the interface and is simply called IndirectDataAnalysis. A collection of classes for each tab on the interface which inherit from a common base class, similar to the C2ETab class in the convert to energy GUI, are composed with the window class to handle the specific implementation details of each the corresponding tabs.
 
 \begin{figure}[H]
 \centering
@@ -677,7 +677,7 @@ The Indirect Data Analysis user interface follows a similar design structure to 
 \label{fig:IDA-class-diagram}
 \end{figure}
 
-As with the convert to energy interface, the layout of the entire GUI is defined in a single XML file which each of the tab objects in the GUI system have a reference too. As of release 3.2 the Indirect Data Analysis interface consists of seven tabs; namely: ElWin, MSDFit, Fury, FuryFit, ConvFit, Calculate Corrections, and Apply Corrections. Each of these have a single class which inherits from a base class called IDATab where the common logic shared between tabs for setting up the tabs, drawing to the mini plot, and loading a nexus file, among other things, is stored.
+As with the convert to energy interface, the layout of the entire GUI is defined in a single XML file which each of the tab objects in the GUI system have a reference too. As of release 3.2 the indirect data analysis interface consists of seven tabs; namely: ElWin, MSDFit, Fury, FuryFit, ConvFit, Calculate Corrections, and Apply Corrections. Each of these have a single class which inherits from a base class called IDATab where the common logic shared between tabs for setting up the tabs, drawing to the mini plot, and loading a nexus file, among other things, is stored.
 
 This approach is much better compared to the one used in the convert to energy interface. The class structure used in the IDA GUI avoids the monolithic class design in convert to energy and separates the implementation logic specific to each routine from the rest of the system while still allowing common code to be shared. However, this structure could still be improved further to remove the reliance on a single GUI file for the defining the interface.
 
@@ -692,10 +692,10 @@ The GUI structure for the Bayes interface again follows a similar structure to t
 \label{fig:indirect-bayes-gui}
 \end{figure}
 
-The key difference between the two is that instead of the interface being defined in a single UI file, the main window and each of the tabs are defined in separate UI files. This is a subtle difference, but one which provides an enormous benefit to the development process. Splitting the UI into multiple files makes the interface more maintainable as tab can be worked on individually without affecting the others. If, for example, a tab needs to be removed or move to a different part of the system it can be easily moved by removing its inclusion in the main window (defined by IndirectBayes).
+The key difference between the two is that instead of the interface being defined in a single UI file, the main window and each of the tabs are defined in separate UI files. This is a subtle difference, but one which provides an enormous benefit to the development process. Splitting the UI into multiple files makes the interface more maintainable as a single tab may be worked on individually without affecting the others. If, for example, a tab needs to be removed or move to a different part of the system it can be easily moved by removing its inclusion in the main window (defined by IndirectBayes).
 
 \subsection{An Example of Basic Data Analysis}
-Once a file has been reduced using the convert to energy interface as described in section \ref{} it can be used as input to the various data analysis routines. This section shows a couple of examples of using the Indirect Data Analysis interface with a reduced workspace. Figure \ref{fig:iris-ida-elwin} shows an example of running ElWin to examine the elastic window of an IRIS reduced workspace created from the convert to energy reduction routine. This interface includes a miniplot which shows the first spectrum of the workspace to help pick sensible values for the ranges.
+Once a file has been reduced using the convert to energy interface as described in section \ref{sec:energy-transfer} it can be used as input to the various data analysis routines. This section shows a couple of examples of using the Indirect Data Analysis interface with a reduced workspace. Figure \ref{fig:iris-ida-elwin} shows an example of running ElWin to examine the elastic window of an IRIS reduced workspace created from the convert to energy reduction routine. This interface includes a miniplot which shows the first spectrum of the workspace to help pick sensible values for the ranges.
 
 \begin{figure}[H]
 \centering
@@ -704,7 +704,7 @@ Once a file has been reduced using the convert to energy interface as described 
 \label{fig:iris-ida-elwin}
 \end{figure}
 
-The \*\_eq2 file created by the routine can be passed to the MSDFit routine to perform a linear fit the the data over all spectra. Again, the miniplot can be used to select the range used with the data. Clicking the run button will fit to just the first spectrum, allowing the user to "get a feel" for the range to be used with the data. Running a sequential fit will use the same range an perform a sequential fit across all spectra in the workspace.
+The \*\_eq2 file created by the routine can be passed to the MSDFit routine to perform a linear fit to the data over all spectra. Again, the miniplot can be used to select the range used with the data. Clicking the run button will fit to just the first spectrum, allowing the user to "get a feel" for the range to be used with the data. Running a sequential fit will use the same range an perform a sequential fit across all spectra in the workspace.
 
 \begin{figure}[H]
 \centering
@@ -743,7 +743,7 @@ The Quasi routine offers a complementary alternative to the ConvFit routine. The
 \label{fig:iris-bayes-quasi}
 \end{figure}
 
-As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace of parameters output from Quasi can be used as direct input to the JumpFit routine. This automatically finds the width parameters within the workspace and allows the user to select which one to fit. The user can choose between any of the models defined for diffusion. Future releases hope to add support using a custom function string as the model for fitting.
+As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace of fit parameters output from Quasi can be used as direct input to the JumpFit routine. This automatically finds the width parameters within the workspace and allows the user to select which one to fit. The user can choose between any of the models defined for diffusion. Future releases hope to add support using a custom function string as the model for fitting.
 
 \begin{figure}[H]
 \centering
@@ -758,13 +758,13 @@ As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace 
 Another important part of experimental analysis involved the comparison of actual results against theoretical predictions. This is an area of development that is only just beginning and there is only a very small amount of support implemented so far.
 
 \subsection{Indirect Simulation}
-Indirect Simulation is a new interface for release 3.2 that splits the basic nMolDyn loader that is currently in Mantid off from it's original location in the Indirect Load ASCII interface. This interface is planned to be a place to expose simulation routines to the GUI with plans to add support for the Sassena routines already in Mantid planned in future releases.
+Indirect Simulation is a new interface for release 3.2 that splits the basic nMolDyn loader that is currently in Mantid off from it's original location in the Indirect Load ASCII interface. This interface is planned to be a place to expose simulation routines to the GUI level, such as adding interface support for the Sassena routines already in Mantid in future releases.
 
 \subsection{nMolDyn}
-The nMolDyn interface that currently exists is a very simple routine load data from a nMolDyn simulation files into a Mantid workspace. In future releases of Mantid it is proposed to attempt to properly integrate support for the nMolDyn python libraries into Mantid, providing a much richer array of tools for the user. The code for this can be found the IndirectMolDyn.py file in the Inelastic scripts folder.
+The nMolDyn interface that currently exists is a very simple routine to load data from a nMolDyn simulation files into a Mantid workspace. In future releases of Mantid it is proposed to attempt to properly integrate support for the nMolDyn python libraries into Mantid, providing a much richer selection of tools for the user. The code for this can be found the IndirectMolDyn.py file in the Inelastic scripts folder.
 
 \subsection{Density Of States}
-The DensityofStates algorithm is does not currently have GUI support, but was a new addition to the 3.1 release of Mantid. It provides loading algorithm for .castep and .phonon files generated by CASTEP simulation program and create workspaces with both total and partial density of states data. Further support for CASTEP is planned in future releases. The code for this file can be found in DensityOfStates.py file under python algorithm plugins section in the Mantid install.
+The DensityofStates algorithm was a new addition to the 3.1 release of Mantid and does not currently have GUI support. It provides loading algorithm for .castep and .phonon files generated by CASTEP simulation program and create workspaces with both total and partial density of states data. Further support for CASTEP is planned in future releases. The code for this file can be found in DensityOfStates.py file under python algorithm plugins section in the Mantid install.
 
 \section{Planning For the Future}
 This section outlines outstanding work in pertaining to support of Indirect geometry instruments within Mantid. This section is not meant as a "set in stone" plan for further development but is meant as guide for future development work in the area and a loose record of user and project requirements which are subject to change.
