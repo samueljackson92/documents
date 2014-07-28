@@ -78,9 +78,11 @@
 \section{Introduction}
 Mantid (http://www.mantidproject.org) is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
-Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the SNS facility at Oak Ridge, Tennessee, USA. Recently additional partners from the ILL and PSI have also contributed.
+Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the Spallation Neutron Source (SNS) at Oak Ridge, Tennessee, USA. Recently additional partners from the Institut Laue-Langevin located in Grenoble and the Paul Scherrer Institute in Würenlingen, Switzerland have also contributed.
 
 The project is currently still under heavy development and provides regular incremental releases for evaluation and feedback from instrument scientists and users in general and is therefore constantly evolving with each release. Until recently, Mantid operated on a three month release cycle. This has now been changed to so that the project releases every four months, with a longer emphasis on the testing and integration phase of development.
+
+Time-of-flight neutron scattering instruments supported by Mantid, such as those based at ISIS and the SNS, can broadly be split into three categories based on the geometry of the instrument. In a direct instrument geometry the incident energy is fixed using choppers to select a specific incident wavelength directed towards the sample. Indirect or inverted geometry instruments use a polychromatic incident beam to scatter from the sample and select the final energy using a crystal analyser. Triple axis spectrometers use crystals both to moderate the incident beam and select the final energy of scattered neutrons. This document focuses on the development progress of indirect geometry instruments within Mantid.
 
 Up until now the indirect geometry section of Mantid has largely been based off of the the existing MODES application which in turn was based on OpenGenie \cite{wshowells2010} and the IRIS Data Analysis package \cite{wshowells1996}. The majority of the functionality has now been integrated into the Mantid framework in one form or another and we are now beginning to reach a point where we can expand the existing functionality further.
 
@@ -158,13 +160,20 @@ Where $k_i$ and $k_f$ are the incident and final wave vectors. The magnitude of 
 Q^2 = k_i^2 + k_f^2 - 2k_ik_fcos 2\theta
 \end{equation}
 
-Where $\theta$ is the scattering angle of the sample. $S(\mathbf{Q}, \omega)$ can then be defined in relation to the density of states ($Z(\omega)$) of a molecule through the following equation:
+Where $\theta$ is the scattering angle of the sample. In reality, the $S(\mathbf{Q}, \omega)$ cannot be directly measured by experiment because of the resolution of the instrument. Instead, the quantity measured from the instrument (denoted $I(\mathbf{Q}, \omega)$) is a convolution between the scattering function and the instrument resolution:
+
+\begin{equation}
+\label{eq:instrument-result}
+I(\mathbf{Q}, \omega) = S(\mathbf{Q}, \omega) \otimes R(\mathbf{Q}, \omega)
+\end{equation}
+
+Where $S(\mathbf{Q}, \omega)$ is given by:
 
 \begin{equation}
 S(\mathbf{Q}, \omega) = \Sigma_j \frac{b_j}{M_j}^2Q^2 < u_j >^2 e^{-2W}\frac{Z(\omega)}{\hbar\omega}
 \end{equation}
 
-Where $b_j$ is the neutron scattering length of the atom, $M_j$ is the mass of the atom, $< u_j >$ is the amplitude of vibration of each atom, and $e^{-2W}$ is the Debye-Waller factor \cite{smukhopadhyay2014}  to correct for thermal energy in which $W$ is equal to:
+Where $b_j$ is the neutron scattering length of the atom, $M_j$ is the mass of the atom, $< u_j >$ is the amplitude of vibration of each atom,  $Z(\omega)$ density of states of a molecule, and $e^{-2W}$ is the Debye-Waller factor \cite{smukhopadhyay2014} to correct for thermal energy in which $W$ is equal to:
 
 \begin{equation}
 W = \frac{1}{2} < u^2_{MSD} > Q^2
@@ -178,13 +187,7 @@ In the case of diffraction experiments, there is no need to convert to energy tr
 \subsection{Data Analysis Theory}
 
 \subsubsection{Convolution Theory}
-In reality, the $S(\mathbf{Q}, \omega)$ cannot be directly measured by experiment because of the resolution of the instrument. Instead, the quantity measured from the instrument (denoted $I(\mathbf{Q}, \omega)$) which is convolution between the scattering function and the instrument resolution:
-
-\begin{equation}
-I(\mathbf{Q}, \omega) = S(\mathbf{Q}, \omega) \otimes R(\mathbf{Q}, \omega)
-\end{equation}
-
-In theory, these can then be separated through the deconvolution of the two functions. There are several different functional forms that may occur depending on the sample used:
+Data analysis of inelastic scattering data is primarily concerend with seperating the scattering function for the instrument's resolution function in the relation defined in equation \ref{eq:instrument-result} . In theory, these can then be separated through the deconvolution of the two functions. There are several different functional forms that may occur depending on the sample used:
 
 \begin{itemize}
 \item The simplest case is when there is a simple diffusive motion within the sample $S(\mathbf{Q},\omega)$ and $R(\mathbf{Q},\omega)$ will both have the form of a Lorentzian and hence there convolution will also be a Lorentzian.
