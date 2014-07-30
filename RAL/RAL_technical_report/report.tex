@@ -57,6 +57,8 @@
 \usepackage[parfill]{parskip}
 \usepackage{float}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[numbers]{natbib}
 
 %%% Title
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
@@ -76,31 +78,31 @@
 \clearpage
 \tableofcontents
 \section{Introduction}
-Mantid (http://www.mantidproject.org) is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
+Mantid \cite{mantid} is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
 Mantid aims to provide a single platform for neutron and muon scattering data analysis to all facilities across the world. It is developed by two teams of developers, one based at the ISIS facility at Rutherford Appleton Laboratory UK, the other at the Spallation Neutron Source (SNS) at Oak Ridge, Tennessee, USA. Recently additional partners from the Institut Laue-Langevin located in Grenoble and the Paul Scherrer Institute in Würenlingen, Switzerland have also contributed.
 
 The project is currently still under heavy development and provides regular incremental releases for evaluation and feedback from instrument scientists and users in general and is therefore constantly evolving with each release. Until recently, Mantid operated on a three month release cycle. This has now been changed to so that the project releases every four months, with a longer emphasis on the testing and integration phase of development.
 
-Time-of-flight neutron scattering instruments supported by Mantid, such as those based at ISIS and the SNS, can broadly be split into three categories based on the geometry of the instrument. In a direct instrument geometry the incident energy is fixed using choppers to select a specific incident wavelength directed towards the sample. Indirect or inverted geometry instruments use a polychromatic incident beam to scatter from the sample and select the final energy using a crystal analyser. Triple axis spectrometers use crystals both to moderate the incident beam and select the final energy of scattered neutrons. This document focuses on the development progress of indirect geometry instruments within Mantid.
+Time-of-flight neutron scattering instruments supported by Mantid, such as those based at ISIS and the SNS, can broadly be split into three categories based on the geometry of the instrument. In a direct instrument geometry the incident energy is fixed using choppers to select a specific incident wavelength directed towards the sample. Indirect or inverted geometry instruments use a polychromatic incident beam to scatter from the sample and select the final energy using a crystal analyser. Triple axis spectrometers use crystals both to moderate the incident beam and select the final energy of scattered neutrons \citep{fernandezalonso2013neutron}. This document focuses on the development progress of indirect geometry instruments within Mantid.
 
 Up until now the indirect geometry section of Mantid has largely been based off of the the existing MODES application which in turn was based on OpenGenie \cite{wshowells2010} and the IRIS Data Analysis package \cite{wshowells1996}. The majority of the functionality has now been integrated into the Mantid framework in one form or another and we are now beginning to reach a point where we can expand the existing functionality further.
 
-This document aims to give an overview of the current stage of development for the indirect geometry section of the application as it currently exists in as much detail as possible to provide a historical snapshot of the progress so far. The remainder of the document then provides a weak outline of suggested directions for future development.
+This document aims to give an overview of the current stage of development for the indirect geometry instruments section of the application as it currently exists in as much detail as possible to provide a historical snapshot of the progress so far. The remainder of the document then provides a weak outline of suggested directions for future development.
 
 \section{Indirect Geometry Instruments}
-Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VESUVIO spectrometers at ISIS are those in which the incident beam is polychromatic and crystal analysers are typically used to determine the final energy. Together these instruments cover a broad energy range. IRIS and OSIRIS operate in a low energy range of up to -0.4 to 0.4 meV (depending on the analyser used) with TOSCA covering the 0 to 500 meV range and VESUVIO operating at high energies of 5 - 150 eV. Diagram \ref{fig:instrument-energy-range} compares the energy range covered by the indirect geometry instruments at ISIS and the applicable techniques at each energy range.
+Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VESUVIO spectrometers at ISIS are those in which the incident beam is polychromatic and crystal analysers are typically used to determine the final energy. Together these instruments cover a broad energy range. IRIS and OSIRIS operate in a low energy range of up to -0.4 to 0.4 meV (depending on the analyser used) and can be used to carry out Quasielastic neutron scattering around the elastic line. This is useful for studying the effects of diffusion  and tunneling. TOSCA covers the 0 to 500 meV range for investigating the lattice and intra-molecular structure of matter. VESUVIO operates at high energies of 5 - 150 eV and is used to perform deep inelastic neutron scattering. Diagram \ref{fig:instrument-energy-range} compares the energy range covered by the indirect geometry instruments at ISIS and the applicable techniques at each energy range.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{img/instrument-energy-chart.png}
-\caption{Energy ranges of various inelastic techniques.}
+\caption{Energy ranges of various inelastic techniques. The ISIS instruments IRIS and OSIRIS cover the Quasielastic range, TOSCA covers the inelastic range and VESUVIO covers deep inelastic neutron scattering.}
 \label{fig:instrument-energy-range}
 \end{figure}
 
 IRIS and OSIRIS share the N6 beamline in target station 1 at the ISIS facility. Both instruments are fed via curved guides from the source moderator. Two choppers positioned at 10m and 6.3m from the instruments define the incident wavelength band and prevent frame overlap \cite{smukhopadhyay2014}. TOSCA is located on the N4 beamline in ISIS target station 1 with a incident flight path of 17m and also has a chopper on the incoming beamline to prevent overlap and remove fast neutrons \cite{colognesi2002tosca}. VESUVIO is located on the S2 beamline and has an incident flight path of 11.005m \cite{mayers2011calibration}.
 
-The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is determined by the reflections from analyser crystals by means of Bragg scattering. IRIS and OSIRIS both have pyrolytic graphite crystal analysers with reflection planes 002 and 004 delivering a final energy of $E_f$=1.845 and 7.38 meV respectively \cite{adams2001iris}\cite{telling2008osiris}. This design leads to a resolution of 17.5 and 54.5 $\mu$eV for the 002 and 004 reflections on IRIS and 25 and 99 $\mu$eV on OSIRIS. IRIS additionally has a mica (muscovite or fluorinated) crystal analyser bank with reflections 002, 004, and 006, and $E_f$ corresponding to 0.207, 0.826, and 1.86 meV respectively which provide better resolutions (at the cost of intensity) of 11$\mu$eV (006), 4.5$\mu$eV (004) and
+The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is determined by the reflections from analyser crystals by means of Bragg scattering. IRIS and OSIRIS both have pyrolytic graphite crystal analysers with reflection planes 002 and 004 delivering a final energy of $E_f$=1.845 and 7.38 meV respectively \cite{adams2001iris, telling2003osiris}. This design leads to a resolution of 17.5 and 54.5 $\mu$eV for the 002 and 004 reflections on IRIS and 25 and 99 $\mu$eV on OSIRIS. IRIS additionally has a mica (muscovite or fluorinated) crystal analyser bank with reflections 002, 004, and 006, and $E_f$ corresponding to 0.207, 0.826, and 1.86 meV respectively which provide better resolutions (at the cost of intensity) of 11$\mu$eV (006), 4.5$\mu$eV (004) and
 1.2$\mu$eV (002) compared to graphite. Recently, OSIRIS has had an upgrade which expands the operational energy range to -0.25 to 25 meV with the pyrolytic graphite analyser with reflection 002. The primary setting for both instruments is graphite with reflection 002. TOSCA has just a pyrolytic graphite analyser with 002 reflection \cite{colognesi2002tosca} and achieves a resolution of roughly 1.25\% of the measured energy transfer \cite{parker2003tosca}.
 
 VESUVIO operates on the principle of neutron Compton scattering and uses a pair of gold foils which can be moved into different positions for use with the foil cycling technique described in \cite{schooneveld2006foil} which produces a neutron absorption resonance at 4.9 eV, emitting a $\gamma$-ray cascade which is detected by the instrument's Yttrium Aluminium Perovskite $\gamma$-ray detectors \cite{mayers2010user}.
@@ -108,7 +110,7 @@ VESUVIO operates on the principle of neutron Compton scattering and uses a pair 
 \section{Theory}
 Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. In a neutron scattering experiment, a beam of neutrons is produced at a source (such as the one provided by ISIS) and directed to the various instruments attached to the beam line. These neutrons then scatter from the sample placed in the instrument. The angle and energy at which scattered neutrons are detected can then be used to deduce the structure and dynamics of the sample.
 
-There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms \cite{rpynn2008}.
+There are two main types of neutron scattering: elastic and inelastic. Elastic scattering is the special case when the final energy is equal to the incident energy and there is no energy transfer and the kinetic energy of the incident neutrons remain unchanged. Inelastic scattering is the more general case where some change in the kinetic energy of the incident neutron occurs and is useful for measuring the vibrations of atoms \cite{dssivia2011}.
 
 
 \subsection{Data Reduction Theory}
@@ -160,7 +162,7 @@ Where $k_i$ and $k_f$ are the incident and final wave vectors. The magnitude of 
 Q^2 = k_i^2 + k_f^2 - 2k_ik_fcos 2\theta
 \end{equation}
 
-Where $\theta$ is the scattering angle of the sample. In reality, the $S(\mathbf{Q}, \omega)$ cannot be directly measured by experiment because of the resolution of the instrument. Instead, the quantity measured from the instrument (denoted $I(\mathbf{Q}, \omega)$) is a convolution between the scattering function and the instrument resolution:
+Where $\theta$ is the scattering angle of the sample \citep{dssivia2011}. In reality, the $S(\mathbf{Q}, \omega)$ cannot be directly measured by experiment because of the resolution of the instrument. Instead, the quantity measured from the instrument (denoted $I(\mathbf{Q}, \omega)$) is a convolution between the scattering function and the instrument resolution:
 
 \begin{equation}
 \label{eq:instrument-result}
@@ -184,10 +186,25 @@ And $< u^2_{MSD} >$ is the mean squared displacement of the scattering atom. The
 \subsubsection{Diffraction Reduction}
 In the case of diffraction experiments, there is no need to convert to energy transfer or $S(\mathbf{Q}, \omega)$. Instead, the results are converted from the raw time-of-flight data to $d$-spacing, the distance between the planes in a lattice. Results are calculated using known parameters of the instrument via the time-of-flight equation (equation \ref{eq:time-of-flight}) and Bragg's law (equation \ref{eq:braggs-law}). Diffraction experiments may be run either on their own or in parallel with spectroscopy.
 
+At pulsed time-of-flight sources such as ISIS a wavelength scanning method can be used to determine the scattering vector by varying the wavelength of the incident wavevector and keeping the scattering angle constant thereby satisfying the Bragg condition \citep{fernandezalonso2013neutron}:
+
+\begin{equation}
+\label{eq:bragg-condition}
+\textbf{Q} = 4\pi sin(\theta)/\lambda
+\end{equation}
+
+Using equations \ref{eq:braggs-law} and \ref{eq:time-of-flight}, the $d$-spacing of a sample is given as a function of the scattering angle $\theta$ and distances between the source and sample $L_0$ and sample and detector $L_1$:
+
+\begin{equation}
+d = \frac{2 t sin(\theta)M_n (L_0 + L_1)}{h}
+\end{equation}
+
+Where $t$ is the time of flight, $M_n$ is the mass of a neutron and $h$ is the Planck constant.
+ 
 \subsection{Data Analysis Theory}
 
 \subsubsection{Convolution Theory}
-Data analysis of inelastic scattering data is primarily concerend with seperating the scattering function for the instrument's resolution function in the relation defined in equation \ref{eq:instrument-result} . In theory, these can then be separated through the deconvolution of the two functions. There are several different functional forms that may occur depending on the sample used:
+Data analysis of inelastic scattering data is primarily concerned with separating the scattering function for the instrument's resolution function in the relation defined in equation \ref{eq:instrument-result} . In theory, these can then be separated through the deconvolution of the two functions. There are several different functional forms that may occur depending on the sample used:
 
 \begin{itemize}
 \item The simplest case is when there is a simple diffusive motion within the sample $S(\mathbf{Q},\omega)$ and $R(\mathbf{Q},\omega)$ will both have the form of a Lorentzian and hence there convolution will also be a Lorentzian.
@@ -205,24 +222,24 @@ An alternative method of deconvolution of the scattering and resolution function
 I(\mathbf{Q}, t) = S(\mathbf{Q}, t) \times R(\mathbf{Q}, t)
 \end{equation}
 
-As the resolution of the instrument is known, the intermediate scattering function can be divided by the resolution and back transformed to obtain the scattering function. This method has the advantage in that the form of the function does not have to be assumed as in ConvFit, but the back transformation from $S(\mathbf{Q}, t)$ to the true scattering function is problematic due to the phase problem \cite{dssivia2011} and the propagation of statistical errors \cite{wild1977measurement}. The Fury routine provides an interface to perform a Fourier transform on the measured data and resolution, but does not provide an automated back transformation because of the aforementioned issues.
+As the resolution of the instrument is known, the intermediate scattering function can be divided by the resolution and back transformed to obtain the scattering function. This method has the advantage in that the form of the function does not have to be assumed as in ConvFit, but the back transformation from $S(\mathbf{Q}, t)$ to the true scattering function is problematic due to the phase problem \citep{dssivia2011} and the propagation of statistical errors \citep{wild1977measurement}. The Fury routine provides an interface to perform a Fourier transform on the measured data and resolution, but does not provide an automated back transformation because of the aforementioned issues.
 
 \subsubsection{Bayesian Analysis}
-An alternative method to model fitting is the use of Bayesian methods to select the best model for the data based on a choice of possible functions. One method described by Sivia \cite{dssivia1992} selects the most likely choice of model from sum of a $\delta$-function and zero or more Lorentzians convolved with the resolution function of the instrument. Using this method, the number of Lorentzians is iteratively varied and the optimum number selected as the final model. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function. For each group of spectra, the best value for the $\beta$ and $\Gamma$ parameters is obtained \cite{wshowells2010}. This model can be used to fit the shape resulting from polymer samples \cite{wshowells1996}\cite{higgins1977observation}\cite{higgins1977q}, and is the basis behind the Stretch program described in section \ref{subsec:stretch}.
+An alternative method to model fitting is the use of Bayesian methods to select the best model for the data based on a choice of possible functions. One method described by Sivia \citep{dssivia1992} selects the most likely choice of model from sum of a $\delta$-function and zero or more Lorentzians convolved with the resolution function of the instrument. Using this method, the number of Lorentzians is iteratively varied and the optimum number selected as the final model. An extension of this method replaces the sum of Lorentzians with a single stretched exponential function. For each group of spectra, the best value for the $\beta$ and $\Gamma$ parameters is obtained \citep{wshowells2010}. This model can be used to fit the shape resulting from polymer samples \citep{wshowells1996, higgins1977observation, higgins1977q}, and is the basis behind the Stretch program described in section \ref{subsec:stretch}.
 
-From the width parameters of the selected model diffusion can be interpreted. This is typically done by modelling jump diffusion where it is assumed an atom remains at a given site for a length of time before moving rapidly to a new site in a time that is negligible to the time spent being stationary. There are several different models for diffusion depending on the application. The Chudley-Elliott form assumes the atom jumps from one point to its nearest neighbour site $l$ distance away in a Bravis lattice \cite{chudley1961neutron} and has the form:
+From the width parameters of the selected model diffusion can be interpreted. This is typically done by modelling jump diffusion where it is assumed an atom remains at a given site for a length of time before moving rapidly to a new site in a time that is negligible to the time spent being stationary. There are several different models for diffusion depending on the application. The Chudley-Elliott form assumes the atom jumps from one point to its nearest neighbour site $l$ distance away in a Bravis lattice \citep{chudley1961neutron} and has the form:
 
 \begin{equation}
 \Gamma(Q) = (\hbar/\pi t) \cdot (1 - sin(Ql)/Ql)/\tau
 \end{equation}
 
-The Hall-Ross \cite{hall1981incoherent} form models the diffusive jump motion as several steps and do oscillatory motion at alternate sites.
+The Hall-Ross \citep{hall1981incoherent} form models the diffusive jump motion as several steps and do oscillatory motion at alternate sites.
 
 \begin{equation}
 \Gamma(Q) = (\hbar/\pi t) \cdot (1-exp(-lQ^2))/\tau
 \end{equation}
 
-Teixeria's model \cite{teixeira1985experimental} is used to study the dynamics of super cooled water and has the form:
+Teixeria's model \citep{teixeira1985experimental} is used to study the dynamics of super cooled water and has the form:
 
 \begin{equation}
 \Gamma(Q) = DQ^2/(1 + DQ^2\tau)
@@ -234,7 +251,7 @@ Where the diffusion constant $D$ is equal to:
 D=<l^2>/6\tau
 \end{equation}
 
-Finally the Fick diffusion model \cite{fick1855v} has the form:
+Finally the Fick diffusion model \citep{fick1855v} has the form:
 
 \begin{equation}
 \Gamma(Q) = DQ^2
@@ -243,9 +260,9 @@ Finally the Fick diffusion model \cite{fick1855v} has the form:
 Each of these functions are implemented as part of the JumpFit interface (section \ref{subsec:jumpfit}), but are also available through the generic fit wizard in Mantid.
 
 \subsubsection{Absorption Corrections}
-A sample typically must be corrected for absorption by the sample and by its container. Typically a sample will need to be corrected for flat plate geometry \cite{ccarlile1974} or cylindrical geometry \cite{aksoper1989}. The methods for cylindrical geometry used in Mantid have been adapted from the methods described in the ATLAS manual \cite{aksoper1989}.
+A sample typically must be corrected for absorption by the sample and by its container. Typically a sample will need to be corrected for flat plate geometry \citep{ccarlile1974} or cylindrical geometry \citep{aksoper1989}. The methods for cylindrical geometry used in Mantid have been adapted from the methods described in the ATLAS manual \citep{aksoper1989}.
 
-Absorption corrections use the formalism specified by Paalman and Pings \cite{hhpaalman1962} to describe the attenuation factors of a sample/container. They are denoted by $A_{i,j}$ where $i$ refers to scattering and $j$ refers to attenuation. For example, $A_{s,sc}$ is the attenuation factor for scattering in the sample plus container. The scattering cross sections for the sample and container are denoted as $\Sigma_s$ and $\Sigma_c$. The scattering from an empty container is then given by:
+Absorption corrections use the formalism specified by Paalman and Pings \citep{hhpaalman1962} to describe the attenuation factors of a sample/container. They are denoted by $A_{i,j}$ where $i$ refers to scattering and $j$ refers to attenuation. For example, $A_{s,sc}$ is the attenuation factor for scattering in the sample plus container. The scattering cross sections for the sample and container are denoted as $\Sigma_s$ and $\Sigma_c$. The scattering from an empty container is then given by:
 
 \begin{equation}
 I_c = \Sigma_c A_{c,c}
@@ -266,7 +283,7 @@ The scattering cross section for the sample can the be calculated as:
 There are two routines in Mantid which perform these corrections. Calculate Corrections calculates the attenuation parameters $A_{i,j}$, while Apply Corrections uses them to calculate $\Sigma_s$ based on the geometry as described here.
 
 \section{Data Reduction with Mantid}
-Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and IRIS Data Analysis (IDA) packages \cite{wshowells2010}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
+Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and IRIS Data Analysis (IDA) packages \citep{wshowells2010, wshowells1996}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
 
 The Convert to Energy interface provides the initial entry point for data into Mantid for indirect instruments. The functionality of this interface is currently also shared with the direct instruments, although a separation of the interfaces is planned in future releases.
 
@@ -340,7 +357,7 @@ The calibration section of the convert to energy interface can be used to create
 As mentioned, the calibration interface can also create resolution files for later use in data analysis. This routine, like many within the indirect code base, is separate from the reducer-reduction step  framework and is just a python function which is executed with parameters supplied from the interface. To create the resolution file, the routine first takes the vanadium run supplied on the calibration interface and converts it to energy using the energy transfer reducer described in section \ref{sec:energy-transfer}, but sets the detector mapping use all detectors and will sum multiple runs if more than one run is used. It then, like calibration, calculates a flat background from a range supplied by the user, rebins it according to the parameters specified for the instrument, and optionally saves the workspace to file in the default save directory.
 
 \subsubsection{Diagnostics}
-The diagnostics routine (called Slice in IndirectEnergyConversion.py, named after the older routine from MODES \cite{wshowells2010}) provides an integration over a specified time-of-flight range. The slice routine begins by loading input files and the calibration file if supplied. If a calibration workspace is supplied, it is cropped to remove the monitors and match the range of the input raw file. For each sample workspace input is cropped to the desired number of spectra and divided by the calibration workspace if it exists. The workspace is then integrated across the supplied time range. If two ranges are given, the second range is used to remove a flat background prior to the integration using CalculateFlatBackground. Finally, the resulting workspace is transposed using the algorithm of the same name.
+The diagnostics routine (called Slice in IndirectEnergyConversion.py, named after the older routine from MODES \citep{wshowells2010}) provides an integration over a specified time-of-flight range. The slice routine begins by loading input files and the calibration file if supplied. If a calibration workspace is supplied, it is cropped to remove the monitors and match the range of the input raw file. For each sample workspace input is cropped to the desired number of spectra and divided by the calibration workspace if it exists. The workspace is then integrated across the supplied time range. If two ranges are given, the second range is used to remove a flat background prior to the integration using CalculateFlatBackground. Finally, the resulting workspace is transposed using the algorithm of the same name.
 
 \begin{figure}[H]
 \centering
@@ -355,7 +372,7 @@ The transmission routine is a simple program used to calculate the measured tran
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/Transmission_activity.png}
-\caption{Activity diagram showing an activity diagram for the Transmission routine.}
+\caption{Activity diagram showing the flow of execution for the Transmission routine.}
 \label{fig:c2e-transmission-activity-diagram}
 \end{figure}
 
@@ -382,8 +399,24 @@ Parallelepiped / Fractional Area & SofQW3 \\
 \end{center}
 \end{table}
 
+Each the approach to rebinning taken by each of the algorithms listed in table \ref{table:sofqw-algorithms} is as follows:
+\begin{itemize}
+\item \textbf{SofQW} - The simplest version of the algorithm iterates over each individual detector in a workspace with units of energy transfer and calculates the value of Q using parameters from the instrument and detector and rebins by using the centre point of the bin between two points in the workspace.
+\item \textbf{SofQW2} - This version calculates the width of theta over all detectors and uses the maximum and minimum as the offset for the value of theta in combination two points in energy transfer to define a quadrilateral for rebinning. This algorithm inherits from the Rebin2D algorithm and uses its methods to rebin both axes without the use of the fractional area option.
+\item \textbf{SofQW3} - The third version of the algorithm is an extension of the second. Again, this algorithm inherits from Rebin2D but uses the fractional area option to rebin. This algorithm also takes into account the angular width based on each individual detector and in the case of PSDs also accounts for the value of phi.
+\end{itemize}
+
 \subsubsection{$S(Q,w)$ Moments}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/SofQWMoments_activity.png}
+\caption{Activity diagram showing the flow of execution for the SofQWMoments algorithm.}
+\label{fig:c2e-transmission-activity-diagram}
+\end{figure}
+
 This is a new addition in Mantid 3.2 and provides a simple routine for calculating the first four statistical moments of an $S(Q,w)$. This is implemented as a standard Mantid algorithm (SofQWMoments) which is created and called from the interface though the algorithm manager and produces a group workspace with one workspace for each moment for every detector which has been transposed in order to make visualisation of the workspace easier.
+
+This algorithm proceeds by first cropping the sample to the desired energy range and optionally scaling it by an arbitrary factor. The sample is then converted from histogram data to point data. A workspace contain the x values of the sample workspace on both axes is then created using the CreateWorkspace algorithm. The sample workspace is then multiplied by this workspace using the Multiply algorithm. The result of this operation is then again multipled by the X workspace. This process repeats on each successive resulting workspace for every moment. These resulting workspaces are then converted back to histogram data, integrated, transposed, and converted to units of momentum transfer. Finally each of the moment workspaces is placed in a single group workspace.
 
 \subsubsection{Support for the ILL}
 The convert to energy reduction currently supports instrument at ISIS and the SNS. In release 3.2 a lot of work has been done in order to increase the level of support for ILL instruments. Prior releases of Mantid added a loader for ASCII data files from the ILL to the Indirect Load ASCII interface and stored in the file IndirectNeutron.py. In 3.2 loaders for various ILL instruments (including the very useful LoadILLIndirect) have been added. Additionally, a new reduction algorithm for IN16B, called IndirectILLReduction, has been to give support for energy transfer reduction within Mantid. Future releases aim to integrate this algorithm into the current reduction chain and therefore completely remove Indirect Load ASCII from the system.
@@ -420,7 +453,7 @@ The instrument parameters used in reduction are defined in files called \seqspli
 
 \end{itemize}
 
-The OSIRIS instrument can double as a diffractometer with a much larger diffraction detector range compared to the other indirect instruments at ISIS. It therefore uses a specialised algorithm called OSIRISDiffractionReduction for use in diff only mode and does not use the reducer chain. OSIRISDiffractionReduction is based off of the ARIEL program \cite{pradaelli2000ariel}. 
+The OSIRIS instrument can double as a diffractometer with a much larger diffraction detector range compared to the other indirect instruments at ISIS. It therefore uses a specialised algorithm called OSIRISDiffractionReduction for use in diff only mode and does not use the reducer chain. OSIRISDiffractionReduction is based off of the ARIEL program \citep{pradaelli2000ariel}. 
 
 This algorithm takes a list of samples and a list of vanadium runs and an old style calibration file (these are not the ones generated by the routine in section \ref{subsec:c2e-calibration}, but the type supplied to the AlignDetectors and DiffractionFocussing algorithms). Each of the sample/vanadium run pairs can cover a different $d$-range which the algorithm then merges using the MergeRuns algorithm. This algorithm proceeds as follows:
 
@@ -487,6 +520,13 @@ In this final subsection, we illustrate an example reduction of some data from t
 
 There are lots of additional options that can be configured depending on the users requirements for the output of the reduction. This includes the rebinning, spectrum mapping, and detector ranges to be used, whether to sum the files and what formats to save the resulting workspace as (in the user's default save directory). All of these options are set to a sensible default for each instrument as it is selected, so in the simplest case all the user needs to do is select there instrument and the appropriate run file(s) and click run energy transfer.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{img/iris-c2e-reduction-plot.png}
+\caption{Reduced IRIS data plotted as both a contour and spectrum plot}
+\label{fig:iris-c2e-reduction}
+\end{figure}
+
 Doing this with the settings shown in figure \ref{fig:iris-c2e-reduction} produces a single workspace for run 553664 on the IRIS instrument with units of energy transfer. This workspace can then be used with the Indirect Data Analysis and Indirect Bayes interfaces. We can also run this through the SofQW algorithm to calculate the $S(\mathbf{Q},\omega)$ and convert the workspace to units of momentum transfer using the SofQW tab on same interface.
 
 \begin{figure}[H]
@@ -513,7 +553,7 @@ The majority of the code for data analysis scripts can be found in the file Indi
 
 \subsection{Basic Analysis}
 \subsubsection{ElWin}
-The ElWin (elastic window) program is used to perform elastic window scans by integrating over the energy range of a reduced file and is based on the routine of the same name that was originally provided as part of the MODES package. As with most all routines in the Indirect Data Analysis interface, the ElWin is implemented as a collection of free standing functions in IndirectDataAnalysis.py. Internally, this routine uses Mantid's ElasticWindow algorithm. This a small C++ side algorithm that integrates over the input workspace. The script provided in IndirectInelastic.py pre and post processes the data. 
+The ElWin (elastic window) program is used to perform elastic window scans by integrating over the energy range of a reduced file and is based on the routine of the same name that was originally provided as part of the MODES package \citep{wshowells2010}. As with most all routines in the Indirect Data Analysis interface, the ElWin is implemented as a collection of free standing functions in IndirectDataAnalysis.py. Internally, this routine uses Mantid's ElasticWindow algorithm. This a small C++ side algorithm that integrates over the input workspace. The script provided in IndirectInelastic.py pre and post processes the data. 
 
 The elastic window algorithm converts the spectrum axis of the input workspace to two output workspaces with units of $Q$ and $Q^2$. Both of these workspaces are then transposed so they are easier to visualise. Optionally, this routine can also remove a background using a second range. The $Q^2$ output for ElWin is used as the input to the MSDFit routine described in the following section.
 
@@ -534,7 +574,15 @@ Finally, a third workspace is created from the two output from the ElasticWindow
 
 \subsubsection{MSDFit}
 \label{subsubsec:msdfit}
-The MSD fit routine is used to calculate the mean squared displacement from the $Q^2$ workspace output from ElWin. In essence this routine performs a linear fit to every spectrum in the workspace using the algorithm PlotPeakByLogValue. However the routine also performs some additional operations to transform the fitting parameters from a table workspace to a matrix workspace.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.2\textwidth]{img/uml/activity_diagrams/MSDFit_activity.png}
+\caption{Activity diagram for the MSDFit routine.}
+\label{fig:msdfit-acticity-diagram}
+\end{figure}
+
+The MSD fit routine is used to calculate the mean squared displacement from the $Q^2$ workspace output from ElWin. In essence this routine performs a linear fit to every spectrum in the workspace using the algorithm PlotPeakByLogValue. However the routine also performs some additional operations to transform the fit parameters from a table workspace to a matrix workspace using the ConvertTableToMatrixWorkspace algorithm. The final parameter workspaces are then grouped.
 
 This routine produces a group workspace contain the linear fits to each spectrum and a workspace for each of the parameters of the fit to each spectrum transposed into a matrix workspace.
 
@@ -549,11 +597,19 @@ The Fury program is used to perform a fast Fourier transform on a reduced worksp
 \end{figure}
 
 
-The routine converts the resolution workspace first then converts each of the samples and dividing by the converted resolution. In order to convert to the intermediate scattering function all of the workspaces must have the same x range and the same regular binning in order for the conversion to work. Therefore the rebin parameters provided by the user must satisfy these conditions. The workspace is then integrated to a separate workspace. The original workspace is then converted to point data in preparation for running the fast Fourier transform algorithm.
+The routine first Fourier transforms the resolution workspace then transforms each of the samples using the exact same method and  then divides each of them by the resolution. In order to convert to the intermediate scattering function all of the workspaces must have the same x range and the same regular binning in order for the conversion to work. Therefore the rebin parameters provided by the user must satisfy these conditions. The workspace is then integrated to a separate workspace. The original workspace is then converted to point data in preparation for running the fast Fourier transform algorithm.
 
 The algorithm used is called ExtractFTTSpectrum which runs Mantid's FFT algorithm to on each spectrum in the workspace which outputs the modulus positive frequencies of the transform in the corresponding spectrum. The transformed sample workspaces are then divided by the transformed resolution workspace. The upper half of the transform is then crop off of the workspace to get rid of excess noise from the transform and then optionally saved to a nexus file.
 
 \subsubsection{FuryFit}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/FuryFit_activity.png}
+\caption{Activity diagram for the Fury Fit routine.}
+\label{fig:fury-fit-activity-diagram}
+\end{figure}
+
 FuryFit provides a fit routine for the output of Fury offering a variety of decaying exponential functions. Similarly to MSDFit, the routine uses the Fit and PlotPeakByLogValue algorithms to sequentially fit each spectrum with the parameters.
 
 The FuryFit code actually consists of two routines which are very similar and which could be merged in future release of Mantid called FuryFitSeq and FuryFitMult which perform a sequential fit and a multi domain fit respectively. Both routines works by executing a function string which is dynamically created in the GUI code for FuryFit, but FuryFitMult first wraps the input function with a MultiDomain composite function. FuryFitMult is only executed when the user has chosen to constrain the $\beta$ parameter for a stretched exponential fit across all $Q$.
@@ -562,6 +618,14 @@ Both of these routines convert the table of fitting parameters created from Fit 
 
 \subsubsection{ConvFit}
 \label{subsubsec:convfit}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.2\textwidth]{img/uml/activity_diagrams/ConvFit_activity.png}
+\caption{Activity diagram for the Conv Fit routine.}
+\label{fig:conv-fit-activity-diagram}
+\end{figure}
+
 The ConvFit routine is used to perform a convolution fit to the workspaces. Again, this routine follows a similar procedure to both the MSDFit and FuryFit routines. A fit function with the options the user has selected are gathered from the user interface and a string representing the function to be fitted is passed to the PlotPeakByLogValue algorithm to perform a sequential fit.
 
 The functions fitted are a $\delta$-function, one or two Lorentzians or a combination of both which are then convolved with the user supplied resolution workspace. The type of background can also be selected from a choice of Fixed Flat (flat background without the intercept tied to the user supplied value), Fit Flat (flat background with the intercept unconstrained), and Fit Linear (unconstrained linear background). Optionally a temperature correction can be applied to the Lorentzians. The temperature correction is defined as:
@@ -581,11 +645,11 @@ Calculate Corrections is used to create a group workspace of absorption correcti
 
 The code for calculating corrections for a cylindrical geometry is has been ported into Mantid using the F2Py package directly from it's previous incarnation as the Acorn routine in the MODES package. This allows a python script run the Fortran code without it being converted to python code. Unfortunately the downside to this is that F2Py cannot be packaged into the installer for any platform outside of Windows. The code for flat plate corrections was ported in Mantid as part of release 3.2.
 
-In depth discussion on the exact methods of calculating the absorption factors for flat plate and cylindrical geometries can be found in Carlile \cite{ccarlile1974} and the ATLAS manual \cite{aksoper1989} respectively.
+In depth discussion on the exact methods of calculating the absorption factors for flat plate and cylindrical geometries can be found in Carlile \citep{ccarlile1974} and the ATLAS manual \citep{aksoper1989} respectively.
 
 The python code underlying the interface of calculate corrections and responsible for liaising between the Fortran and C++ GUI code is (unlike the other routines described in this section) stored in a separate file called IndirectAbsCor.py. This is to keep F2Py import call separate from the rest of the data analysis code, so the other interfaces can be used on platforms other than Windows.
 
-Regardless of the geometry used, the Python/Fortran code calculates four arrays for each spectrum in the sample workspace each of which are collected into four resulting output workspaces with the suffixes \textit{ass}, \textit{assc}, \textit{acsc}, and \textit{acc} which loosely corresponds to the formalism described in Paalman and Pings \cite{hhpaalman1962}. These stand for:
+Regardless of the geometry used, the Python/Fortran code calculates four arrays for each spectrum in the sample workspace each of which are collected into four resulting output workspaces with the suffixes \textit{ass}, \textit{assc}, \textit{acsc}, and \textit{acc} which loosely corresponds to the formalism described in Paalman and Pings \citep{hhpaalman1962}. These stand for:
 
 \begin{itemize}
 \item \textbf{Ass} - Attenuation factor for scattering in the sample and attenuation in the sample.
@@ -623,17 +687,17 @@ In future releases of Mantid it is hoped that these routines will be converted i
 ResNorm is used to create a group normalisation workspace which can be input to the Quasi routine (described in the next section). It normalises the input data using the instrument resolution by fitting. A group normalisation may also be done by grouping Q values where the resolution is stretched using a stretch factor. The routine produces two group workspaces with the suffixes \**\_ResNorm and \**\_ResNorm\_Fit respectively. The ResNorm group workspace contains two workspaces with the suffixes intensity and stretch. The intensity workspace contains the intensity normalisation factor and stretch contains a stretch factor for the width of the supplied resolution file. The ResNorm\_Fit group workspace contains the fits to each spectrum in the workspace.
 
 \subsubsection{Quasi}
-The Quasi routine provides a model selection algorithm using Bayesian methods to choose the number of lorentzian components present in the input data \cite{dssivia1992} and was originally known as Quasi Lines in the old MODES package. This routine takes a sample to fit to and a resolution file created in the convert to energy interface and optionally a resolution normalisation file created in ResNorm (see the previous section). This program can run either by fitting a $\delta$-function plus a sum of Lorentzians or a single stretched exponential.
+The Quasi routine provides a model selection algorithm using Bayesian methods to choose the number of lorentzian components present in the input data \citep{dssivia1992} and was originally known as Quasi Lines in the old MODES package \citep{wshowells2010}. This routine takes a sample to fit to and a resolution file created in the convert to energy interface and optionally a resolution normalisation file created in ResNorm (see the previous section). This program can run either by fitting a $\delta$-function plus a sum of Lorentzians or a single stretched exponential.
 
 There are three Fortran modules used depending on the input. The QLres module fits a sum of Lorentzians. If the resolution file contains more than one spectrum, then the QLdata module is used and any ResNorm file supplied is ignored. Finally if the choice of fitting a stretched exponential is used the QLse module is used. Each of these modules share very similar code which is duplicated and modified slightly to suit the specifics of the implementation.
 
-Inside the fitting routine it first refines the parameters for the $\delta$-function, linear background, energy range offset and thereby estimates the probability of the absence of quasielastic components in data. It then refines the parameters for one, two and three Lorentzian components successively \cite{dssivia1992}.
+Inside the fitting routine it first refines the parameters for the $\delta$-function, linear background, energy range offset and thereby estimates the probability of the absence of quasielastic components in data. It then refines the parameters for one, two and three Lorentzian components successively \citep{dssivia1992}.
 
 Internally the program loads both the ResNorm and width files into 1D arrays. It then extracts from the sample and resolution workspaces a the x, y, and e arrays for each spectrum in the workspace and passes this data to the Fortran routine with any accompanying fit parameters used. The corresponding fits to the data are returned in the form of x, y, and e arrays for the spectrum and its log probability for each Lorentzian (from 0 to 3). Additionally, the program also reads the program parameters from the generated file (saved in the user's default save directory) and creates a workspace of fit parameters similar to the one output by ConvFit. Likewise, it will also calculate the EISF from the fit parameters.
 
 \subsubsection{Stretch}
 \label{subsec:stretch}
-Stretch is a variation on the stretched exponential option provided by the Quasi program described in the previous section and was originally called Quest in the old MODES package. The Fortran module used is called Que. The operation of the two programs are essentially the same, except that a grid of $\beta$ and $\sigma$ parameters are fitted to each spectrum instead.
+Stretch is a variation on the stretched exponential option provided by the Quasi program described in the previous section and was originally called Quest in the old MODES package \citep{wshowells2010}. The Fortran module used is called Que. The operation of the two programs are essentially the same, except that a grid of $\beta$ and $\sigma$ parameters are fitted to each spectrum instead.
 
 This fit routine produces one group workspace containing the fit to the data for each spectrum and two additional workspaces containing the parameters $\beta$ and $\sigma$ parameters of the fit.
 
@@ -690,8 +754,15 @@ Once a file has been reduced using the convert to energy interface as described 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{img/iris-ida-elwin.png}
+\includegraphics[width=0.6\textwidth]{img/iris-ida-elwin.png}
 \caption{Using a reduced workspace with ElWin in release 3.2.}
+\label{fig:iris-ida-elwin}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{img/iris-ida-elwin-output.png}
+\caption{Plots of the output workspaces from ElWin.}
 \label{fig:iris-ida-elwin}
 \end{figure}
 
@@ -699,14 +770,21 @@ The \*\_eq2 file created by the routine can be passed to the MSDFit routine to p
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{img/iris-ida-msd.png}
+\includegraphics[width=0.6\textwidth]{img/iris-ida-msd.png}
 \caption{Using an \*\_eq2 workspace output from ElWin as input to MSDFit.}
+\label{fig:iris-ida-msd}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{img/iris-ida-msd-output.png}
+\caption{Resulting parameter workspace from MSDFit.}
 \label{fig:iris-ida-msd}
 \end{figure}
 
 The ConvFit interface (section \ref{subsubsec:convfit}) can be used to separate the instrument resolution from the $S(\mathbf{Q}, \omega)$ function by fitting a convolution of the resolution and the appropriate model to the data. A screen shot of the ConvFit interface is shown in figure \ref{fig:iris-ida-convfit}. This interface has lots of configurable options for the model that is to be convolved with the resolution, but works on similar principle to the MSDFit interface. 
 
-The run button at the bottom of the screen is used to perform a single fit to the data which also updates the parameters for the model in the properties browser. This is useful because it allows the user to choose parameters close to the appropriate value, then tighten them up before fitting all spectra. Once the user is happen with the fit for a single spectrum (shown in the mini plot) the sequential fit button can be used to fit all of the spectra.
+The run button at the bottom of the screen is used to perform a single fit to the data which also updates the parameters for the model in the properties browser. This is useful because it allows the user to choose parameters close to the appropriate value, then tighten them up before fitting all spectra. Once the user is happy with the fit parameters for a single spectrum (shown in the mini plot) the sequential fit button can be used to fit all of the spectra.
 
 \begin{figure}[H]
 \centering
@@ -746,7 +824,7 @@ As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace 
 
 \section{Simulation}
 \label{sec:simulation}
-Another important part of experimental analysis involved the comparison of actual results against theoretical predictions. This is an area of development that is only just beginning and there is only a very small amount of support implemented so far.
+Another important part of experimental analysis involved the comparison of experimental results against theoretical predictions. This is an area of development that is only just beginning and there is only a very small amount of support implemented so far.
 
 \subsection{Indirect Simulation}
 Indirect Simulation is a new interface for release 3.2 that splits the basic nMolDyn loader that is currently in Mantid off from it's original location in the Indirect Load ASCII interface. This interface is planned to be a place to expose simulation routines to the GUI level, such as adding interface support for the Sassena routines already in Mantid in future releases.
@@ -758,14 +836,14 @@ The nMolDyn interface that currently exists is a very simple routine to load dat
 The DensityofStates algorithm was a new addition to the 3.1 release of Mantid and does not currently have GUI support. It provides loading algorithm for .castep and .phonon files generated by CASTEP simulation program and create workspaces with both total and partial density of states data. Further support for CASTEP is planned in future releases. The code for this file can be found in DensityOfStates.py file under python algorithm plugins section in the Mantid install.
 
 \section{Planning For the Future}
-This section outlines outstanding work required to fully support indirect geometry instruments within Mantid. This section is not meant as a "set in stone" plan for further development but is meant as guide for future development work in the area and a loose record of user and project requirements all of which are subject to change.
+This section outlines outstanding work required to fully support indirect geometry instruments within Mantid. This section is not meant as a ``set in stone'' plan for further development but is meant as guide for future development work in the area and a loose record of user and project requirements all of which are subject to change.
 
 \subsection{Conversion of Existing Routines to Algorithms and Work-Flow Algorithms}
 Now that a large proportion of the code base required for data reduction and analysis of indirect geometry spectroscopy has been incorporated into Mantid, it is time to move forward with consolidating the existing code base we already have. As already mentioned in the earlier sections of this document most of the code base is either using the old style reducer-reduction step framework or is in the form of simple python scripts which are both not sufficiently documented and (largely) untested.
 
 Ideally, the Indirect framework should take advantage of the core concept of the Mantid framework: algorithms. An algorithm in Mantid is defined as being a set of code that performs some operation on a workspace. Algorithms are well documented (both for the user and the development team) and are the preferred common interface for performing actions in Mantid.
 
-There are two types of algorithms in Mantid. Normal algorithms are simply ones which perform some operation on a workspace, such as ConvertUnits or Fit or Load. The second type is called a work flow algorithm. This is an algorithm that performs no direct manipulation of a workspace itself, but executes a collection of algorithms other algorithms in order to perform some larger task. The benefits of the latter are that: 
+There are two types of algorithms in Mantid. Normal algorithms are simply ones which perform some operation on a workspace, such as ConvertUnits or Fit or Load. The second type is called a work flow algorithm. This is an algorithm that performs no direct manipulation of a workspace itself, but executes a collection of algorithms other algorithms in order to perform some larger task. An example of such an algorithm would be DgsReduction or ReflectometryReductionAutoOne. The benefits of the latter are that: 
 
 \begin{itemize}
 \item Large operations get broken do into smaller, more easily understood operations which already have algorithms defined which are used by multiple research groups and facilities and have become tried and tested.
@@ -829,7 +907,7 @@ The code to handle setting up and executing algorithms would not be overly compl
 
 One final thing to note is that this should wait until the energy conversion for direct geometry instruments is split from the indirect geometry interface so that restructuring the interface does not effect development in that area.
 
-\subsection{nMOLDYN integration into Mantid}
+\subsection{Simulation Support in Mantid}
 Support for simulation is an area in which there has been little development so far for indirect, but would be a useful addition to our existing collection. As mentioned in section \ref{sec:simulation} there is a small amount of existing support for some simulation programs within Mantid. There are currently loaders for the output of CASTEP, Sassena, and nMOLDYN simulations. In the most recent release, a new interface was created as a place to integrate simulation programs into Mantid's GUI.
 
 One current goal in the development of Mantid is to attempt to integrate the open source nMOLDYN library into Mantid and package it with the distribution of the project. This would not only further enrich the existing Python API available in Mantid, but would also provided us with an extensive, reliable molecular dynamics simulation package with which to build on.
@@ -842,7 +920,7 @@ As mentioned in several sections through out the documentation of existing devel
 
 A long term goal would be to convert these existing, tried and tested routines into well documented, thoroughly unit tested C++ or python code which utilises the some of the existing fitting routines that are already present inside Mantid. As mentioned in the previous section, some of the functionality is repeated inside the code for Quasi and Stretch and it may be the case that common code could be merged during the conversion.
 
-The biggest difficulty with this is that it will require a sizeable chunk of a developers time and a good understanding of Fortran and what the udnerlying code is doing in order to convert the routines and write thorough tests for the converted code to ensure the fitting is good enough to match the existing Fortran while still matching the process described in the references.
+The biggest difficulty with this is that it will require a sizeable chunk of a developers time and a good understanding of Fortran and what the underlying code is doing in order to convert the routines and write thorough tests for the converted code to ensure the fitting is good enough to match the existing Fortran while still matching the process described in the references.
 
 There are currently four routines that are still in Fortran code: the three Bayes programs (ResNorm, Quasi, and Stretch) and the cylindrical absorption corrections program used in the calculate corrections routine. There are additional Fortran based routines in the for multiple scattering (see section \ref{subsec:multiple-scattering}) which will also need to be ported to Mantid in future releases.
 
@@ -851,10 +929,10 @@ Officially the framework we currently have supports both the SNS and ISIS. Howev
 
 \subsection{Multiple Scattering Support}
 \label{subsec:multiple-scattering}
-The multiple scattering routines from the MODES package are the last major parts that have not been ported from the MODES application in one form or another. There are two different multiple scattering routines called MuscatData and MuscatFunc which were originally part of the MODES package as the program MINUS which in turn was adapted from the DISCUS program \cite{wshowells2010}\cite{mjohnson1974}. Both routines work with both flat and cylindrical geometries. The difference between the two is MuscatData uses takes $S(Q,w)$ workspace as input, while MuscatFunc just uses a set of specified parameters from the user. 
+The multiple scattering routines from the MODES package are the last major parts that have not been ported from the MODES application in one form or another. There are two different multiple scattering routines called MuscatData and MuscatFunc which were originally part of the MODES package as the program MINUS which in turn was adapted from the DISCUS program \citep{wshowells2010, mjohnson1974}. Both routines work with both flat and cylindrical geometries. The difference between the two is MuscatData uses takes $S(Q,w)$ workspace as input, while MuscatFunc just uses a set of specified parameters from the user. 
 
 Ideally these routines should be converted from Fortran to C++ code first before including them in Mantid, but if demand is high they can be included in the GUI in the same way Bayes and cylindrical corrections works using the F2Py package. There has already been some existing work to import them into Mantid, but the current versions do not work. Recently, there has also been a goal outlined by the scientific steering committee to provide a general framework for multiple scattering corrections within Mantid. At the time of writing it is uncertain whether the planned implementation of this will be compatible with the existing methods used by the MODES routines.
 
-\bibliographystyle{unsrt}
+\bibliographystyle{unsrtnat_corrected}
 \bibliography{refs}
 \end{document}
