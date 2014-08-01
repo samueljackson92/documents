@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.4.16)  31 JUL 2014 11:55
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.4.16)  1 AUG 2014 13:54
 entering extended mode
  %&-line parsing enabled.
 **vesuvio_report.tex
@@ -605,6 +605,27 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 Class scrartcl Info: You've told me to use the font selection of the element
 (scrartcl)           `sectioning' that is an alias of element `disposition'
 (scrartcl)            on input line 2.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 3.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 4.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 5.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 6.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 7.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 8.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 9.
 )
 \tf@toc=\write5
 \openout5 = `vesuvio_report.toc'.
@@ -612,28 +633,49 @@ Class scrartcl Info: You've told me to use the font selection of the element
  [2
 
 ]
-No file vesuvio_report.bbl.
-[3
+<img/tof-spectrum.png, id=64, 575.14874pt x 287.57437pt>
+File: img/tof-spectrum.png Graphic file (type png)
 
-] (./vesuvio_report.aux) ) 
+<use img/tof-spectrum.png> [3
+
+ <./img/tof-spectrum.png (PNG copy)>]
+<img/corrections-gamma.png, id=85, 588.69937pt x 287.57437pt>
+File: img/corrections-gamma.png Graphic file (type png)
+
+<use img/corrections-gamma.png>
+<img/uml/compton-class-diagram.png, id=87, 354.32375pt x 266.9975pt>
+File: img/uml/compton-class-diagram.png Graphic file (type png)
+
+<use img/uml/compton-class-diagram.png> (./vesuvio_report.bbl [4 <./img/correct
+ions-gamma.png (PNG copy)> <./img/uml/compton-class-diagram.png>]
+Missing character: There is no â in font cmti10!
+Missing character: There is no € in font cmti10!
+Missing character: There is no ” in font cmti10!
+) [5]
+(./vesuvio_report.aux) ) 
 Here is how much of TeX's memory you used:
- 10101 strings out of 493848
- 155103 string characters out of 1152823
- 290034 words of memory out of 3000000
- 13180 multiletter control sequences out of 15000+50000
- 14129 words of font info for 44 fonts, out of 3000000 for 9000
+ 10320 strings out of 493848
+ 158369 string characters out of 1152823
+ 298034 words of memory out of 3000000
+ 13295 multiletter control sequences out of 15000+50000
+ 22321 words of font info for 100 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 46i,10n,43p,316b,322s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc
-}</usr/share/texmf-texlive/fonts/type1/bitstrea/charter/bchb8a.pfb></usr/share/
-texmf-texlive/fonts/type1/bitstrea/charter/bchr8a.pfb></usr/share/texmf-texlive
-/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1
-/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
-onts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/c
-mtt12.pfb>
-Output written on vesuvio_report.pdf (3 pages, 57925 bytes).
+ 46i,10n,43p,1014b,436s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
+/usr/share/texmf-texlive/fonts/type1/bitstrea/charter/bchb8a.pfb></usr/share/te
+xmf-texlive/fonts/type1/bitstrea/charter/bchr8a.pfb></usr/share/texmf-texlive/f
+onts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/
+public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsf
+onts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr1
+2.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fon
+ts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmtt10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmtt12.pfb>
+Output written on vesuvio_report.pdf (5 pages, 1943327 bytes).
 PDF statistics:
- 51 PDF objects out of 1000 (max. 8388607)
- 6 named destinations out of 1000 (max. 500000)
- 11273 words of extra memory for PDF output out of 12000 (max. 10000000)
+ 151 PDF objects out of 1000 (max. 8388607)
+ 26 named destinations out of 1000 (max. 500000)
+ 18000 words of extra memory for PDF output out of 20736 (max. 10000000)
 

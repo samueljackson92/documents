@@ -1,2 +1,9 @@
 \select@language {english}
 \contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Loading}{3}{section.2}
+\contentsline {section}{\numberline {3}Corrections}{3}{section.3}
+\contentsline {section}{\numberline {4}Fitting}{4}{section.4}
+\contentsline {section}{\numberline {5}Diffraction}{5}{section.5}
+\contentsline {section}{\numberline {6}Calibration}{5}{section.6}
+\contentsline {section}{\numberline {7}GUI}{5}{section.7}
+\contentsline {section}{\numberline {8}Visualisation}{5}{section.8}
