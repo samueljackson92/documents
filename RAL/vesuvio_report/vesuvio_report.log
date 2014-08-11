@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.4.16)  1 AUG 2014 13:54
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.4.16)  11 AUG 2014 16:46
 entering extended mode
  %&-line parsing enabled.
 **vesuvio_report.tex
@@ -626,6 +626,12 @@ Class scrartcl Info: You've told me to use the font selection of the element
 Class scrartcl Info: You've told me to use the font selection of the element
 (scrartcl)           `sectioning' that is an alias of element `disposition'
 (scrartcl)            on input line 9.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 10.
+Class scrartcl Info: You've told me to use the font selection of the element
+(scrartcl)           `sectioning' that is an alias of element `disposition'
+(scrartcl)            on input line 11.
 )
 \tf@toc=\write5
 \openout5 = `vesuvio_report.toc'.
@@ -633,34 +639,47 @@ Class scrartcl Info: You've told me to use the font selection of the element
  [2
 
 ]
-<img/tof-spectrum.png, id=64, 575.14874pt x 287.57437pt>
+<img/vesuvio-diagram.png, id=73, 722.7pt x 963.6pt>
+File: img/vesuvio-diagram.png Graphic file (type png)
+
+<use img/vesuvio-diagram.png> [3
+
+ <./img/vesuvio-diagram.png (PNG copy)>]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 103.
+
+
+(/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <10.95> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 103.
+
+<img/tof-spectrum.png, id=97, 575.14874pt x 287.57437pt>
 File: img/tof-spectrum.png Graphic file (type png)
 
-<use img/tof-spectrum.png> [3
-
- <./img/tof-spectrum.png (PNG copy)>]
-<img/corrections-gamma.png, id=85, 588.69937pt x 287.57437pt>
+<use img/tof-spectrum.png> [4]
+<img/corrections-gamma.png, id=114, 588.69937pt x 287.57437pt>
 File: img/corrections-gamma.png Graphic file (type png)
 
-<use img/corrections-gamma.png>
-<img/uml/compton-class-diagram.png, id=87, 354.32375pt x 266.9975pt>
+<use img/corrections-gamma.png> [5 <./img/tof-spectrum.png (PNG copy)>]
+<img/uml/compton-class-diagram.png, id=124, 354.32375pt x 266.9975pt>
 File: img/uml/compton-class-diagram.png Graphic file (type png)
 
-<use img/uml/compton-class-diagram.png> (./vesuvio_report.bbl [4 <./img/correct
-ions-gamma.png (PNG copy)> <./img/uml/compton-class-diagram.png>]
+<use img/uml/compton-class-diagram.png> [6 <./img/corrections-gamma.png (PNG co
+py)> <./img/uml/compton-class-diagram.png>] (./vesuvio_report.bbl
 Missing character: There is no â in font cmti10!
 Missing character: There is no € in font cmti10!
 Missing character: There is no ” in font cmti10!
-) [5]
+) [7]
 (./vesuvio_report.aux) ) 
 Here is how much of TeX's memory you used:
- 10320 strings out of 493848
- 158369 string characters out of 1152823
- 298034 words of memory out of 3000000
- 13295 multiletter control sequences out of 15000+50000
- 22321 words of font info for 100 fonts, out of 3000000 for 9000
+ 10387 strings out of 493848
+ 159502 string characters out of 1152823
+ 300034 words of memory out of 3000000
+ 13333 multiletter control sequences out of 15000+50000
+ 22843 words of font info for 108 fonts, out of 3000000 for 9000
  714 hyphenation exceptions out of 8191
- 46i,10n,43p,1014b,436s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 46i,10n,43p,882b,378s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}<
 /usr/share/texmf-texlive/fonts/type1/bitstrea/charter/bchb8a.pfb></usr/share/te
 xmf-texlive/fonts/type1/bitstrea/charter/bchr8a.pfb></usr/share/texmf-texlive/f
@@ -670,12 +689,13 @@ onts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr1
 2.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/s
 hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texmf-te
 xlive/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fon
-ts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/amsfonts/cm/cmtt10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
-ts/cm/cmtt12.pfb>
-Output written on vesuvio_report.pdf (5 pages, 1943327 bytes).
+ts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/pu
+blic/amsfonts/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
+ts/cm/cmtt10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt1
+2.pfb>
+Output written on vesuvio_report.pdf (7 pages, 2008105 bytes).
 PDF statistics:
- 151 PDF objects out of 1000 (max. 8388607)
- 26 named destinations out of 1000 (max. 500000)
- 18000 words of extra memory for PDF output out of 20736 (max. 10000000)
+ 196 PDF objects out of 1000 (max. 8388607)
+ 35 named destinations out of 1000 (max. 500000)
+ 18021 words of extra memory for PDF output out of 20736 (max. 10000000)
 

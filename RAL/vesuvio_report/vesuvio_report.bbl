@@ -1,4 +1,4 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{11}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -34,6 +34,19 @@ EM~Schooneveld, J~Mayers, NJ~Rhodes, A~Pietropaolo, C~Andreani, R~Senesi,
 \newblock Review of scientific instruments, 77\penalty0 (9):\penalty0 095103,
   2006.
 
+\bibitem[Seeger et~al.(1985)Seeger, Taylor, and Brugger]{seeger1985double}
+PA~Seeger, AD~Taylor, and RM~Brugger.
+\newblock \emph{Double-difference method to improve the resolution of an eV
+  neutron spectrometer}.
+\newblock Nuclear Instruments and Methods in Physics Research Section A:
+  Accelerators, Spectrometers, Detectors and Associated Equipment, 240\penalty0
+  (1):\penalty0 98--114, 1985.
+
+\bibitem[Fernandez-Alonso and Price(2013)]{fernandezalonso2013neutron}
+F.~Fernandez-Alonso and D.~L. Price.
+\newblock \emph{Neutron Scattering Fundermentals}.
+\newblock Academic Press, 1st edition, 2013.
+
 \bibitem[Mayers et~al.(2004)Mayers, Tomkinson, Abdul-Redah, Stirling, Andreani,
   Senesi, Nardone, Colognesi, and Degiorgi]{mayers2004vesuvio}
 J~Mayers, J~Tomkinson, T~Abdul-Redah, WG~Stirling, C~Andreani, R~Senesi,
@@ -42,6 +55,19 @@ J~Mayers, J~Tomkinson, T~Abdul-Redah, WG~Stirling, C~Andreani, R~Senesi,
   at ISIS}.
 \newblock Physica B: Condensed Matter, 350\penalty0 (1):\penalty0 E659--E662,
   2004.
+
+\bibitem[Mayers(2010)]{mayers2010user}
+J.~Mayers.
+\newblock \emph{User guide to VESUVIO data analysis}.
+\newblock Technical Report RAL-TR-2011-003, Rutherford Appleton Laboratory UK,
+  2010.
+
+\bibitem[man()]{mantidgithubncs}
+\emph{Mantid Github scripts Repository}.
+\newblock
+  \url{https://github.com/mantidproject/scripts/tree/master/development/inelas%
+tic}.
+\newblock Accessed: 2014-08-11.
 
 \bibitem[Mayers et~al.(2002)Mayers, Fielding, and Senesi]{mayers2002multiple}
 J~Mayers, AL~Fielding, and R~Senesi.
