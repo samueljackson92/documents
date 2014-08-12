@@ -55,6 +55,7 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[numbers]{natbib}															% Tablenumbering: section.tab#
+\usepackage{minted}
 
 
 
@@ -100,11 +101,11 @@ The resulting time-of-flight data contains a number of spectra each consisting o
 
 \section{Introduction to the Vesuvio Data Analysis Package}
 \label{sec:intro-data-analysis}
-The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}.
+The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. Currently, the simplest way of including the ncs python module in Mantid is to place it in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
 
 \section{Viewing Data in Time-of-Flight}
 \label{sec:viewtof}
-The original data analysis package \cite{mayers2010user} used two separate commands to process the raw time-of-flight data, one for the front scattering detectors and one for the back scattering. In the Mantid implementation this has been replaced with a single algorithm called LoadVesuvio which performs all of the processing for raw files from the instrument. This includes options for handling each of the different foil positions and difference techniques available with Vesuvio \citep{schooneveld2006foil, mayers2004vesuvio} and handles the summing multiple runs. It also contains a flag for summing each spectrum in the desired range into a single spectrum. The results of this loading operation are output as a single workspace in Mantid with units in time-of-flight which can be plotted using Mantid's various visualisation tools.
+The original data analysis package \cite{mayers2010user} used two separate commands to process the raw time-of-flight data, one for the front scattering detectors and one for the back scattering. In the Mantid implementation this has been replaced with a single algorithm called LoadVesuvio which performs all of the processing for raw files from the instrument. This includes options for handling each of the different foil positions and difference techniques available with Vesuvio \citep{schooneveld2006foil, mayers2004vesuvio} and handles the summing multiple runs. It also contains a flag for summing each spectrum in the desired range into a single spectrum. The results of this loading operation are output as a single workspace in Mantid with units in time-of-flight which can be plotted using both Mantid's in built visualisation tools and custom plotting commands described in \ref{sec:visualisation}.
 
 \begin{figure}[H]
 \centering
@@ -117,13 +118,29 @@ Optionally, an instrument parameter file can be supplied to the loading routine.
 
 Once a Vesuvio data has been loaded into a Mantid workspace it can be used with the various tools in the ncs data analysis module. Typically the first step after loading the raw data in time-of-flight is to crop the workspace to a sensible range for data analysis. This can be done by using the Mantid CropWorkspace algorithm. The typically time-of-flight range used is 50.0 - 562.0 $\mu s$.
 
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+import ncs
+runs = "14188-14195"
+spectra = "134"
+diff_type="SingleDifference" # Allowed values=Single,Double,Thick
+ip_file = "IP0004_10.par"
+
+raw_ws = LoadVesuvio(Filename=runs, SpectrumList=spectra,
+		     Mode=diff_type,InstrumentParFile=ip_file)
+raw_ws = CropWorkspace(raw_ws,XMin=50.0,XMax=562.0)
+\end{minted}
+\caption{Example script showing how to load data and crop Vesuvio data using the Mantid python API.}
+\label{lst:loading-data}
+\end{listing}
+
 The ncs.py module also provides a preprocessing function for further preparing the data for analysis. This method provides options for masking data points in the raw workspace given an error threshold as well as an option to smooth the workspace using the SmoothData algorithm.
 
 \section{Multiple Scattering and Gamma Background Corrections}
 \label{sec:corrections}
 The time-of-flight data loaded using the methods described in section \ref{sec:viewtof} need to be corrected to account for the effects of multiple scattering \citep{mayers2002multiple} and gamma background \citep{mayers2011calculation}. Currently, the multiple scattering corrections for VESUVIO in Mantid are uder development and will be available in future release cycles.
 
-Corrections for the gamma background are implemented using the Mantid algorithm framework as an algorithm called CalculateGammaBackground. This takes a single workspace in time-of-flight, and a fit function describing the mass spectrum of the input data and a list of workspace indices to include as part of the correction. The fit function for the mass spectrum is typically one which has been created as part of the fit routines described in section \ref{sec:fitting}. This algorithm results in two workspaces: one that contains the calculated background and a copy of the input time-of-flight workspace with the background subtracted.
+Corrections for the gamma background are implemented using the Mantid algorithm framework as an algorithm called CalculateGammaBackground. This takes a single workspace in time-of-flight, and a fit function describing the mass spectrum of the input data and a list of workspace indices to include as part of the correction. The fit function for the mass spectrum is typically one which has been created as part of the fit routines described in section \ref{sec:fitting}. This algorithm results in two workspaces: one that contains the calculated background and a copy of the input time-of-flight workspace with the background subtracted. This function loosely corresponds to the \textit{bcorr} command in the old data analysis package.
 
 \begin{figure}[H]
 \centering
@@ -132,37 +149,163 @@ Corrections for the gamma background are implemented using the Mantid algorithm 
 \label{fig:corrections-gamma}
 \end{figure}
 
-Again, there are helper functions for this implemented in ncs.py. The gamma background can be computed from a workspace simply by using the \textit{gamma\_correct} function and passing the workspace to correct, the required fitting options, and the parameters produced from a fit (see section \ref{sec:fitting}).
+Again, there are helper functions for this implemented in ncs.py. The gamma background can be computed from a workspace simply by using the \textit{gamma\_correct} function and passing the workspace to correct, the required fitting options, and the parameter workspace produced from a fit (see section \ref{sec:fitting}). Listing \ref{lst:gamma-correction} shows the code to perform a gamma correction on a workspace that has already been fitted.
+
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+ncs.preprocess(raw_ws, fit_options)
+reduced_chi_square, params_ws = ncs.run_fit(raw_ws, fit_options)
+ncs.display_fit_output(reduced_chi_square, params_ws, fit_options)
+
+background, corrected = ncs.gamma_correct(raw_ws, fit_options, params_ws)
+\end{minted}
+\caption{Example script for performing a gamma correction to the ZrH$_2$ sample using ncs.py.}
+\label{lst:gamma-correction}
+\end{listing}
 
 \section{Fitting}
 \label{sec:fitting}
 The majority of the development for integrating Vesuvio into Mantid has concerned the development of the fitting procedures required to measure the neutron compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions was required which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily setup a fit given the appropriate parameters for the sample and are available in the ncs.py module.
 
+There are two major fit functions used in the analysis of Vesuvio data. The GaussianComptonProfile defines a function for fitting the simpler Gaussian approximation to mass peaks. The GramChalierComptonProfile is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. Both of these are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}.
+
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+fit_options = ncs.FitOptions()
+fit_options.workspace_index = 0
+fit_options.bad_data_error = 1e6
+
+mass1 = {'value':27.0,  'widths':14.4, 'function':'Gaussian', }
+mass2 = {'value':91, 'widths':26.6, 'function':'Gaussian'}
+fit_options.masses = [mass1, mass2]
+
+ncs.preprocess(raw_ws, fit_options)
+reduced_chi_square, params_ws = ncs.run_fit(raw_ws, fit_options)
+ncs.display_fit_output(reduced_chi_square, params_ws,fit_options)
+\end{minted}
+\caption{Example script for setting up a fit to the ZrH$_2$ sample using ncs.py. The mass of aluminium and zirconium are fitted using the Gaussian fit function. In this example, the widths of each of the masses has been fixed using ``widths'' attribute}
+\label{lst:fit-setup}
+\end{listing}
+
+The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a FitOptions object must be created from ncs.py and set up with the appropriate options relative to the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py FitOptions class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the FitOptions class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.4\textwidth]{img/uml/compton-class-diagram.png}
-\caption{Class diagram of the Compton Profile fit functions in Mantid.}
-\label{fig:compton-class-diagram}
+\includegraphics[width=0.6\textwidth]{img/gaussian-fit-example.png}
+\caption{Plot of the fitted time-of-flight data from the sum runs 14188-14195 at the scattering angle of 163 degrees for a sample of ZrH$_2$. The black line shows the original data, the red line shows the fit to the data is in red, and the individual contributing peaks are in green (aluminium) and blue (zirconium)}
+\label{fig:gaussian-example-fit}
 \end{figure}
 
-There are two major fit functions used in the analysis of Vesuvio data. The GaussianComptonProfile defines a function for fitting the simpler Gaussian approximation to mass peaks. The GramChalierComptonProfile is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. Both of these are described in detail in Refs. \citep{mayers2012vesuvio}.
+Fitting the data show in listing \ref{lst:loading-data} with the parameters defined in listing \ref{lst:fit-setup} produces three workspaces. One containing the fit of the composite function and individual mass profiles to the raw data, a table workspace of parameters for the fit, and a table workspace for the normalised covariance matrix of the fit. These workspace are in fact just the standard output from the Mantid Fit algorithm. A plot of the fit using the Gaussian approximation function to two mass peaks for aluminium and zirconium is shown in \ref{fig:gaussian-example-fit}. Comparing this to the original example in Ref. \cite{mayers2010user} shows a good correlation between implementations.
 
-Both of these fit functions inherit from a common class called the ComptonProfile. This implements the common operations between both fit functions such as conversion of time-of-flight data to y-space and the calculation of the resolution components.
 
+\begin{table}[H]
+\centering
+\begin{tabular}{ l p{12cm}}
+Name & Description \\ \hline
+\textit{smooth\_points} & Number of data points to use in the SmoothData algorithm in the pre-processing function. If not set the data will not be smoothed. \\ \hline
+\textit{bad\_data\_error} & If set, the data will be masked if it falls outside of this error tolerance.\\ \hline
+\textit{background\_function} & The type of background to use in fitting. By default this is set to use the Polynomial background function. \\ \hline
+\textit{background\_order} & The order of the background to use.\\ \hline
+\textit{masses} & A dictionary of parameters for each mass supplied to the fit. This should include the atomic weight, function to fit (either \textit{Gaussian} or \textit{GramCharlier}) any any other parameters required by the function. \\ \hline
+\textit{constraints} & Constraints on the intensity of each mass peak. \\ \hline
+\textit{workspace\_index} & The index in the workspace to fit to. \\ \hline
+\textit{output\_prefix} & String which is prefixed to output workspaces created from the fitting. \\ \hline
+\textit{global\_fit} & Whether or not to perform a multi-dataset (global) fitting of the data. \\ \hline
+\end{tabular}
+\caption{Table listing the different fitting options available in the FitOptions class}
+\label{table:fit-parameters}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ l p{12cm}}
+Name & Description \\ \hline
+\textit{value} & The atomic weight of the mass in amu \\ \hline
+\textit{widths} & The width of the peak. If this is set to a single number the width will be fixed to that value. If it is set to a tuple of three values the middle value is the starting value and the first and last values are the constraints on the parameters' fit. \\ \hline
+\textit{function} & The function to use to fit this mass. Options are currently either \textit{Gaussian} or \textit{GramCharlier}. \\ \hline
+\textit{hermite\_coeffs} & Only applicable when using \textit{GramCharlier}. This is a list of coefficients for each mass being fitted. If set to one the term is included within the fit. If set to zero it is excluded from the fit\\ \hline
+\textit{k\_free} & Only applicable when using \textit{GramCharlier}. If this flag is set to true the FSE coefficient is not tied to a value. If false it is set to a value dependant on the \textit{sears\_flag}.\\ \hline
+\textit{sears\_flag} & Only applicable when using \textit{GramCharlier}. If the \textit{k\_free} flag is set to false, this flag will control what the FSE coefficient gets tied too. If set to one it is tied to $width\times\sqrt{\frac{2}{12}}$\\ \hline
+\end{tabular}
+\caption{Table listing the options for defining a mass to be fitted.}
+\label{table:mass-parameters}
+\end{table}
 
 \section{Diffraction}
 \label{sec:diffraction}
-Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used as part of the 
+Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments.
 
-\section{Calibration}
+\section{Calibration of Instrument Parameters}
 \label{sec:calibration}
+The calibration routines for Vesuvio have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
+
+The calibration fit program can either fit using a list of incident energies as the reference point for the expected centre point of a recoil peak in time-of-flight data or by taking a list of $d$-spacings and calculating the position of Bragg peaks. The algorithm also requires a file containing a set of reference parameters with which to calculate the expected peak positions. This is analogous to the procedures described in Ref. \cite{mayers2011calibration} where hand measure parameters were used as starting values and the fitting program used to incrementally converge on the true value of the instrument parameters.
+
+The analysis program makes use of the fit program to fit all of the parameters in the order defined by the original Vesuvio calibration paper \cite{mayers2011calibration}, starting with the incident flight path and time delay using well defined uranium sample runs, then computing the values of the final energy and hence the final flight path and finally the scattering angles for all detectors.
 
 \section{GUI}
 \label{sec:GUI}
+Vesuvio does not currently have any GUI support within Mantid. Focus on development has been to get the underlying reduction and analysis routines working before focusing on feasibility. The current plan of Vesuvio is to have a completely new GUI under the indirect geometry section of Mantid. The current design would be to have a series of three tabs on the interface which would each deal with a separate part of reduction and analysis.
+
+\begin{itemize}
+\item \textbf{Loading:} This tab would broadly handle the procedures described in section \ref{sec:viewtof} and would provide a user interface for using the LoadVesuvio algorithm to get raw data into Mantid as well as providing plotting functions for examining the captured time-of-flight data.
+
+\item \textbf{Corrections:} The corrections tab would provide a user interface for calculating both multiple scattering and gamma background corrections and applying them to data loaded in the first tab.
+
+\item \textbf{Fitting:} The fitting interface is the most complex in the series. This will provide support for setting up a fit using the same procedures used in the ncs.py module, but in a more user friendly manner than the current implementation achieves. This would provide support for both the Gaussian and Gram-Charlier functions as well as the ability to set the intensity constraints and hermite coefficients.
+\end{itemize}
+
+The number and function of the tabs on the interface may change as development progresses. For example, there is a currently goal to support fitting a sample directly in y-space. It may be possible to integrate this with the fitting tab mentioned above, or depending on requirements, may be split to a fourth tab.
 
 \section{Visualisation}
 \label{sec:visualisation}
+Vesuvio analysis requires a few custom plotting commands to display data in a ways which are not currently supported by the general Mantid framework. The final tab in the series would provide a user interface to allow the user to examine there data more easily with some helper functions which exist in the ncs\_plotting.py module. This is implemented as a single plot function with options to plot data by spectra, scattering angle, or bank.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/plot-angle.png}
+\caption{Plot of some raw time-of-flight data using the ncs\_plotting module using the script in listing \ref{lst:plot-angle}. Checking the spectrum numbers in the key shows that the scattering angles of 33$^\circ$ and 32$^\circ$ have been plotted.}
+\label{fig:plot-angle}
+\end{figure}
+
+Table \ref{table:plotting-parameters} lists all of the currently supported plotting commands. This function replicates the functionality for the various plotting routines that the old data analysis package had. The listing \ref{lst:plot-angle} shows a basic example of plotting some spectra from a raw workspace by angle using the ncs\_plotting module. Figure \ref{fig:plot-angle} shows the resulting plot.
+
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+import ncs_plotting
+
+runs = "14188-14195"
+spectra = "3-195"
+diff_type="SingleDifference" # Allowed values=Single,Double,Thick
+ip_file = "IP0004_10.par"
+
+raw_ws = LoadVesuvio(Filename=runs, SpectrumList=spectra,
+		     Mode=diff_type,InstrumentParFile=ip_file)
+raw_ws = CropWorkspace(raw_ws,XMin=50.0,XMax=562.0)
+
+ncs_plotting.plot(raw_ws, angles=(30,35))
+\end{minted}
+\caption{Example python code showing how to plot spectra in a workspace within the scattering range of 30-35$^\circ$ using the ncs\_plotting module.}
+\label{lst:plot-angle}
+\end{listing}
+
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ l p{15cm}}
+Name & Description \\ \hline
+\textit{spectra} & Plot a single spectrum or, given a list of indices, plot any number of spectra. \\ \hline
+\textit{angles} & Plot by scattering angle given a list/tuple of size two specifying the minimum and maximum angles in the range. \\ \hline
+\textit{bank} & Plot a single bank or, given a list of bank numbers, plot any number of banks with the inclusive range of 1-8. \\ \hline
+\textit{errors} & Create the plot with error bars shown. Default is false. \\ \hline
+\textit{sum} & Sum all spectra falling within the range defined by the angle/spectra/bank options. This is applied independently to each workspace is there is more than one. Default is false.\\ \hline
+\textit{fig} & If supplied the a new window will not be created, but the new plot will be attached to the existing figure referenced by \textit{fig}\\ \hline
+\textit{clrfig} & If supplied the given window will be clear before the new plot is drawn. \\ \hline
+\end{tabular}
+\caption{Table listing the options that can be used in conjunction with the plot function.}
+\label{table:plotting-parameters}
+\end{table}
 
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{references}

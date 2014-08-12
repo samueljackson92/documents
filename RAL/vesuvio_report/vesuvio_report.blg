@@ -16,45 +16,45 @@ Repeated entry---line 125 of file references.bib
 I'm skipping whatever remains of this entry
 Warning--empty journal in mantid
 Warning--empty year in mantidgithubncs
-You've used 11 entries,
+You've used 12 entries,
             2481 wiz_defined-function locations,
-            622 strings with 6444 characters,
-and the built_in function-call counts, 4122 in all, are:
-= -- 332
-> -- 222
+            631 strings with 6716 characters,
+and the built_in function-call counts, 4586 in all, are:
+= -- 368
+> -- 255
 < -- 7
-+ -- 88
-- -- 66
-* -- 340
-:= -- 670
-add.period$ -- 35
-call.type$ -- 11
-change.case$ -- 22
-chr.to.int$ -- 11
-cite$ -- 14
-duplicate$ -- 201
-empty$ -- 376
-format.name$ -- 82
-if$ -- 854
++ -- 100
+- -- 76
+* -- 385
+:= -- 747
+add.period$ -- 38
+call.type$ -- 12
+change.case$ -- 24
+chr.to.int$ -- 12
+cite$ -- 15
+duplicate$ -- 220
+empty$ -- 414
+format.name$ -- 93
+if$ -- 948
 int.to.chr$ -- 1
-int.to.str$ -- 12
-missing$ -- 10
-newline$ -- 65
-num.names$ -- 30
-pop$ -- 90
+int.to.str$ -- 13
+missing$ -- 11
+newline$ -- 70
+num.names$ -- 33
+pop$ -- 97
 preamble$ -- 1
-purify$ -- 11
+purify$ -- 12
 quote$ -- 0
-skip$ -- 115
+skip$ -- 125
 stack$ -- 0
-substring$ -- 174
-swap$ -- 24
+substring$ -- 201
+swap$ -- 26
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 74
+type$ -- 81
 warning$ -- 2
-while$ -- 31
+while$ -- 35
 width$ -- 0
-write$ -- 150
+write$ -- 163
 (There were 3 error messages)

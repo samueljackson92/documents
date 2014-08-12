@@ -5,7 +5,7 @@
 \contentsline {section}{\numberline {4}Viewing Data in Time-of-Flight}{4}{section.4}
 \contentsline {section}{\numberline {5}Multiple Scattering and Gamma Background Corrections}{5}{section.5}
 \contentsline {section}{\numberline {6}Fitting}{6}{section.6}
-\contentsline {section}{\numberline {7}Diffraction}{7}{section.7}
-\contentsline {section}{\numberline {8}Calibration}{7}{section.8}
-\contentsline {section}{\numberline {9}GUI}{7}{section.9}
-\contentsline {section}{\numberline {10}Visualisation}{7}{section.10}
+\contentsline {section}{\numberline {7}Diffraction}{8}{section.7}
+\contentsline {section}{\numberline {8}Calibration of Instrument Parameters}{8}{section.8}
+\contentsline {section}{\numberline {9}GUI}{9}{section.9}
+\contentsline {section}{\numberline {10}Visualisation}{9}{section.10}
