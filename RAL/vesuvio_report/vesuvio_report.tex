@@ -62,7 +62,7 @@
 
 %%% Title	
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
-		\huge \strut Vesuvio Data Reduction and Analysis in Mantid \strut \\
+		\huge \strut VESUVIO Data Reduction and Analysis in Mantid \strut \\
 }
 \author{ 									\usefont{OT1}{bch}{m}{n}
         Samuel Jackson\\		\usefont{OT1}{bch}{m}{n}
@@ -79,35 +79,35 @@
 \tableofcontents
 \clearpage
 \begin{abstract}
-VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating at high energies in the 1 eV range and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
+VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating at high energies in the 1 eV range and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines written for VESUVIO with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
 \end{abstract}
 
 \section{Introduction}
 \label{sec:introduction}
-\subsection{Vesuvio Overview}
-\label{subsec:vesuvio-overview}
-Vesuvio is a deep inelastic neutron scattering spectrometer situated on the S2 beamline at ISIS with an operational energy range of 5-150 eV. The instrument utilises a indirect geometry design with the final energy being fixed at 4.89 eV \cite{mayers2011calibration} and consists of 64 Yttrium Aluminium Perovskite $\gamma$-ray forward scattering detectors in 8 separate banks and 132 $^6$Li doped glass scintillator back scattering detectors split into 3 banks. The final energy for both forward and back scattering detectors are determined using gold foils which have a large resonance peak at 4.9 eV $\pm$ 0.15 eV. 
+\subsection{VESUVIO Overview}
+\label{subsec:VESUVIO-overview}
+VESUVIO is a deep inelastic neutron scattering spectrometer situated on the S2 beamline at ISIS with an operational energy range of 5-150 eV. The instrument utilises a indirect geometry design with the final energy being fixed at 4.89 eV \cite{mayers2011calibration} and consists of 64 Yttrium Aluminium Perovskite $\gamma$-ray forward scattering detectors in 8 separate banks and 132 $^6$Li doped glass scintillator back scattering detectors split into 3 banks. The final energy for both forward and back scattering detectors are determined using gold foils which have a large resonance peak at 4.9 eV $\pm$ 0.15 eV. 
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{img/vesuvio-diagram.png}
-\caption{Schematic diagram of the Vesuvio instrument. Positions of the gold foils used for each of the differencing methods are shown in yellow.}
-\label{fig:vesuvio-diagram}
+\caption{Schematic diagram of the VESUVIO instrument. Positions of the gold foils used for each of the differencing methods are shown in yellow.}
+\label{fig:VESUVIO-diagram}
 \end{figure}
 
 The forward scattering detectors make use of the difference technique described in Ref. \cite{schooneveld2006foil} which use the gold foils both as detectors and energy selectors by detecting the $\gamma$-ray cascade emitted when a neutron is absorbed. The back scattering detectors utilise a similar process but use a double differencing technique described in Ref. \cite{seeger1985double}.
 
-Vesuvio is primarily designed to measure the atomic momentum distribution of atoms in condensed matter systems. Data analysis on Vesuvio relies on the accuracy of the impulse approximation which implies that for incident neutron wavelengths much less than the $d$-spacing of the sample, atoms will scatter incoherently and the measured intensity is therefore the total sum of intensities for individual atoms in the sample \cite{fernandezalonso2013neutron}. This effectively treats the scattering as a single atom 'billiard ball', with conservation of momentum and kinetic energy of a neutron a single target atom, allowing the momentum distribution of a mass to be measured using the theory developed in Ref. \cite{mayers2004vesuvio}.
+VESUVIO is primarily designed to measure the atomic momentum distribution of atoms in condensed matter systems. Data analysis on VESUVIO relies on the accuracy of the impulse approximation which implies that for incident neutron wavelengths much less than the $d$-spacing of the sample, atoms will scatter incoherently and the measured intensity is therefore the total sum of intensities for individual atoms in the sample \cite{fernandezalonso2013neutron}. This effectively treats the scattering as single atom `billiard ball' scattering, with conservation of momentum and kinetic energy of and a neutron a single target atom, allowing the momentum distribution of a mass to be measured using the theory developed in Ref. \cite{mayers2004vesuvio}.
 
-The resulting time-of-flight data contains a number of spectra each consisting of a series of peaks. Each of these peaks corresponds to a single atomic mass in the sample begins studied. The positions of the peaks in the spectrum are determined by the mass of the sample. The amplitude of each of the peaks is determined by an atoms mass and scattering cross section. Finally, the width of the peaks is determined by the momentum distribution of the mass. The goal of data analysis of Vesuvio data is to determine the shape and intensity of the peaks, thereby determining the momentum distributions of the atoms in the sample. \cite{mayers2010user}.
+The resulting time-of-flight data contains a number of spectra each consisting of a series of peaks. Each of these peaks corresponds to a single atomic mass in the sample begins studied. The positions of the peaks in the spectrum are determined by the mass of the sample. The amplitude of each of the peaks is determined by an atom's mass and scattering cross section. Finally, the width of the peaks is determined by the momentum distribution of the mass. The goal of data analysis of VESUVIO data is to determine the shape and intensity of the peaks, thereby determining the momentum distributions of the atoms in the sample. \cite{mayers2010user}.
 
 \subsection{Introduction to the NCS data analysis module}
 \label{subsec:intro-data-analysis}
-The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. Currently, the simplest way of including the ncs python module in Mantid is to place the files \textit{ncs.py} and \textit{ncs\_plotting.py} in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
+The Mantid development team in combination with VESUVIO instrument scientists have created a data analysis package to help aid with the analysis of VESUVIO data. This is still a working in progress and under heavy development. Currently it is in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of helper functions and classes for data analysis which builds upon the existing Mantid framework. This module is publicly available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. The simplest way of including the ncs python module in Mantid is to place the files \textit{ncs.py} and \textit{ncs\_plotting.py} in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
 
 \section{Viewing Data in Time-of-Flight}
 \label{sec:viewtof}
-The original data analysis package \cite{mayers2010user} used two separate commands to process the raw time-of-flight data, one for the front scattering detectors and one for the back scattering. In the Mantid implementation this has been replaced with a single algorithm called LoadVesuvio which performs all of the processing for raw files from the instrument. This includes options for handling each of the different foil positions and difference techniques available with Vesuvio \citep{schooneveld2006foil, mayers2004vesuvio} and handles the summing multiple runs. It also contains a flag for summing each spectrum in the desired range into a single spectrum. The results of this loading operation are output as a single workspace in Mantid with units in time-of-flight which can be plotted using both Mantid's in built visualisation tools and custom plotting commands described in \ref{sec:visualisation}.
+The original data analysis package \cite{mayers2010user} used two separate commands to process the raw time-of-flight data, one for the front scattering detectors and one for the back scattering. In the Mantid implementation this has been replaced with a single algorithm called LoadVesuvio which performs all of the processing for raw files from the instrument. This includes options for handling each of the different foil positions and difference techniques available with VESUVIO \citep{schooneveld2006foil, mayers2004vesuvio} and handles the summing multiple runs. It also contains a flag for summing each spectrum in the desired range into a single spectrum. The results of this loading operation are output as a single workspace in Mantid with units in time-of-flight which can be plotted using both Mantid's in built visualisation tools and custom plotting commands described in \ref{sec:visualisation}.
 
 \begin{figure}[H]
 \centering
@@ -116,9 +116,9 @@ The original data analysis package \cite{mayers2010user} used two separate comma
 \label{fig:tof-spectrum}
 \end{figure}
 
-Optionally, an instrument parameter file can be supplied to the loading routine. This file contains a set of calibrated instrument parameters for each of the detectors and can correct each of the default parameters used and attach $t0$ (the time delay offset parameter) \cite{mayers2011calibration} to the instrument attached to the workspace. This parameter file is usually generated by the instrument scientist using a set of reference runs using the calibration program outlined in section \ref{sec:calibration} and does not need to be regenerated for every analysis session. 
+Optionally, an instrument parameter file can be supplied to the loading routine. This file contains a set of calibrated instrument parameters for each of the detectors and can correct each of the default parameters used and attach the $t0$ parameter (the time delay offset)\cite{mayers2011calibration} to the instrument attached to the workspace. This parameter file is usually generated by the instrument scientist using a set of reference runs using the calibration program outlined in section \ref{sec:calibration} and does not need to be regenerated for every analysis session. 
 
-Once a Vesuvio data has been loaded into a Mantid workspace it can be used with the various tools in the ncs data analysis module. Typically the first step after loading the raw data in time-of-flight is to crop the workspace to a sensible range for data analysis. This can be done by using the Mantid CropWorkspace algorithm. The typically time-of-flight range used is 50.0 - 562.0 $\mu s$.
+Once VESUVIO data has been loaded into a Mantid workspace it can be used with the various tools in the ncs data analysis module. Typically the first step after loading the raw data in time-of-flight is to crop the workspace to a sensible range for data analysis. This can be done by using the Mantid CropWorkspace algorithm. The typical time-of-flight range used is 50.0 - 562.0 $\mu s$.
 
 \begin{listing}[H]
 \begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
@@ -132,17 +132,17 @@ raw_ws = LoadVesuvio(Filename=runs, SpectrumList=spectra,
 		     Mode=diff_type,InstrumentParFile=ip_file)
 raw_ws = CropWorkspace(raw_ws,XMin=50.0,XMax=562.0)
 \end{minted}
-\caption{Example script showing how to load data and crop Vesuvio data using the Mantid python API.}
+\caption{Example script showing how to load data and crop VESUVIO data using the Mantid python API.}
 \label{lst:loading-data}
 \end{listing}
 
-The ncs.py module also provides a preprocessing function for further preparing the data for analysis. This method provides options for masking data points in the raw workspace given an error threshold as well as an option to smooth the workspace using the SmoothData algorithm.
+The ncs.py module also provides a preprocessing function for further preparing the data for analysis. This method provides options for masking data points in the raw workspace given an error threshold as well as an option to smooth the workspace using the SmoothData algorithm. This requires a \textit{FitOptions} object to be supplied (see section \ref{sec:fitting}).
 
 \section{Multiple Scattering and Gamma Background Corrections}
 \label{sec:corrections}
-The time-of-flight data loaded using the methods described in section \ref{sec:viewtof} need to be corrected to account for the effects of multiple scattering \citep{mayers2002multiple} and gamma background \citep{mayers2011calculation}. Currently, the multiple scattering corrections for VESUVIO in Mantid are uder development and will be available in future release cycles.
+The time-of-flight data loaded using the methods described in section \ref{sec:viewtof} need to be corrected to account for the effects of multiple scattering \citep{mayers2002multiple} and gamma background \citep{mayers2011calculation}. Currently, the multiple scattering corrections for VESUVIO in Mantid are under development and will be available in future releases.
 
-Corrections for the gamma background are implemented using the Mantid algorithm framework as an algorithm called CalculateGammaBackground. This takes a single workspace in time-of-flight, and a fit function describing the mass spectrum of the input data and a list of workspace indices to include as part of the correction. The fit function for the mass spectrum is typically one which has been created as part of the fit routines described in section \ref{sec:fitting}. This algorithm results in two workspaces: one that contains the calculated background and a copy of the input time-of-flight workspace with the background subtracted. This function loosely corresponds to the \textit{bcorr} command in the old data analysis package.
+Corrections for the gamma background are implemented using the Mantid algorithm framework as an algorithm called \textit{CalculateGammaBackground}. This takes a single workspace in time-of-flight, and a fit function describing the mass spectrum of the input data and a list of workspace indices to include as part of the correction. The fit function for the mass spectrum is typically one which has been created as part of the fit routines described in section \ref{sec:fitting}. This algorithm results in two workspaces: one that contains the calculated background and a copy of the input time-of-flight workspace with the background subtracted. This function loosely corresponds to the \textit{bcorr} command in the old data analysis package.
 
 \begin{figure}[H]
 \centering
@@ -151,7 +151,7 @@ Corrections for the gamma background are implemented using the Mantid algorithm 
 \label{fig:corrections-gamma}
 \end{figure}
 
-Again, there are helper functions for this implemented in ncs.py. The gamma background can be computed from a workspace simply by using the \textit{gamma\_correct} function and passing the workspace to correct, the required fitting options, and the parameter workspace produced from a fit (see section \ref{sec:fitting}). Listing \ref{lst:gamma-correction} shows the code to perform a gamma correction on a workspace that has already been fitted.
+There are helper functions for this implemented in ncs.py. The gamma background can be computed from a workspace simply by using the \textit{gamma\_correct} function and passing the raw workspace to correct, the required fitting options, and the parameter workspace produced from a fit (see section \ref{sec:fitting}). Listing \ref{lst:gamma-correction} shows the code to perform a gamma correction on a workspace that has already been fitted.
 
 \begin{listing}[H]
 \begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
@@ -167,11 +167,11 @@ background, corrected = ncs.gamma_correct(raw_ws, fit_options, params_ws)
 
 \section{Fitting}
 \label{sec:fitting}
-The majority of the development for integrating Vesuvio into Mantid has concerned the development of the fitting procedures required to measure the neutron compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions was required which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily setup a fit given the appropriate parameters for the sample and are available in the ncs.py module.
+The majority of the work to integrate VESUVIO into Mantid has been concerned with the development of the fitting procedures required to measure the neutron Compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions was required which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily setup a fit given the appropriate parameters for the sample and are available in the ncs.py module. These will eventually be folded into a GUI for VESUVIO (see section \ref{sec:GUI}).
 
-There are two major fit functions used in the analysis of Vesuvio data. The \textit{GaussianComptonProfile} defines a function for fitting the simpler Gaussian approximation to mass peaks. The \textit{GramChalierComptonProfile} is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. The theory behind both of these functions are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}. Both functions are implemented as standard Mantid fit functions are therefore directly accessible through the fit wizard.
+There are two major fit functions used in the analysis of VESUVIO data. The \textit{GaussianComptonProfile} defines a function for fitting the simpler Gaussian approximation to mass peaks. The \textit{GramChalierComptonProfile} is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. The theory behind both of these functions are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}. Both functions are implemented as standard Mantid fit functions are are therefore directly accessible through the fit wizard.
 
-The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a \textit{FitOptions} object must be created from ncs.py and set up with the appropriate options relative to the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py \textit{FitOptions} class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the \textit{FitOptions} class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
+The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a \textit{FitOptions} object must be created from ncs.py and set up with the appropriate options for the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py \textit{FitOptions} class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the \textit{FitOptions} class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
 
 \subsection{Fitting the data to obtain sample compositions and kinetic energies}
 \label{subsec:fitting-composition-kinetic}
@@ -272,7 +272,7 @@ The final step in analysis is to simultaneously fit data across all detectors us
 
 \section{Diffraction}
 \label{sec:diffraction}
-Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments. Preliminary trials with the existing implementation for other indirect instruments have shown that this should simply be a matter of adding the appropriate parameters for monitor thickness, attenuation, and area to Vesuvio's instrument parameter file.
+Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments. Preliminary trials with the existing implementation for other indirect instruments have shown that this should simply be a matter of adding the appropriate parameters for monitor thickness, attenuation, and area to VESUVIO's instrument parameter file.
 
 \section{Resolution Calculation}
 Calculation of the resolution of a particular mass in a sample can be performed using the \textit{calculate\_resolution} function in ncs.py. This uses the same method to calculate the resolution that is used in the fit function described in section \ref{sec:fitting}. The output of running this function is a workspace with a single spectrum for the calculated resolution. Figure \ref{fig:resolution} shows a plot of the resolution for hydrogen and listing \ref{lst:resolution} shows the python code that generated the workspace shown in the plot.
@@ -302,13 +302,13 @@ mass = 1.0079
 raw_ws = ConvertToYSpace(raw_ws, mass)
 ncs.calculate_resolution(raw_ws, mass)
 \end{minted}
-\caption{Example script showing how to load data and crop Vesuvio data using the Mantid python API.}
+\caption{Example script showing how to load data and crop VESUVIO data using the Mantid python API.}
 \label{lst:resolution}
 \end{listing}
 
 \section{Calibration of Instrument Parameters}
 \label{sec:calibration}
-The calibration routines for Vesuvio have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
+The calibration routines for VESUVIO have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
 
 
 \begin{figure}[H]
@@ -320,11 +320,11 @@ The calibration routines for Vesuvio have been implemented as two Mantid algorit
 
 The calibration fit program can either fit using a list of incident energies as the reference point for the expected centre point of a recoil peak in time-of-flight data or by taking a list of $d$-spacings and calculating the position of Bragg peaks. The algorithm also requires a file containing a set of reference parameters with which to calculate the expected peak positions. This is analogous to the procedures described in Ref. \cite{mayers2011calibration} where hand measure parameters were used as starting values and the fitting program used to incrementally converge on the true value of the instrument parameters.
 
-The analysis program makes use of the fit program to fit all of the parameters in the order defined by the original Vesuvio calibration paper \cite{mayers2011calibration}, starting with the incident flight path and time delay using well defined uranium sample runs, then computing the values of the final energy and hence the final flight path and finally the scattering angles for all detectors.
+The analysis program makes use of the fit program to fit all of the parameters in the order defined by the original VESUVIO calibration paper \cite{mayers2011calibration}, starting with the incident flight path and time delay using well defined uranium sample runs, then computing the values of the final energy and hence the final flight path and finally the scattering angles for all detectors.
 
 \section{GUI}
 \label{sec:GUI}
-Vesuvio does not currently have any GUI support within Mantid. Focus on development has been to get the underlying reduction and analysis routines working before focusing on feasibility. The current plan of Vesuvio is to have a completely new GUI under the indirect geometry section of Mantid. The current design would be to have a series of three tabs on the interface which would each deal with a separate part of reduction and analysis.
+VESUVIO does not currently have any GUI support within Mantid. Focus on development has been to get the underlying reduction and analysis routines working before focusing on feasibility. The current plan of VESUVIO is to have a completely new GUI under the indirect geometry section of Mantid. The current design would be to have a series of three tabs on the interface which would each deal with a separate part of reduction and analysis.
 
 \begin{itemize}
 \item \textbf{Loading:} This tab would broadly handle the procedures described in section \ref{sec:viewtof} and would provide a user interface for using the LoadVesuvio algorithm to get raw data into Mantid as well as providing plotting functions for examining the captured time-of-flight data.
@@ -338,7 +338,7 @@ The number and function of the tabs on the interface may change as development p
 
 \section{Visualisation}
 \label{sec:visualisation}
-Vesuvio analysis requires a few custom plotting commands to display data in a ways which are not currently supported by the general Mantid framework. The final tab in the series would provide a user interface to allow the user to examine there data more easily with some helper functions which exist in the ncs\_plotting.py module. This is implemented as a single plot function with options to plot data by spectra, scattering angle, or bank.
+VESUVIO analysis requires a few custom plotting commands to display data in a ways which are not currently supported by the general Mantid framework. The final tab in the series would provide a user interface to allow the user to examine there data more easily with some helper functions which exist in the ncs\_plotting.py module. This is implemented as a single plot function with options to plot data by spectra, scattering angle, or bank.
 
 \begin{figure}[H]
 \centering

@@ -11,19 +11,19 @@ J~Mayers and G~Reiter.
 \newblock Measurement Science and Technology, 23\penalty0 (4):\penalty0 045902,
   2012.
 
-\bibitem[Mayers and Adams(2011)]{mayers2011calibration}
-J~Mayers and MA~Adams.
-\newblock \emph{Calibration of an electron volt neutron spectrometer}.
-\newblock Nuclear Instruments and Methods in Physics Research Section A:
-  Accelerators, Spectrometers, Detectors and Associated Equipment, 625\penalty0
-  (1):\penalty0 47--56, 2011.
-
 \bibitem[Project(2013)]{mantid}
 Mantid Project.
 \newblock \emph{Mantid: Manipulation and Analysis Toolkit for Instrument Data}.
 \newblock 2013.
 \newblock \doi{10.5286/SOFTWARE/MANTID}.
 \newblock URL \url{http://dx.doi.org/10.5286/SOFTWARE/MANTID}.
+
+\bibitem[Mayers and Adams(2011)]{mayers2011calibration}
+J~Mayers and MA~Adams.
+\newblock \emph{Calibration of an electron volt neutron spectrometer}.
+\newblock Nuclear Instruments and Methods in Physics Research Section A:
+  Accelerators, Spectrometers, Detectors and Associated Equipment, 625\penalty0
+  (1):\penalty0 47--56, 2011.
 
 \bibitem[Schooneveld et~al.(2006)Schooneveld, Mayers, Rhodes, Pietropaolo,
   Andreani, Senesi, Gorini, Perelli-Cippo, and Tardocchi]{schooneveld2006foil}
