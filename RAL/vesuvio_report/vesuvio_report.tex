@@ -56,6 +56,7 @@
 \usepackage{hyperref}
 \usepackage[numbers]{natbib}															% Tablenumbering: section.tab#
 \usepackage{minted}
+\usepackage[toc,page]{appendix}
 
 
 
@@ -101,7 +102,7 @@ The resulting time-of-flight data contains a number of spectra each consisting o
 
 \section{Introduction to the Vesuvio Data Analysis Package}
 \label{sec:intro-data-analysis}
-The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. Currently, the simplest way of including the ncs python module in Mantid is to place it in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
+The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. Currently, the simplest way of including the ncs python module in Mantid is to place the files \textit{ncs.py} and \textit{ncs\_plotting.py} in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
 
 \section{Viewing Data in Time-of-Flight}
 \label{sec:viewtof}
@@ -167,7 +168,25 @@ background, corrected = ncs.gamma_correct(raw_ws, fit_options, params_ws)
 \label{sec:fitting}
 The majority of the development for integrating Vesuvio into Mantid has concerned the development of the fitting procedures required to measure the neutron compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions was required which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily setup a fit given the appropriate parameters for the sample and are available in the ncs.py module.
 
-There are two major fit functions used in the analysis of Vesuvio data. The GaussianComptonProfile defines a function for fitting the simpler Gaussian approximation to mass peaks. The GramChalierComptonProfile is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. Both of these are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}.
+There are two major fit functions used in the analysis of Vesuvio data. The \textit{GaussianComptonProfile} defines a function for fitting the simpler Gaussian approximation to mass peaks. The \textit{GramChalierComptonProfile} is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. The theory behind both of these functions are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}. Both functions are implemented as standard Mantid fit functions are therefore directly accessible through the fit wizard.
+
+The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a \textit{FitOptions} object must be created from ncs.py and set up with the appropriate options relative to the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py \textit{FitOptions} class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the \textit{FitOptions} class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
+
+\subsection{Fitting the data to obtain sample compositions and kinetic energies}
+\label{subsec:fitting-composition-kinetic}
+
+The simplest mode of analysis is to assume that each of the peaks in momentum space is of Gaussian shape \cite{mayers2011calibration}. Using the amplitudes and widths obtained for the fit the composition of the sample and the atomic kinetic energies may be determined. Listing \ref{lst:fit-setup} shows a basic example of how to use the \textit{FitOptions} class to set up fit for the aluminium and zirconium masses in the sample.
+
+Fitting the data shown in listing \ref{lst:loading-data} with the parameters defined in listing \ref{lst:fit-setup} produces three workspaces. One containing the fit of the composite function and individual mass profiles to the raw data, a table workspace of parameters for the fit, and a table workspace for the normalised covariance matrix of the fit. These workspaces are in fact just the standard output from the Mantid Fit algorithm. A plot of the fit using the Gaussian approximation function to two mass peaks for aluminium and zirconium is shown in \ref{fig:gaussian-example-fit}. Comparing this to the original example in Ref. \cite{mayers2010user} shows a good correlation between implementations.
+
+The fitted amplitudes and widths of the sample can be examined by looking at the parameters table produced by the fit. In the original VMS data analysis package a routine called \textit{ke} was used to calculate the kinetic energy in meV and K and the fundamental frequency in meV and cm$^{-1}$ \cite{mayers2010user}. There is currently no direct implementation of this program in Mantid.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/gaussian-fit-example.png}
+\caption{Plot of the fitted time-of-flight data from the sum runs 14188-14195 at the scattering angle of 163 degrees for a sample of ZrH$_2$. The black line shows the original data, the red line shows the fit to the data is in red, and the individual contributing peaks are in green (aluminium) and blue (zirconium)}
+\label{fig:gaussian-example-fit}
+\end{figure}
 
 \begin{listing}[H]
 \begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
@@ -175,8 +194,8 @@ fit_options = ncs.FitOptions()
 fit_options.workspace_index = 0
 fit_options.bad_data_error = 1e6
 
-mass1 = {'value':27.0,  'widths':14.4, 'function':'Gaussian', }
-mass2 = {'value':91, 'widths':26.6, 'function':'Gaussian'}
+mass1 = {'value':27.0,  'widths':[12,14.4, 16], 'function':'Gaussian', }
+mass2 = {'value':91, 'widths':[24, 26.6, 28], 'function':'Gaussian'}
 fit_options.masses = [mass1, mass2]
 
 ncs.preprocess(raw_ws, fit_options)
@@ -187,58 +206,84 @@ ncs.display_fit_output(reduced_chi_square, params_ws,fit_options)
 \label{lst:fit-setup}
 \end{listing}
 
-The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a FitOptions object must be created from ncs.py and set up with the appropriate options relative to the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py FitOptions class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the FitOptions class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
+The momentum distribution of atoms has a strictly Gaussian shape only when bound by isotropic harmonic forces. The shape of the momentum distribution $n(p)$ \cite{mayers2004vesuvio}, is of interest as this contains information about the anisotropy of the binding and anharmonic effects \cite{andreani2005measurement}. In this case the data can be fitted using the \textit{GramCharlier} function. 
+
+Setting up such a fit is very similar to the procedure described for the Gaussian approximation. Each mass being fitted using the expansion requires some additional parameters describing the hermite coefficients to be used in the fit and what the Final State Effects (FSE) coefficient should be tied too. See appendix \ref{sec:fit-options} for more details on the available options. Listing \ref{lst:fit-gram-charlier-setup} shows an example of setting up such a fit using the data for the ZrH$_2$ sample.
+
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+fit_options = ncs.FitOptions()
+fit_options.workspace_index = 0
+fit_options.bad_data_error = 1e6
+
+mass1 = {'value':1.0079, 'widths':[2,5,7], 'function':'GramCharlier', 
+         'hermite_coeffs':[1,0,0],'k_free':False, 'sears_flag':1}
+mass2 = {'value':27.0,  'widths':14.4, 'function':'Gaussian', }
+mass3 = {'value':91, 'widths':26.6, 'function':'Gaussian'}
+fit_options.masses = [mass1, mass2, mass3]
+
+ncs.preprocess(raw_ws, fit_options)
+reduced_chi_square, params_ws = ncs.run_fit(raw_ws, fit_options)
+ncs.display_fit_output(reduced_chi_square, params_ws,fit_options)
+\end{minted}
+\caption{Example script for setting up a fit to the ZrH$_2$ sample using ncs.py. In this example, the widths of each of the masses except hydrogen has been fixed using ``widths'' attribute}
+\label{lst:fit-gram-charlier-setup}
+\end{listing}
+
+
+\subsection{Fitting to determine momentum distributions}
+\label{subsec:fitting-momentum-distributions}
+In order to fit the data to determine the momentum distribution the raw data needs to first be to be normalised by the area of the peak. This removes the effects of different detector efficiencies and solid angles. The Mantid algorithm \textit{NormaliseByPeakArea} has been created to handle this step. This algorithm directly replaces the implementation of the \textit{isofile} command in the original data analysis package \cite{mayers2010user}. This algorithm will:
+
+\begin{enumerate}
+\item Transform the fitted data to y-space using the algorithm \textit{ConvertToYSpace}.
+\item Fit the hydrogen peak in y-space.
+\item Divide the time of flight data by the area of the fitted peak in momentum space.
+\end{enumerate}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.6\textwidth]{img/gaussian-fit-example.png}
-\caption{Plot of the fitted time-of-flight data from the sum runs 14188-14195 at the scattering angle of 163 degrees for a sample of ZrH$_2$. The black line shows the original data, the red line shows the fit to the data is in red, and the individual contributing peaks are in green (aluminium) and blue (zirconium)}
-\label{fig:gaussian-example-fit}
+\includegraphics[width=0.6\textwidth]{img/yspace-norm.png}
+\caption{Plot of the time-of-flight data normalised and converted to y-space as the black line (behind the green). The red line shows the fit to the peak and the green line shows the symmetrised workspace which is in good agreement with y-space data.}
+\label{fig:yspace-norm}
 \end{figure}
 
-Fitting the data show in listing \ref{lst:loading-data} with the parameters defined in listing \ref{lst:fit-setup} produces three workspaces. One containing the fit of the composite function and individual mass profiles to the raw data, a table workspace of parameters for the fit, and a table workspace for the normalised covariance matrix of the fit. These workspace are in fact just the standard output from the Mantid Fit algorithm. A plot of the fit using the Gaussian approximation function to two mass peaks for aluminium and zirconium is shown in \ref{fig:gaussian-example-fit}. Comparing this to the original example in Ref. \cite{mayers2010user} shows a good correlation between implementations.
+The \textit{NormaliseByPeakArea} algorithm produces four workspaces:
 
+\begin{itemize}
+\item \textbf{OutputWorkspace - } This workspace is the time-of-flight workspace supplied as input to the algorithm normalised by the area of the fitted peak.
+\item \textbf{YSpaceDataWorkspace - } This is the time-of-flight workspace converted to y-space using the \textit{ConvertToYSpace} algorithm.
+\item \textbf{FittedWorkspace - } The value of the fit to the data.
+\item \textbf{SymmetrisedWorkspace - } The time-of-flight workspace converted to y-space and symmetrised about zero. As the momentum distribution should be symmetric about the origin, this workspace should match the \textit{YSpaceDataWorkspace}.
+\end{itemize}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{ l p{12cm}}
-Name & Description \\ \hline
-\textit{smooth\_points} & Number of data points to use in the SmoothData algorithm in the pre-processing function. If not set the data will not be smoothed. \\ \hline
-\textit{bad\_data\_error} & If set, the data will be masked if it falls outside of this error tolerance.\\ \hline
-\textit{background\_function} & The type of background to use in fitting. By default this is set to use the Polynomial background function. \\ \hline
-\textit{background\_order} & The order of the background to use.\\ \hline
-\textit{masses} & A dictionary of parameters for each mass supplied to the fit. This should include the atomic weight, function to fit (either \textit{Gaussian} or \textit{GramCharlier}) any any other parameters required by the function. \\ \hline
-\textit{constraints} & Constraints on the intensity of each mass peak. \\ \hline
-\textit{workspace\_index} & The index in the workspace to fit to. \\ \hline
-\textit{output\_prefix} & String which is prefixed to output workspaces created from the fitting. \\ \hline
-\textit{global\_fit} & Whether or not to perform a multi-dataset (global) fitting of the data. \\ \hline
-\end{tabular}
-\caption{Table listing the different fitting options available in the FitOptions class}
-\label{table:fit-parameters}
-\end{table}
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+normalised, yspace, fitted, symmetrised = \
+	NormaliseByPeakArea(InputWorkspace=raw_ws, Mass=1.0079,Sum=True)
+\end{minted}
+\caption{Example python code showing how to run the \textit{NormaliseByPeakArea} algorithm.}
+\label{lst:plot-angle}
+\end{listing}
 
-\begin{table}[H]
-\centering
-\begin{tabular}{ l p{12cm}}
-Name & Description \\ \hline
-\textit{value} & The atomic weight of the mass in amu \\ \hline
-\textit{widths} & The width of the peak. If this is set to a single number the width will be fixed to that value. If it is set to a tuple of three values the middle value is the starting value and the first and last values are the constraints on the parameters' fit. \\ \hline
-\textit{function} & The function to use to fit this mass. Options are currently either \textit{Gaussian} or \textit{GramCharlier}. \\ \hline
-\textit{hermite\_coeffs} & Only applicable when using \textit{GramCharlier}. This is a list of coefficients for each mass being fitted. If set to one the term is included within the fit. If set to zero it is excluded from the fit\\ \hline
-\textit{k\_free} & Only applicable when using \textit{GramCharlier}. If this flag is set to true the FSE coefficient is not tied to a value. If false it is set to a value dependant on the \textit{sears\_flag}.\\ \hline
-\textit{sears\_flag} & Only applicable when using \textit{GramCharlier}. If the \textit{k\_free} flag is set to false, this flag will control what the FSE coefficient gets tied too. If set to one it is tied to $width\times\sqrt{\frac{2}{12}}$\\ \hline
-\end{tabular}
-\caption{Table listing the options for defining a mass to be fitted.}
-\label{table:mass-parameters}
-\end{table}
+The final step in analysis is to simultaneously fit data across all detectors using the normalised workspace created as part of the previous section while keeping the widths of each peak tied. This roughly emulates the corresponding section described in Ref. \cite{mayers2010user} as the \textit{isofileu} program. This global fitting option is still currently under development.
+
 
 \section{Diffraction}
 \label{sec:diffraction}
-Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments.
+Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments. Preliminary trials with the existing implementation for other indirect instruments have shown that this should simply be a matter of adding the appropriate parameters for monitor thickness, attenuation, and area to Vesuvio's instrument parameter file.
 
 \section{Calibration of Instrument Parameters}
 \label{sec:calibration}
 The calibration routines for Vesuvio have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/calib-theta.png}
+\caption{Plot showing the calculated scattering angle from a Pb sample.}
+\label{fig:calib-theta}
+\end{figure}
 
 The calibration fit program can either fit using a list of incident energies as the reference point for the expected centre point of a recoil peak in time-of-flight data or by taking a list of $d$-spacings and calculating the position of Bragg peaks. The algorithm also requires a file containing a set of reference parameters with which to calculate the expected peak positions. This is analogous to the procedures described in Ref. \cite{mayers2011calibration} where hand measure parameters were used as starting values and the fitting program used to incrementally converge on the true value of the instrument parameters.
 
@@ -269,7 +314,7 @@ Vesuvio analysis requires a few custom plotting commands to display data in a wa
 \label{fig:plot-angle}
 \end{figure}
 
-Table \ref{table:plotting-parameters} lists all of the currently supported plotting commands. This function replicates the functionality for the various plotting routines that the old data analysis package had. The listing \ref{lst:plot-angle} shows a basic example of plotting some spectra from a raw workspace by angle using the ncs\_plotting module. Figure \ref{fig:plot-angle} shows the resulting plot.
+Appendix \ref{sec:plotting-options} lists all of the currently supported plotting commands. This function replicates the functionality for the various plotting routines that the old data analysis package had. The listing \ref{lst:plot-angle} shows a basic example of plotting some spectra from a raw workspace by angle using the ncs\_plotting module. Figure \ref{fig:plot-angle} shows the resulting plot.
 
 \begin{listing}[H]
 \begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
@@ -290,7 +335,48 @@ ncs_plotting.plot(raw_ws, angles=(30,35))
 \label{lst:plot-angle}
 \end{listing}
 
+\begin{appendices}
+\section{Fit Options}
+\label{sec:fit-options}
+The following two tables list all of the current options that may be supplied to the FitOptions object created from ncs.py. The first table shows the general parameters for the fit, while the second table lists the options used to define a single mass used as part of a fit.
 
+\begin{table}[H]
+\centering
+\begin{tabular}{ l p{12cm}}
+Name & Description \\ \hline
+\textit{smooth\_points} & Number of data points to use in the SmoothData algorithm in the pre-processing function. If not set the data will not be smoothed. \\ \hline
+\textit{bad\_data\_error} & If set, the data will be masked if it falls outside of this error tolerance.\\ \hline
+\textit{background\_function} & The type of background to use in fitting. By default this is set to use the Polynomial background function. \\ \hline
+\textit{background\_order} & The order of the background to use.\\ \hline
+\textit{masses} & A dictionary of parameters for each mass supplied to the fit. This should include the atomic weight, function to fit (either \textit{Gaussian} or \textit{GramCharlier}) any any other parameters required by the function. \\ \hline
+\textit{constraints} & Constraints on the intensity of each mass peak. \\ \hline
+\textit{workspace\_index} & The index in the workspace to fit to. \\ \hline
+\textit{output\_prefix} & String which is prefixed to output workspaces created from the fitting. \\ \hline
+\textit{global\_fit} & Whether or not to perform a multi-dataset (global) fitting of the data. \\ \hline
+\end{tabular}
+\caption{Table listing the different fitting options available in the FitOptions class}
+\label{table:fit-parameters}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ l p{12cm}}
+Name & Description \\ \hline
+\textit{value} & The atomic weight of the mass in amu \\ \hline
+\textit{widths} & The width of the peak. If this is set to a single number the width will be fixed to that value. If it is set to a tuple of three values the middle value is the starting value and the first and last values are the constraints on the parameters' fit. \\ \hline
+\textit{function} & The function to use to fit this mass. Options are currently either \textit{Gaussian} or \textit{GramCharlier}. \\ \hline
+\textit{hermite\_coeffs} & Only applicable when using \textit{GramCharlier}. This is a list of coefficients for each mass being fitted. If set to one the term is included within the fit. If set to zero it is excluded from the fit\\ \hline
+\textit{k\_free} & Only applicable when using \textit{GramCharlier}. If this flag is set to true the FSE (``Final State Effects'') coefficient is not tied to a value. If false it is set to a value dependant on the \textit{sears\_flag}.\\ \hline
+\textit{sears\_flag} & Only applicable when using \textit{GramCharlier}. If the \textit{k\_free} flag is set to false, this flag will control what the FSE coefficient gets tied too. If set to one it is tied to $width\times\sqrt{\frac{2}{12}}$\\ \hline
+\end{tabular}
+\caption{Table listing the options for defining a mass to be fitted.}
+\label{table:mass-parameters}
+\end{table}
+
+\section{Plotting Options}
+\label{sec:plotting-options}
+
+The following table summarises the plotting options available in the \textit{plot} routine in the ncs\_plotting.py module.
 \begin{table}[H]
 \centering
 \begin{tabular}{ l p{15cm}}
@@ -307,6 +393,7 @@ Name & Description \\ \hline
 \label{table:plotting-parameters}
 \end{table}
 
+\end{appendices}
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{references}
 \end{document}
