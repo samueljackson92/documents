@@ -78,13 +78,14 @@
 \clearpage
 \tableofcontents
 \clearpage
+\begin{abstract}
+VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating at high energies in the 1 eV range and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
+\end{abstract}
+
 \section{Introduction}
 \label{sec:introduction}
-VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating a high energy range of between 5-150 eV and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. It is located on the S2 beamline and features 64 forward scattering Yttrium Aluminium Perovskite (YAP) $\gamma$-ray detectors and 132 $^{6}$Li doped glass scintillator neutron detectors \citep{mayers2011calibration}.
-
-Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
-
-\section{Vesuvio Overview}
+\subsection{Vesuvio Overview}
+\label{subsec:vesuvio-overview}
 Vesuvio is a deep inelastic neutron scattering spectrometer situated on the S2 beamline at ISIS with an operational energy range of 5-150 eV. The instrument utilises a indirect geometry design with the final energy being fixed at 4.89 eV \cite{mayers2011calibration} and consists of 64 Yttrium Aluminium Perovskite $\gamma$-ray forward scattering detectors in 8 separate banks and 132 $^6$Li doped glass scintillator back scattering detectors split into 3 banks. The final energy for both forward and back scattering detectors are determined using gold foils which have a large resonance peak at 4.9 eV $\pm$ 0.15 eV. 
 
 \begin{figure}[H]
@@ -100,8 +101,8 @@ Vesuvio is primarily designed to measure the atomic momentum distribution of ato
 
 The resulting time-of-flight data contains a number of spectra each consisting of a series of peaks. Each of these peaks corresponds to a single atomic mass in the sample begins studied. The positions of the peaks in the spectrum are determined by the mass of the sample. The amplitude of each of the peaks is determined by an atoms mass and scattering cross section. Finally, the width of the peaks is determined by the momentum distribution of the mass. The goal of data analysis of Vesuvio data is to determine the shape and intensity of the peaks, thereby determining the momentum distributions of the atoms in the sample. \cite{mayers2010user}.
 
-\section{Introduction to the Vesuvio Data Analysis Package}
-\label{sec:intro-data-analysis}
+\subsection{Introduction to the NCS data analysis module}
+\label{subsec:intro-data-analysis}
 The Mantid development team in combination with Vesuvio instrument scientists have created a data analysis package to help aid with the analysis of Vesuvio data. This is still under heavy development and is currently in the form of a separate python module called ncs.py (NCS: Neutron Compton Scattering) which provides a collection of help functions for data analysis which builds upon the existing Mantid framework. This module is currently available in the Mantid Github scripts repository in the \textit{development \textgreater  inelastic} folder \cite{mantidgithubncs}. Currently, the simplest way of including the ncs python module in Mantid is to place the files \textit{ncs.py} and \textit{ncs\_plotting.py} in the \textit{ \textless Mantid Install \textgreater }/\textit{scripts} folder. This will allow the ncs module to be imported directly into the Mantid script window.
 
 \section{Viewing Data in Time-of-Flight}
@@ -273,6 +274,38 @@ The final step in analysis is to simultaneously fit data across all detectors us
 \label{sec:diffraction}
 Diffraction on VESUVIO is not yet fully implemented within Mantid. As the reduction of diffraction data is fairly trivial in comparison to the other requirements of VESUVIO data analysis, this can be handled by the existing IndirectDiffractionReduction routine that is used by other indirect geometry instruments. Preliminary trials with the existing implementation for other indirect instruments have shown that this should simply be a matter of adding the appropriate parameters for monitor thickness, attenuation, and area to Vesuvio's instrument parameter file.
 
+\section{Resolution Calculation}
+Calculation of the resolution of a particular mass in a sample can be performed using the \textit{calculate\_resolution} function in ncs.py. This uses the same method to calculate the resolution that is used in the fit function described in section \ref{sec:fitting}. The output of running this function is a workspace with a single spectrum for the calculated resolution. Figure \ref{fig:resolution} shows a plot of the resolution for hydrogen and listing \ref{lst:resolution} shows the python code that generated the workspace shown in the plot.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/resolution.png}
+\caption{Plot of the resolution workspace generated from listing \ref{lst:resolution}.}
+\label{fig:resolution}
+\end{figure}
+
+
+\begin{listing}[H]
+\begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
+import ncs
+
+runs = "14188-14195"
+spectra = "135-198"
+diff_type="SingleDifference" # Allowed values=Single,Double,Thick
+ip_file = "IP0004_10.par"
+
+raw_ws = LoadVesuvio(Filename=runs, SpectrumList=spectra,
+		     Mode=diff_type,InstrumentParFile=ip_file)
+raw_ws = CropWorkspace(raw_ws,XMin=50.0,XMax=562.0)
+
+mass = 1.0079
+raw_ws = ConvertToYSpace(raw_ws, mass)
+ncs.calculate_resolution(raw_ws, mass)
+\end{minted}
+\caption{Example script showing how to load data and crop Vesuvio data using the Mantid python API.}
+\label{lst:resolution}
+\end{listing}
+
 \section{Calibration of Instrument Parameters}
 \label{sec:calibration}
 The calibration routines for Vesuvio have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
@@ -393,6 +426,8 @@ Name & Description \\ \hline
 \label{table:plotting-parameters}
 \end{table}
 
+\section*{Acknowledgments}
+The author would like to thank M. Gigg and A. Seel for their knowledgeable assistance in producing this report and for aiding in the implementations the author had a hand in, and M. Gigg and R. Tolchenov who wrote the majority of the implementation presented in this document. I would also like to thank S. Mukhopadhyay for her contributions to the report.
 \end{appendices}
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{references}
