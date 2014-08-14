@@ -167,16 +167,16 @@ background, corrected = ncs.gamma_correct(raw_ws, fit_options, params_ws)
 
 \section{Fitting}
 \label{sec:fitting}
-The majority of the work to integrate VESUVIO into Mantid has been concerned with the development of the fitting procedures required to measure the neutron Compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions was required which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily setup a fit given the appropriate parameters for the sample and are available in the ncs.py module. These will eventually be folded into a GUI for VESUVIO (see section \ref{sec:GUI}).
+The majority of the work to integrate VESUVIO into Mantid has been concerned with the development of the fitting procedures required to measure the neutron Compton profile following the theory described in Ref.\citep{mayers2012vesuvio}. Development in this area has focussed on two major additions to the Mantid framework. First was the creation a new suite of fit functions which could accurately describe the results of a neutron Compton scattering experiment. The second was the creation of a collection of supporting data analysis functions which allow the user to easily set up a fit given the appropriate parameters for the sample and are available in the ncs.py module. These will eventually be folded into a GUI for VESUVIO (see section \ref{sec:GUI}).
 
-There are two major fit functions used in the analysis of VESUVIO data. The \textit{GaussianComptonProfile} defines a function for fitting the simpler Gaussian approximation to mass peaks. The \textit{GramChalierComptonProfile} is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. The theory behind both of these functions are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}. Both functions are implemented as standard Mantid fit functions are are therefore directly accessible through the fit wizard.
+There are two major fit functions used in the analysis of VESUVIO data. The \textit{GaussianComptonProfile} defines a function for fitting the simpler Gaussian approximation to mass peaks. The \textit{GramChalierComptonProfile} is for the more complex fitting case where the atoms in the sample are affected by anisotropy and anharmonicity. The theory behind both of these functions are described in detail in Refs. \cite{mayers2012vesuvio, andreani2005measurement}. Both functions are implemented as standard Mantid fit functions and are therefore directly accessible through the fit wizard.
 
-The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit, a \textit{FitOptions} object must be created from ncs.py and set up with the appropriate options for the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options required by the fitting model. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py \textit{FitOptions} class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the \textit{FitOptions} class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
+The fitting routines provided as part of ncs.py are radically different from the originals described in Ref. \cite{mayers2010user}. Currently, in order to run a fit a \textit{FitOptions} object must be created from ncs.py and set up with the appropriate options for the sample being fitted. This includes a set of parameters for each mass describing it's atomic weight, the function it should be fitted with and any additional options specific to the model used. Listing \ref{lst:fit-setup} shows an example of how to set up the parameters of a fit using the ncs.py \textit{FitOptions} class. Table \ref{table:fit-parameters} lists all of the current fitting options available in the \textit{FitOptions} class, while table \ref{table:mass-parameters} describes each of the options for defining the masses to be fitted.
 
 \subsection{Fitting the data to obtain sample compositions and kinetic energies}
 \label{subsec:fitting-composition-kinetic}
 
-The simplest mode of analysis is to assume that each of the peaks in momentum space is of Gaussian shape \cite{mayers2011calibration}. Using the amplitudes and widths obtained for the fit the composition of the sample and the atomic kinetic energies may be determined. Listing \ref{lst:fit-setup} shows a basic example of how to use the \textit{FitOptions} class to set up fit for the aluminium and zirconium masses in the sample.
+The simplest mode of analysis is to assume that each of the peaks in momentum space is of Gaussian shape \cite{mayers2004vesuvio}. Using the amplitudes and widths obtained for the fit the composition of the sample and the atomic kinetic energies may be determined. Listing \ref{lst:fit-setup} shows a basic example of how to use the \textit{FitOptions} class to set up fit for the aluminium and zirconium masses in the sample.
 
 Fitting the data shown in listing \ref{lst:loading-data} with the parameters defined in listing \ref{lst:fit-setup} produces three workspaces. One containing the fit of the composite function and individual mass profiles to the raw data, a table workspace of parameters for the fit, and a table workspace for the normalised covariance matrix of the fit. These workspaces are in fact just the standard output from the Mantid Fit algorithm. A plot of the fit using the Gaussian approximation function to two mass peaks for aluminium and zirconium is shown in \ref{fig:gaussian-example-fit}. Comparing this to the original example in Ref. \cite{mayers2010user} shows a good correlation between implementations.
 
@@ -234,11 +234,11 @@ ncs.display_fit_output(reduced_chi_square, params_ws,fit_options)
 
 \subsection{Fitting to determine momentum distributions}
 \label{subsec:fitting-momentum-distributions}
-In order to fit the data to determine the momentum distribution the raw data needs to first be to be normalised by the area of the peak. This removes the effects of different detector efficiencies and solid angles. The Mantid algorithm \textit{NormaliseByPeakArea} has been created to handle this step. This algorithm directly replaces the implementation of the \textit{isofile} command in the original data analysis package \cite{mayers2010user}. This algorithm will:
+In order to fit the data to determine the momentum distribution the raw data needs to first be normalised by the area of the peak. This removes the effects of different detector efficiencies and solid angles. The Mantid algorithm \textit{NormaliseByPeakArea} has been created to handle this step. This algorithm effectively directly replaces the implementation of the \textit{isofile} command in the original data analysis package \cite{mayers2010user}. This algorithm will:
 
 \begin{enumerate}
-\item Transform the fitted data to y-space using the algorithm \textit{ConvertToYSpace}.
-\item Fit the hydrogen peak in y-space.
+\item Transform the fitted data to y-space using the algorithm \textit{ConvertToYSpace} for a single mass.
+\item Fit the peak in y-space.
 \item Divide the time of flight data by the area of the fitted peak in momentum space.
 \end{enumerate}
 
@@ -302,13 +302,13 @@ mass = 1.0079
 raw_ws = ConvertToYSpace(raw_ws, mass)
 ncs.calculate_resolution(raw_ws, mass)
 \end{minted}
-\caption{Example script showing how to load data and crop VESUVIO data using the Mantid python API.}
+\caption{Example script showing how to calculate the resolution for a particular mass.}
 \label{lst:resolution}
 \end{listing}
 
 \section{Calibration of Instrument Parameters}
 \label{sec:calibration}
-The calibration routines for VESUVIO have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called EVSCalibrationFit, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called EVSCalibrationAnalysis. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
+The calibration routines for VESUVIO have been implemented as two Mantid algorithms following the procedures described in Ref. \cite{mayers2011calibration}. The first algorithm, called \textit{EVSCalibrationFit}, is used to fit sample data in order to accurately obtain the values of the parameters for the instrument. A second Mantid algorithm built on top of the first is used to set up and run the fitting does the actual calculation of the instrument parameters called \textit{EVSCalibrationAnalysis}. These two algorithms should only be run by instrument scientists and a calibration parameter file does not need to be recreated for every data analysis session.
 
 
 \begin{figure}[H]
@@ -318,13 +318,13 @@ The calibration routines for VESUVIO have been implemented as two Mantid algorit
 \label{fig:calib-theta}
 \end{figure}
 
-The calibration fit program can either fit using a list of incident energies as the reference point for the expected centre point of a recoil peak in time-of-flight data or by taking a list of $d$-spacings and calculating the position of Bragg peaks. The algorithm also requires a file containing a set of reference parameters with which to calculate the expected peak positions. This is analogous to the procedures described in Ref. \cite{mayers2011calibration} where hand measure parameters were used as starting values and the fitting program used to incrementally converge on the true value of the instrument parameters.
+The calibration fit program can either fit using a list of incident energies as the reference point for the expected centre point of a recoil peak in time-of-flight data or by taking a list of $d$-spacings and calculating the position of Bragg peaks. The algorithm also requires a file containing a set of reference parameters with which to calculate the expected peak positions. This is analogous to the procedures described in Ref. \cite{mayers2011calibration} where hand measured parameters were used as starting values and the fitting program used these to incrementally converge on the true value of the instrument parameters.
 
 The analysis program makes use of the fit program to fit all of the parameters in the order defined by the original VESUVIO calibration paper \cite{mayers2011calibration}, starting with the incident flight path and time delay using well defined uranium sample runs, then computing the values of the final energy and hence the final flight path and finally the scattering angles for all detectors.
 
 \section{GUI}
 \label{sec:GUI}
-VESUVIO does not currently have any GUI support within Mantid. Focus on development has been to get the underlying reduction and analysis routines working before focusing on feasibility. The current plan of VESUVIO is to have a completely new GUI under the indirect geometry section of Mantid. The current design would be to have a series of three tabs on the interface which would each deal with a separate part of reduction and analysis.
+VESUVIO does not currently have any GUI support within Mantid. Focus on development has been to get the underlying reduction and analysis routines working before focusing on usability. The current plan is for VESUVIO to have a completely new GUI listed under the indirect geometry section of Mantid. The current design would be to have a series of three tabs on the interface which would each deal with a separate part of reduction and analysis.
 
 \begin{itemize}
 \item \textbf{Loading:} This tab would broadly handle the procedures described in section \ref{sec:viewtof} and would provide a user interface for using the LoadVesuvio algorithm to get raw data into Mantid as well as providing plotting functions for examining the captured time-of-flight data.
@@ -334,11 +334,11 @@ VESUVIO does not currently have any GUI support within Mantid. Focus on developm
 \item \textbf{Fitting:} The fitting interface is the most complex in the series. This will provide support for setting up a fit using the same procedures used in the ncs.py module, but in a more user friendly manner than the current implementation achieves. This would provide support for both the Gaussian and Gram-Charlier functions as well as the ability to set the intensity constraints and hermite coefficients.
 \end{itemize}
 
-The number and function of the tabs on the interface may change as development progresses. For example, there is a currently goal to support fitting a sample directly in y-space. It may be possible to integrate this with the fitting tab mentioned above, or depending on requirements, may be split to a fourth tab.
+This is simply a loose plan based on previous discussions. The number and function of the tabs on the interface may change as development progresses. A proper design cannot be produced until the underlying framework is finalised. For example, there is a currently goal to support fitting a sample directly in y-space. It may be possible to integrate this with the fitting tab mentioned above, or depending on requirements, may be split to a fourth tab. Global fitting may well also require yet another separate interface.
 
 \section{Visualisation}
 \label{sec:visualisation}
-VESUVIO analysis requires a few custom plotting commands to display data in a ways which are not currently supported by the general Mantid framework. The final tab in the series would provide a user interface to allow the user to examine there data more easily with some helper functions which exist in the ncs\_plotting.py module. This is implemented as a single plot function with options to plot data by spectra, scattering angle, or bank.
+VESUVIO analysis requires a few custom plotting commands to display data in ways which are not currently supported by the general Mantid framework. The final tab in the series would provide a user interface to allow the user to examine their data more easily with some helper functions which exist in the ncs\_plotting.py module. This is provides a single plot function with options to plot data by spectra, scattering angles, or detector banks.
 
 \begin{figure}[H]
 \centering
@@ -347,7 +347,7 @@ VESUVIO analysis requires a few custom plotting commands to display data in a wa
 \label{fig:plot-angle}
 \end{figure}
 
-Appendix \ref{sec:plotting-options} lists all of the currently supported plotting commands. This function replicates the functionality for the various plotting routines that the old data analysis package had. The listing \ref{lst:plot-angle} shows a basic example of plotting some spectra from a raw workspace by angle using the ncs\_plotting module. Figure \ref{fig:plot-angle} shows the resulting plot.
+Appendix \ref{sec:plotting-options} lists all of the currently supported plotting commands. This replicates the functionality for the various plotting routines that the old data analysis package had. The listing \ref{lst:plot-angle} shows a basic example of plotting some spectra from a raw workspace by angle using the ncs\_plotting module. Figure \ref{fig:plot-angle} shows the resulting plot.
 
 \begin{listing}[H]
 \begin{minted}[frame=lines,linenos=true,fontsize=\footnotesize]{python}
@@ -371,7 +371,7 @@ ncs_plotting.plot(raw_ws, angles=(30,35))
 \begin{appendices}
 \section{Fit Options}
 \label{sec:fit-options}
-The following two tables list all of the current options that may be supplied to the FitOptions object created from ncs.py. The first table shows the general parameters for the fit, while the second table lists the options used to define a single mass used as part of a fit.
+The following two tables list all of the current options that may be supplied to the \textit{FitOptions} object created using ncs.py. The first table shows the general parameters for the fit, while the second table lists the options used to define a single mass used as part of a fit.
 
 \begin{table}[H]
 \centering
@@ -396,7 +396,7 @@ Name & Description \\ \hline
 \begin{tabular}{ l p{12cm}}
 Name & Description \\ \hline
 \textit{value} & The atomic weight of the mass in amu \\ \hline
-\textit{widths} & The width of the peak. If this is set to a single number the width will be fixed to that value. If it is set to a tuple of three values the middle value is the starting value and the first and last values are the constraints on the parameters' fit. \\ \hline
+\textit{widths} & The width of the peak. If this is set to a single number the width will be fixed to that value. If it is set to an iterable (tuple or list) of three values the middle value is the starting value and the first and last values are the constraints on the parameters' fit. \\ \hline
 \textit{function} & The function to use to fit this mass. Options are currently either \textit{Gaussian} or \textit{GramCharlier}. \\ \hline
 \textit{hermite\_coeffs} & Only applicable when using \textit{GramCharlier}. This is a list of coefficients for each mass being fitted. If set to one the term is included within the fit. If set to zero it is excluded from the fit\\ \hline
 \textit{k\_free} & Only applicable when using \textit{GramCharlier}. If this flag is set to true the FSE (``Final State Effects'') coefficient is not tied to a value. If false it is set to a value dependant on the \textit{sears\_flag}.\\ \hline
@@ -427,7 +427,7 @@ Name & Description \\ \hline
 \end{table}
 
 \section*{Acknowledgments}
-The author would like to thank M. Gigg and A. Seel for their knowledgeable assistance in producing this report and for aiding in the implementations the author had a hand in, and M. Gigg and R. Tolchenov who wrote the majority of the implementation presented in this document. I would also like to thank S. Mukhopadhyay for her contributions to the report.
+The author would like to thank M. Gigg and A. Seel for their knowledgeable assistance in producing this report and for aiding with the parts of the implementation the author had a hand in, and M. Gigg and R. Tolchenov who wrote the majority of the implementation presented in this document. Special thanks to thank S. Mukhopadhyay for her contributions to the report.
 \end{appendices}
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{references}
