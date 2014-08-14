@@ -62,7 +62,7 @@
 
 %%% Title
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
-		\huge \strut An Overview of the Development of Indirect Inelastic Data Analysis in Mantid\strut \\
+		\huge \strut An Overview of the Recent Development of Indirect Inelastic Data Analysis in Mantid\strut \\
 }
 \author{ 									\usefont{OT1}{bch}{m}{n}
         Samuel Jackson\\		\usefont{OT1}{bch}{m}{n}
@@ -77,6 +77,11 @@
 \maketitle
 \clearpage
 \tableofcontents
+
+\begin{abstract}
+Mantid \cite{mantid}, the Manipulation and Analysis Toolkit for Instrument Data, is an open source and cross platform data analysis application specialising in the analysis of Neutron and Muon scattering data. Recent development work has been undertaken to improve support for indirect geometry spectrometers, particularly in regards to those based at ISIS. This document aims to provide an overview of the current progress of development and describe from a technical perspective operation of the procedures used in data reduction and analysis. The final section of the document then loosely outlines areas to focus on in further development in relation to the requirements described by instrument scientists.
+\end{abstract}
+
 \section{Introduction}
 Mantid \cite{mantid} is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
@@ -114,7 +119,7 @@ There are two main types of neutron scattering: elastic and inelastic. Elastic s
 
 
 \subsection{Data Reduction Theory}
-Before data analysis can begin, the raw data collected from the instrument must be converted to an instrument independent function that describes the proportion of incident neutrons scattered with a given momentum and energy transfer known as $S(\mathbf{Q},\omega)$. Obviously, in order to calculate $S(\mathbf{Q},\omega)$ the quantities of \textbf{Q} (wavevector transfer) and $\omega$ (energy transfer) must be derived.
+Before data analysis can begin, the raw data collected from the instrument must be converted to an instrument independent function that describes the proportion of incident neutrons scattered with a given momentum and energy transfer known as $S(\mathbf{Q},\omega)$. Obviously, in order to calculate $S(\mathbf{Q},\omega)$ the quantities of \textbf{Q} (wavevector transfer) and $\omega$ (energy transfer) must first be derived.
 
 \mbox{ }\\
 \begin{figure}[H]
@@ -182,6 +187,8 @@ W = \frac{1}{2} < u^2_{MSD} > Q^2
 \end{equation}
 
 And $< u^2_{MSD} >$ is the mean squared displacement of the scattering atom. The mean squared displacement is the quantity that is analysed using the MSDFit routine described in section \ref{subsubsec:msdfit}.
+
+This theory is only relevant for IRIS, OSIRIS, and TOSCA spectrometers. The theory behind data reduction for the deep inelastic neutron scattering instrument VESUVIO is completely different and is based on the validity of the impulse approximation at sufficiently high energy and momentum transfer. A detailed description of the theory behind data analysis and reduction for VEUSVIO can be found in Ref. \cite{mayers2012vesuvio}.
 
 \subsubsection{Diffraction Reduction}
 In the case of diffraction experiments, there is no need to convert to energy transfer or $S(\mathbf{Q}, \omega)$. Instead, the results are converted from the raw time-of-flight data to $d$-spacing, the distance between the planes in a lattice. Results are calculated using known parameters of the instrument via the time-of-flight equation (equation \ref{eq:time-of-flight}) and Bragg's law (equation \ref{eq:braggs-law}). Diffraction experiments may be run either on their own or in parallel with spectroscopy.
@@ -719,6 +726,9 @@ Teixeira Water & \parbox{6cm}{$\Gamma(Q) = DQ^2/(1 + DQ^2\tau)$ \\ where $D=<l^2
 \end{center}
 \end{table}
 
+\subsection{VESUVIO Data Analysis}
+The VESUVIO spectrometer is currently not officially supported by the Mantid framework. Analysis with the spectrometer is primarily centred on the determination of atomic momentum distributions in condensed matter systems \cite{mayers2012vesuvio}. Development work has already been undertaken to add support for the spectrometer to Mantid. A collection of data analysis routines are available, but are currently under heavy testing and development and may be unstable. Information on using these routines, how to obtain them, and the progress of development are outlined in \cite{jackson2014vesuvio}.
+
 \subsection{Data Analysis GUI}
 
 \subsubsection{Indirect Data Analysis GUI Overview}
@@ -822,7 +832,7 @@ As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace 
 \end{figure}
 
 
-\section{Simulation}
+\section{Materials Modelling}
 \label{sec:simulation}
 Another important part of experimental analysis involved the comparison of experimental results against theoretical predictions. This is an area of development that is only just beginning and there is only a very small amount of support implemented so far.
 
@@ -924,6 +934,28 @@ The biggest difficulty with this is that it will require a sizeable chunk of a d
 
 There are currently four routines that are still in Fortran code: the three Bayes programs (ResNorm, Quasi, and Stretch) and the cylindrical absorption corrections program used in the calculate corrections routine. There are additional Fortran based routines in the for multiple scattering (see section \ref{subsec:multiple-scattering}) which will also need to be ported to Mantid in future releases.
 
+\subsection{Support for VESUVIO}
+Due to the uniqueness of the instrument VESUVIO is currently not officially supported by the Mantid framework. Significant development work has already been undertaken add the data reduction and analysis routines that VESUVIO requires into the Mantid framework. The majority of the modifications to the framework have already been implemented, but some areas such as multiple scattering corrections \cite{mayers2002multiple} and global fitting are still incomplete. Besides this there is currently no GUI support for VESUVIO within Mantid. Once all parties involved are in happy with the state of the reduction and analysis routines in Mantid work can begin on the developing a GUI. Broadly with would require a separate interface under the indirect section of Mantid, loosely separated in to the following sections:
+
+\begin{itemize}
+\item \textbf{Loading:} This would provide a user interface for using the LoadVesuvio algorithm to get raw data into Mantid as well as providing plotting functions for examining the captured time-of-flight data.
+
+\item \textbf{Corrections:} The corrections interface would provide a user interface for calculating both multiple scattering \cite{mayers2002multiple} and gamma background corrections \cite{mayers2011calculation} and applying them to data loaded in the first tab.
+
+\item \textbf{Fitting:} The fitting interface is the most complex in the series. This will provide support for setting up a fit using the same procedures used in the Ref. \cite{mayers2010user}, but in a more user friendly manner than the current implementation achieves. This would provide support for both the Gaussian and Gram-Charlier functions as well as the ability to set the intensity constraints and hermite coefficients.
+\end{itemize}
+
+Additional sections may also be required, such as interfaces for the global fitting and fitting data directly in y-space, but a full design will wait until after the framework behind VESUVIO analysis is finalised.
+
+\subsection{Additional Support for TOSCA}
+TOSCA has had several previous incarnations before its current set up, and has been known as TFXA and TOSCA-1 \cite{penfold1986isis, parker1997tosca, bowden2000tosca, colognesi2002tosca} in the past. Mantid currently only has the most recent set up defined in Mantid. The older incarnations should be able to be supported fairly easily using tools already in the Mantid framework. The geometry of each instrument is defined using a instrument definition file XML file. 
+
+This XML file has a date valid from and too attribute that allows Mantid to figure out at the time of loading what instrument definition should be used with a particular run. Each older incarnation can be defined using this attribute to be valid within the appropriate date range, and the correct definition for TOSCA will be loaded at runtime for each sample reduced based on the age of the sample run. 
+
+A prototype instrument definition file has already been tested for TFXA, but additional work will be required to properly support both incarnations. In particular a full description of the geometry of the instrument in 3D space is required for each incarnation for an accurate definition.
+
+Another requirement by the TOSCA team is to add support for the Renishaw Ramen spectroscopy instrument which is used to perform Ramen spectroscopy and neutron spectroscopy simultaneously. The data from the Renishaw instrument can currently be imported into Mantid through the ASCII loading algorithms already in place, but this is an awkward process. A better approach would be to provide a way to store the runs on the TOSCA data archive and then provide procedures for loading the run directly from the archive as is currently done for regular neutron sample runs on TOSCA.
+
 \subsection{Improved Support for Other Facilities}
 Officially the framework we currently have supports both the SNS and ISIS. However, there has been a lot of development during the last release to further support for the ILL within Mantid. One of the goals of future development should be to integrate the existing loading and reduction routines with the existing GUI. This would eventually lead to the removal of the Indirect Load ASCII interface which would no longer be required.
 
@@ -933,6 +965,8 @@ The multiple scattering routines from the MODES package are the last major parts
 
 Ideally these routines should be converted from Fortran to C++ code first before including them in Mantid, but if demand is high they can be included in the GUI in the same way Bayes and cylindrical corrections works using the F2Py package. There has already been some existing work to import them into Mantid, but the current versions do not work. Recently, there has also been a goal outlined by the scientific steering committee to provide a general framework for multiple scattering corrections within Mantid. At the time of writing it is uncertain whether the planned implementation of this will be compatible with the existing methods used by the MODES routines.
 
+\section*{Acknowledgements}
+The author would like to thank S. Mukhopadhyay for her assistance in the writing of this report and in particular for her guidance and support with the theory section of the document. Additional thanks W.S. Howells for his enumerable contributions to the development of the indirect geometry section, particularly in regards to QENs analysis, and F. Fernandez-Alonso for his constructive comments and criticisms.
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{refs}
 \end{document}
