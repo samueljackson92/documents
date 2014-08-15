@@ -79,7 +79,7 @@
 \tableofcontents
 
 \begin{abstract}
-Mantid \cite{mantid}, the Manipulation and Analysis Toolkit for Instrument Data, is an open source and cross platform data analysis application specialising in the analysis of Neutron and Muon scattering data. Recent development work has been undertaken to improve support for indirect geometry spectrometers, particularly in regards to those based at ISIS. This document aims to provide an overview of the current progress of development and describe from a technical perspective operation of the procedures used in data reduction and analysis. The final section of the document then loosely outlines areas to focus on in further development in relation to the requirements described by instrument scientists.
+Mantid \cite{mantid}, the Manipulation and Analysis Toolkit for Instrument Data, is an open source and cross platform data analysis application specialising in Neutron and Muon scattering data. Recent development work has been undertaken to improve support for indirect geometry spectrometers, particularly in regards to those based at ISIS. This document aims to provide an overview of the current progress of development and describe from a technical perspective the procedures used in data reduction and analysis. The final section of the document then loosely outlines areas to focus on in further development in relation to the requirements described by instrument scientists.
 \end{abstract}
 
 \section{Introduction}
@@ -376,16 +376,16 @@ The diagnostics routine (called Slice in IndirectEnergyConversion.py, named afte
 \subsubsection{Transmission}
 The transmission routine is a simple program used to calculate the measured transmission of a sample using the incident and transmission monitors. Using a run of both the sample and the can, monitors from each  raw file are extracted and converted to units of wavelength. The transmission monitor is then normalised by the incident monitor in each run over the common wavelength range. Finally, the sample is divided by the can to give the sample transmission as a function of wavelength.
 
+The procedure for doing this using the Mantid API is shown in the activity diagram \ref{fig:c2e-transmission-activity-diagram}. The routine assumes that the first two spectra in a raw file are the monitors (as is generally the case for ISIS indirect instruments) where the first is the incident monitor and the second is the transmission monitor. It also loads the third spectrum in the raw file (which should be actual detector data) to use as a reference time range. 
+
+If the first value on the detector's x-axis matches the corresponding value on the incident monitor it simply converts the monitor workspace to units of wavelength. If it does not match the monitor must first be unwrapped using the UnwrapMonitor algorithm with a hard coded parameter for the flight path of 38.76. Then it corrects the join wavelength for the UnwrapMonitor algorithm by removing the bins at the join with a linear interpolation method that uses the FFTSmooth algorithm for smoothing. It then crops the incident monitor to the shortest wavelength of the two monitors and rebins the second monitor to match. The transmission monitor is then divided by the incident monitor.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/Transmission_activity.png}
 \caption{Activity diagram showing the flow of execution for the Transmission routine.}
 \label{fig:c2e-transmission-activity-diagram}
 \end{figure}
-
-The procedure for doing this using the Mantid API is shown in the activity diagram \ref{fig:c2e-transmission-activity-diagram}. The routine assumes that the first two spectra in a raw file are the monitors (as is generally the case for ISIS indirect instruments) where the first is the incident monitor and the second is the transmission monitor. It also loads the third spectrum in the raw file (which should be actual detector data) to use as a reference time range. 
-
-If the first value on the detector's x-axis matches the corresponding value on the incident monitor it simply converts the monitor workspace to units of wavelength. If it does not match the monitor must first be unwrapped using the UnwrapMonitor algorithm with a hard coded parameter for the flight path of 38.76. Then it corrects the join wavelength for the UnwrapMonitor algorithm by removing the bins at the join with a linear interpolation method that uses the FFTSmooth algorithm for smoothing. It then crops the incident monitor to the shortest wavelength of the two monitors and rebins the second monitor to match. The transmission monitor is then divided by the incident monitor.
 
 This procedure is repeated for both the sample and the can file provided by the user. After the monitors for both the sample and can have been converted the sample transmission monitor is then divided by the can transmission monitor. Finally, a group workspace containing the sample transmission monitor, can transmission monitor, and sample transmission monitor with can removed is created.
 
@@ -726,8 +726,26 @@ Teixeira Water & \parbox{6cm}{$\Gamma(Q) = DQ^2/(1 + DQ^2\tau)$ \\ where $D=<l^2
 \end{center}
 \end{table}
 
+\subsection{TOSCA Data Analysis}
+All of the data analysis routines mentioned in the previous section are orientated towards the analysis of quasi-elastic neutron scattering (QENS) data. The TOSCA spectrometer is used to perform inelastic neutron scattering and does not make use of the QENS routines outlined in previous sections. Their data analysis procedures are far simpler. The general process for analysing TOSCA data is to perform an energy transfer reduction as described in section \ref{sec:energy-transfer} and then directly comparing the resulting workspace with one produced from theory using the visualisation tools available through the Mantid framework. Currently the simulated data used in comparison is generated using tools such as Gaussian 03 and a-CLIMAX and then loaded into Mantid. In the future we aim to add more support in Mantid for comparing experimental results with theory (see section \ref{sec:simulation}). As an example, the plot in figure \ref{fig:tosca-analysis} shows a comparison of the experimental result from a sample of toluene with the spectrum generated from theory by simulation programs.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/tosca-analysis.png}
+\caption{Plot of a toluene sample (run 13930) cooled to 10K in black with theoretical simulation of the spectrum in red.}
+\label{fig:tosca-analysis}
+\end{figure}
+
+
 \subsection{VESUVIO Data Analysis}
-The VESUVIO spectrometer is currently not officially supported by the Mantid framework. Analysis with the spectrometer is primarily centred on the determination of atomic momentum distributions in condensed matter systems \cite{mayers2012vesuvio}. Development work has already been undertaken to add support for the spectrometer to Mantid. A collection of data analysis routines are available, but are currently under heavy testing and development and may be unstable. Information on using these routines, how to obtain them, and the progress of development are outlined in \cite{jackson2014vesuvio}.
+The VESUVIO spectrometer is currently not officially supported by the Mantid framework. Analysis with the spectrometer is primarily centred on the determination of atomic momentum distributions in condensed matter systems \cite{mayers2012vesuvio}. Development work has already been undertaken to add support for the spectrometer to Mantid. A collection of data analysis routines are available, but are currently under heavy testing and may be unstable. Information on using these routines, how to obtain them, and the progress of development are outlined in Ref. \cite{jackson2014vesuvio}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/gaussian-fit-example.png}
+\caption{Plot of some VESUVIO data for a sample of ZrH$_2$ using the routines described in Ref. \cite{jackson2014vesuvio} and based on the methods described in Ref. \cite{mayers2012vesuvio}. The black line shows the original data, the red line shows the fit to the data is in red, and the individual contributing peaks are in green (aluminium) and blue (zirconium)}
+\label{fig:vesuvio-gaussian-fit}
+\end{figure}
 
 \subsection{Data Analysis GUI}
 
@@ -935,24 +953,22 @@ The biggest difficulty with this is that it will require a sizeable chunk of a d
 There are currently four routines that are still in Fortran code: the three Bayes programs (ResNorm, Quasi, and Stretch) and the cylindrical absorption corrections program used in the calculate corrections routine. There are additional Fortran based routines in the for multiple scattering (see section \ref{subsec:multiple-scattering}) which will also need to be ported to Mantid in future releases.
 
 \subsection{Support for VESUVIO}
-Due to the uniqueness of the instrument VESUVIO is currently not officially supported by the Mantid framework. Significant development work has already been undertaken add the data reduction and analysis routines that VESUVIO requires into the Mantid framework. The majority of the modifications to the framework have already been implemented, but some areas such as multiple scattering corrections \cite{mayers2002multiple} and global fitting are still incomplete. Besides this there is currently no GUI support for VESUVIO within Mantid. Once all parties involved are in happy with the state of the reduction and analysis routines in Mantid work can begin on the developing a GUI. Broadly with would require a separate interface under the indirect section of Mantid, loosely separated in to the following sections:
+Due to the uniqueness of the instrument, VESUVIO is currently not officially supported by the Mantid framework. Significant development work has already been undertaken add the data reduction and analysis routines that VESUVIO requires into the Mantid framework. The majority of the modifications to the framework have already been implemented, but some areas such as multiple scattering corrections \cite{mayers2002multiple} and global fitting are still incomplete. Besides this there is currently no GUI support for VESUVIO within Mantid. Once all parties involved are in happy with the state of the prototype reduction and analysis routines in Mantid work can begin on the developing a GUI. Broadly, this would require a separate interface under the indirect section of Mantid, loosely separated in to the following sections:
 
 \begin{itemize}
 \item \textbf{Loading:} This would provide a user interface for using the LoadVesuvio algorithm to get raw data into Mantid as well as providing plotting functions for examining the captured time-of-flight data.
 
-\item \textbf{Corrections:} The corrections interface would provide a user interface for calculating both multiple scattering \cite{mayers2002multiple} and gamma background corrections \cite{mayers2011calculation} and applying them to data loaded in the first tab.
+\item \textbf{Corrections:} The corrections interface would provide a user interface for calculating both multiple scattering \cite{mayers2002multiple} and gamma background \cite{mayers2011calculation} corrections and applying them to data loaded in the first tab.
 
-\item \textbf{Fitting:} The fitting interface is the most complex in the series. This will provide support for setting up a fit using the same procedures used in the Ref. \cite{mayers2010user}, but in a more user friendly manner than the current implementation achieves. This would provide support for both the Gaussian and Gram-Charlier functions as well as the ability to set the intensity constraints and hermite coefficients.
+\item \textbf{Fitting:} The fitting interface is the most complex in the series. This will provide support for setting up a fit using the same procedures used in the Ref. \cite{mayers2010user}, but in a more user friendly manner than the current implementation achieves. This would provide support for both the Gaussian and Gram-Charlier functions with the ability to easily set the intensity constraints and hermite coefficients.
 \end{itemize}
 
 Additional sections may also be required, such as interfaces for the global fitting and fitting data directly in y-space, but a full design will wait until after the framework behind VESUVIO analysis is finalised.
 
 \subsection{Additional Support for TOSCA}
-TOSCA has had several previous incarnations before its current set up, and has been known as TFXA and TOSCA-1 \cite{penfold1986isis, parker1997tosca, bowden2000tosca, colognesi2002tosca} in the past. Mantid currently only has the most recent set up defined in Mantid. The older incarnations should be able to be supported fairly easily using tools already in the Mantid framework. The geometry of each instrument is defined using a instrument definition file XML file. 
+TOSCA has had several previous incarnations before its current set up, and has been known as TFXA in the past \cite{penfold1986isis, parker1997tosca, bowden2000tosca, colognesi2002tosca}. Mantid currently only has the most recent set up for the instrument defined. The older incarnations should be able to be supported fairly easily using tools already in the Mantid framework. The geometry of each instrument is defined using a instrument definition file XML file. This XML file has a date valid from and to attribute that allows Mantid to figure out at the load time what instrument definition to use with a particular run. Each older incarnation can be defined using this attribute by setting it to be valid within the appropriate date range, meaning the correct definition for TOSCA will be loaded at runtime for each sample reduced based on the age of the sample run. 
 
-This XML file has a date valid from and too attribute that allows Mantid to figure out at the time of loading what instrument definition should be used with a particular run. Each older incarnation can be defined using this attribute to be valid within the appropriate date range, and the correct definition for TOSCA will be loaded at runtime for each sample reduced based on the age of the sample run. 
-
-A prototype instrument definition file has already been tested for TFXA, but additional work will be required to properly support both incarnations. In particular a full description of the geometry of the instrument in 3D space is required for each incarnation for an accurate definition.
+A prototype instrument definition file has already been tested for TFXA, but additional work will be required to properly support the full range of TOSCA's history. In particular a full description of the geometry of the instrument in 3D space is required for each prior incarnation for an accurate definition.
 
 Another requirement by the TOSCA team is to add support for the Renishaw Ramen spectroscopy instrument which is used to perform Ramen spectroscopy and neutron spectroscopy simultaneously. The data from the Renishaw instrument can currently be imported into Mantid through the ASCII loading algorithms already in place, but this is an awkward process. A better approach would be to provide a way to store the runs on the TOSCA data archive and then provide procedures for loading the run directly from the archive as is currently done for regular neutron sample runs on TOSCA.
 
@@ -966,7 +982,7 @@ The multiple scattering routines from the MODES package are the last major parts
 Ideally these routines should be converted from Fortran to C++ code first before including them in Mantid, but if demand is high they can be included in the GUI in the same way Bayes and cylindrical corrections works using the F2Py package. There has already been some existing work to import them into Mantid, but the current versions do not work. Recently, there has also been a goal outlined by the scientific steering committee to provide a general framework for multiple scattering corrections within Mantid. At the time of writing it is uncertain whether the planned implementation of this will be compatible with the existing methods used by the MODES routines.
 
 \section*{Acknowledgements}
-The author would like to thank S. Mukhopadhyay for her assistance in the writing of this report and in particular for her guidance and support with the theory section of the document. Additional thanks W.S. Howells for his enumerable contributions to the development of the indirect geometry section, particularly in regards to QENs analysis, and F. Fernandez-Alonso for his constructive comments and criticisms.
+The author would like to thank S. Mukhopadhyay for her assistance in the writing of this report and in particular for her guidance and support with the theory section of the document. Additional thanks W.S. Howells for his enumerable contributions to the development of the indirect geometry section, particularly in regards to QENS analysis, and F. Fernandez-Alonso for his constructive comments and criticisms.
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{refs}
 \end{document}
