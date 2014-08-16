@@ -1,0 +1,95 @@
+\documentclass[margin,line]{res}
+\usepackage{paralist}
+\usepackage{multicol} \setlength{\multicolsep}{0pt}
+\oddsidemargin -.5in
+\evensidemargin -.5in
+\textwidth=6.0in
+\itemsep=0in
+\parsep=0in
+% if using pdflatex:
+%\setlength{\pdfpagewidth}{\paperwidth}
+%\setlength{\pdfpageheight}{\paperheight} 
+
+\newenvironment{list1}{
+  \begin{list}{\ding{113}}{%
+      \setlength{\itemsep}{0in}
+      \setlength{\parsep}{0in} \setlength{\parskip}{0in}
+      \setlength{\topsep}{0in} \setlength{\partopsep}{0in} 
+      \setlength{\leftmargin}{0.17in}}}{\end{list}}
+\newenvironment{list2}{
+  \begin{list}{$\bullet$}{%
+      \setlength{\itemsep}{0in}
+      \setlength{\parsep}{0in} \setlength{\parskip}{0in}
+      \setlength{\topsep}{0in} \setlength{\partopsep}{0in} 
+      \setlength{\leftmargin}{0.2in}}}{\end{list}}
+
+
+\begin{document}
+
+\name{Samuel Jackson \vspace*{.1in}}
+
+\begin{resume}
+\section{\sc Contact Information}
+\vspace{.05in}
+\begin{tabular}{@{}p{2in}p{4in}}
+24 Kineton Road             & {\it Tel:}  07895 318714 \\                  
+Oxfordshire, OX1 4PG & {\it E-mail:}  samueljackson@outlook.com\\       
+\end{tabular}
+
+\section{\sc Education}
+{\bf University of Aberystwyth}, Ceredigion, Wales, UK\\
+%{\em Department of Computer Science} 
+\vspace*{-.1in}
+\begin{list1}
+\item[] MEng. Software Engineering, December 2011 (expected
+  graduation date: June 2016) \\
+
+\end{list1}
+
+\section{\sc Professional Experience}
+{\bf Software Developer, STFC, Rutherford Appleton Laboratory}, Harwell, Oxfordshire, UK
+
+\vspace{-.3cm}
+{\em Year in Industry} \hfill {\bf July, 2013 - June, 2014}\\
+I am currently employed as a software developer for ISIS Neutron source based at Rutherford Appleton Laboratory. 
+I work on the Mantid data analysis and visualisation project with the role of aiding the integration and development of scientific workflows for the instrument scientists in the ISIS molecular spectroscopy group.
+
+{\bf Practical Demonstrator, University of Aberystwyth}, Ceredigion, Wales, UK
+
+\vspace{-.3cm}
+\hfill {\bf  October, 2012 - June, 2013}\\
+I was employed as a practical demonstrator for Aberystwyth University. This position involved being on hand during first year advanced programming practical sessions to helping students with any problems they might have with either their worksheets or assignments. I was also responsible for ensuring that students get there worksheets signed off before leaving each session. 
+
+This role is helped to further develop my verbal communication skills through developing my ability to impart technical knowledge of Java and Haskell to other students.
+
+\section{\sc Honors and Awards} 
+Glyn Emery prize for highest course performance as first year student, University of Aberystwyth, 2012.
+
+\section{\sc Skills} 
+\begin{list2}
+\item Languages:  C++, Python, C, Java, Haskell, JavaScript, PHP.
+\item Applications: Eclipse, Qt Designer.
+\item Tools: Git, CMake, GDB, \LaTeX.
+\item Libraries: Boost, Numpy, Scipy, CxxTest, Qt, JQuery.
+\item Operating Systems:  Unix/Linux, Windows and Mac OS X.\\ 
+\end{list2}
+
+\section{\sc Volunteering} 
+{\bf Student Ambassador, University of Aberystwyth}, Aberystwyth, Ceredigion, UK
+
+\vspace{-.3cm}
+\hfill {\bf July, 2012 - June, 2013}\\
+I volunteered to be an open day and visit day ambassador for the university. My position was to talk to prospective students and their families about what it is like to live and study in Aberystwyth. I was also responsible for giving tours of the computer science department and helping to get prospective students to talks and interviews conducted by the department on time.
+
+\section{\sc References}
+Dr. Lynda Thomas, Tutor, llt@aber.ac.uk \\
+{\em University of Aberystwyth, Aberystwyth, Ceredigion, Wales, UK}
+
+Mr. Nick Draper, Mantid Project Manager, nick.draper@stfc.ac.uk \\	
+{\em Rutherford Appleton Laboratory, Harwell, Oxfordshire, UK}
+
+\end{resume}
+\end{document}
+
+
+
