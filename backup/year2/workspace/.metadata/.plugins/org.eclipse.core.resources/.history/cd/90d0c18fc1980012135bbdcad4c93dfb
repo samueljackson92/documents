@@ -1,0 +1,37 @@
+import java.util.ArrayList;
+
+
+public class Main {
+	
+	public static void main(String[] args) {
+		new Main().calcSlot(7);
+	}
+	
+	public int calcSlot(int priority) {
+		//list of jobs
+		ArrayList<Object> queue = new ArrayList<Object>();
+		
+		//our list of weights
+		ArrayList<Double> weights = new ArrayList<Double>();
+	
+		//calculate the min and max priorities yourself
+		int priorityMin = 2;
+		int priorityMax = 14;
+		
+		//calculate the range
+		int range = priorityMax - priorityMin;
+		
+		double scaledPriority = (double)(priority - priorityMin);
+		scaledPriority = (scaledPriority / range) * (queue.size()-1);
+		
+		//Generate the weights for each 'slot'
+		for (int i = 0; i < queue.size(); i++) {
+			double w = 1 - Math.abs()
+			weights.add()
+		}
+		
+		//return the random slot (array index)
+		return;
+	}
+
+}

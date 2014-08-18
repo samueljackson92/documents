@@ -1,0 +1,58 @@
+1350948614405	Rename method 'aStarSearch'
+1350950572001	Delete element
+1350950777067	Encapsulate field 'word'
+1350976060195	Encapsulate field 'distance'
+1350983588405	Encapsulate field 'distance'
+1350984010690	Rename type 'DataList'
+1350985826423	Rename field 'distance'
+1350985838577	Rename method 'getDistance'
+1350985848492	Rename method 'setDistance'
+1350985924787	Rename method 'getDistance'
+1350985933908	Rename method 'setDistance'
+1350986771760	Encapsulate field 'word'
+1350988089048	Rename method 'getFscore'
+1350988095370	Rename method 'setFscore'
+1350988176388	Rename method 'getDistance'
+1350990953539	Encapsulate field 'word'
+1350991157638	Rename method 'setDistance'
+1350991188091	Rename method 'getDistance'
+1350991310265	Rename local variable 's'
+1350992017635	Rename method 'getDistance'
+1350992024225	Rename method 'setDistance'
+1350992029006	Rename local variable 'distance'
+1350992061311	Rename field 'word'
+1350994245305	Move compilation unit
+1350994599960	Encapsulate field 'gscore'
+1350995464356	Delete element
+1350995474372	Delete element
+1350995540133	Delete element
+1351003307670	Encapsulate field 'gscore'
+1351027599755	Delete element
+1351030936904	Delete element
+1351031339706	Delete element
+1351031344976	Delete element
+1351031350219	Delete element
+1351031356131	Delete element
+1351031361596	Delete element
+1351081325794	Encapsulate field 'fscore'
+1351081526983	Encapsulate field 'key'
+1351081708531	Encapsulate field 'gscore'
+1351082113499	Rename local variable 'newgscore'
+1351108501361	Rename method 'setFscore'
+1351108512117	Rename method 'getGscore'
+1351108517195	Rename method 'setGscore'
+1351108522706	Rename local variable 'gscore'
+1351108527735	Rename local variable 'fscore'
+1351108533403	Rename field 'fscore'
+1351108541108	Rename field 'gscore'
+1351108567723	Rename method 'getFscore'
+1351109311037	Move compilation units
+1351110285066	Delete elements
+1351110288518	Delete elements
+1351110291671	Delete element
+1351110294233	Delete element
+1351116140102	Rename local variable 'tentativegscore'
+1351181666903	Rename resource 'doc'
+1351181678296	Rename resource 'documentation'
+1351181693096	Rename resource 'docs'
+1351181701886	Delete elements

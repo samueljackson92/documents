@@ -1,0 +1,30 @@
+1350322054172	Rename local variable 'distance'
+1350334999325	Move compilation unit
+1350337048084	Rename local variable 'x'
+1350337052692	Rename local variable 'y'
+1350371611891	Rename local variable 'n'
+1350384523281	Rename local variable 'Q'
+1350553853618	Rename method 'setNeighbours'
+1350553857960	Rename method 'neighbours'
+1350554342730	Rename method 'neighbors'
+1350558511595	Delete element
+1350559045169	Rename method 'findNeighbours'
+1350559550824	Rename method 'setNeighbors'
+1350559991924	Rename method 'findNeighbors'
+1350593169976	Delete element
+1350593537840	Rename method 'resetDistances'
+1350594718188	Move compilation units
+1350596046042	Rename type 'Graph'
+1350596387108	Delete element
+1350598091093	Move compilation unit
+1350641417684	Rename field 'queue'
+1350642072872	Move compilation units
+1350642111224	Rename type 'GraphInterfaceManagerTest'
+1350642377272	Rename local variable 'buildMI'
+1350642384853	Rename local variable 'loadMI'
+1350658431313	Rename method 'dequeue'
+1350658434873	Rename method 'enqueue'
+1350677000829	Move compilation unit
+1350677961029	Move compilation unit
+1350678425632	Move compilation unit
+1350680638440	Move compilation unit

@@ -1,0 +1,15 @@
+<resources>
+
+    <string name="app_name">ConferenceListView</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+
+	<string name="conf_title">Conference App</string>
+	<string name="no_list_data">No Data</string>
+	<string name="conference_header">Conference Header</string>
+	
+	<color name="dark_gray">#333333</color>
+	<color name="white">#FFFFFF</color>
+	<color name="black">#000000</color>
+</resources>

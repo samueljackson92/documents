@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;FileReader.java&apos; to &apos;AFileReader.java&apos;&#x0A;- Original project: &apos;cs211Worksheet1&apos;&#x0A;- Original element: &apos;FileReader.java&apos;&#x0A;- Renamed element: &apos;AFileReader.java&apos;" description="Rename compilation unit &apos;FileReader.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;{FileReader.java" name="AFileReader.java" references="false" stamp="1349169859138" version="1.0"/>
+</session>

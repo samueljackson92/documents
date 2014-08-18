@@ -1,0 +1,12 @@
+contextsDir=/usr/share/tomcat7/conf/Catalina/localhost
+eclipse.preferences.version=1
+fixTomcatHomeBug=fixed
+managerPassword=admin
+managerUrl=http\://localhost\:8080/manager
+managerUser=tomcat
+projectsInSourcePath=cs211Worksheet3;
+tomcatBase=/usr/share/tomcat7
+tomcatConfigFile=/usr/share/tomcat7/conf/server.xml
+tomcatDir=/usr/share/tomcat7
+tomcatJRE=1349169647386
+tomcatVersion=tomcatV7

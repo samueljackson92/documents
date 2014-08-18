@@ -1,0 +1,30 @@
+1350120587076	Rename type 'Main'
+1350138897813	Encapsulate field 'visited'
+1350146209166	Encapsulate field 'visited'
+1350206263266	Rename method 'iterativeDeepeningSearch'
+1350215420328	Rename type 'DLSStates'
+1350215450697	Rename type 'RESULT'
+1350217349496	Rename type 'WordList'
+1350217360459	Delete element
+1350217761357	Rename field 'words'
+1350218491959	Rename local variable 'menuBar'
+1350219012391	Rename local variable 'generate'
+1350219016935	Rename local variable 'discover'
+1350219539218	Rename type 'MenuListener'
+1350219951285	Rename field 'menuListener'
+1350220207682	Rename local variable 'MainPanel'
+1350222195342	Delete element
+1350225113043	Rename type 'GraphManager'
+1350225404068	Rename local variable 'found'
+1350225452953	Delete element
+1350230117589	Rename type variable 'E'
+1350230268572	Move compilation unit
+1350230330222	Rename package 'gui'
+1350230351957	Rename package 'uk.ac.aber.dcs.slj11wordplay.gui'
+1350230374635	Rename package 'wordplay'
+1350230422520	Move compilation units
+1350230434425	Rename package 'uk.ac.aber.dcs.slj11.wordplay.data'
+1350230876951	Delete element
+1350230880718	Delete element
+1350237704686	Rename type 'Result'
+1350238531486	Rename type 'Results'

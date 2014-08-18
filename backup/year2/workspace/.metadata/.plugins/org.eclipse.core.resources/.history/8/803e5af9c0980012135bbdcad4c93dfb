@@ -1,0 +1,23 @@
+
+public class Main {
+	
+	public static void main(String[] args) {
+		new Main().calcSlot(7);
+	}
+	
+	public int calcSlot(int priority) {
+		
+		//calculate the min and max priorities yourself
+		int priorityMin = 2;
+		int priorityMax = 14;
+		
+		//calculate the range
+		int range = priorityMax - priorityMin;
+		
+		
+		
+		//return the random slot (array index)
+		return;
+	}
+
+}

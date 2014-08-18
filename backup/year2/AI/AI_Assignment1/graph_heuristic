@@ -1,0 +1,17 @@
+\begin{tikzpicture}[level distance=6cm,
+level 1/.style={sibling distance=4cm}]
+\tikzstyle{every node}=[circle,fill=blue!20,draw]
+
+\node (Root) {$B_3B_3B_3[]R_3R_3R_3$}
+child [grow=right] {node[fill=white] (a) {$sum = 18/2 = 9$}edge from parent[draw=none]} 
+child {
+    node {$B_3B_3[]B_3R_3R_3R_3$}
+	child [grow=right] {node[fill=white] (b) {$sum = 18/2 = 9$}edge from parent[draw=none]}
+	child {
+    			node {$B_3B_3R_2B_2[]R_3R_3$} 
+			child [grow=right] {node[fill=white] (c) {$sum = 16/2 = 8$}edge from parent[draw=none]}
+			edge from parent node[left,draw=none] {1}
+	} 
+	edge from parent node[left,draw=none] {1}
+};
+\end{tikzpicture}

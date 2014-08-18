@@ -1,0 +1,20 @@
+
+public class Main {
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		calcSlot(7);
+	}
+	
+	public int calcSlot(int priority) {
+		int priotiryMin = 2;
+		int priorityMax = 14;
+		
+		int range = priorityMax - priotiryMin;
+		
+		
+		//return the random slot (array index)
+		return;
+	}
+
+}

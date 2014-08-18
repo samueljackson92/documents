@@ -1,0 +1,11 @@
+ddms.logcat.auotmonitor.level=error
+ddms.logcat.automonitor.userprompt=true
+eclipse.preferences.version=1
+logcat.view.colsize.Application=169
+logcat.view.colsize.Level=42
+logcat.view.colsize.PID=54
+logcat.view.colsize.TID=54
+logcat.view.colsize.Tag=203
+logcat.view.colsize.Text=674
+logcat.view.colsize.Time=156
+logcat.view.filters.list=name\: 'temperatureConversionLifecycleEvents', tag\: 'temperatureConversionLifecycleEvents', text\: '', pid\: '', app\: '', level\: 'verbose', 

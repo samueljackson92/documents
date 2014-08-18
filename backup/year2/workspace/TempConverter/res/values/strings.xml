@@ -1,0 +1,17 @@
+<resources>
+
+    <string name="app_name">TempConverter</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="textLabelFarenheit">F</string>
+    <string name="celsiusLabel">C</string>
+    <string name="kelvinLabel">K</string>
+    <string name="buttonConvertToCelsius">Convert to Celsius</string>
+    <string name="buttonConvertToKelvin">Convert to Kelvin</string>
+
+    <color name="ColorCold">#8888FF</color>
+    <color name="ColorMidTemp">#FFFF44</color>
+    <color name="ColorHot">#FF8888</color>
+
+</resources>

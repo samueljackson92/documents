@@ -1,0 +1,110 @@
+It's worth pointing out that HP in Galway, Ireland, have taken many of
+our students; they seem to like us. So this is a high-likelihood one to
+go for, not just any multinational.
+
+Adrian
+
+On Thu, 2012-11-22 at 09:39 +0000, Lorraine Alison Langford [lal] wrote:
+> Hello Everyone
+> 
+>  
+> 
+> Please see below details of an IY with HP.....
+> 
+>  
+> 
+> Closing date is end of January but as always, the sooner you apply the
+> better.
+> 
+>  
+> 
+> Lorraine
+> 
+>  
+> 
+> ------------------------------------------------------------------------------
+> 
+>  
+> 
+> Industrial Year Placement with HP Cloud Services - Galway, Ireland
+> 
+> 
+> You will be joining a high energy and seasoned team, with a startup 
+> culture, to build the next generation of public cloud, as part of
+> HP's 
+> converged cloud offering. HP Cloud Services (HPCS) is a startup 
+> division within HP. Our goal is to provide the next generation of
+> cloud 
+> infrastructure, platform services, and cloud solutions for
+> developers, 
+> ISVs, and businesses of all sizes, based on OpenStack and related
+> open 
+> source projects. www.hpcloud.com provides more information if HP's 
+> public cloud service.
+> 
+> As a member of the team, you will participate in one or more aspects
+> of 
+> building a highly available, scalable and secure cloud solution. You 
+> will be engaged in a mix of Open Source and proprietary development, 
+> working with teams with HP and across the Open Stack Community.
+> 
+> 
+> Location
+> 
+> HP offices in Galway, on the west coast of Ireland. Galway is the
+> major 
+> hub of Western Ireland, and well known for mixing travellers,
+> students, 
+> culture and night-life.
+> 
+> HP Galway has a long history of taking placement year students from 
+> Aberystwyth, and prides itself on providing an atmosphere and
+> situation 
+> where both students and HP get the maximum benefit from their year. 
+> Students are given real work on real systems and become full members
+> of 
+> the teams they are placed with.
+> 
+> 
+> Responsibilities
+> 
+> - As a member of the HP Cloud Services team, you will contribute to
+> the 
+> operational (running a data centre) and development activities
+> involved 
+> with deploying and maintaining a public cloud.
+> 
+> - Work with multiple project teams of other software systems
+> engineers 
+> and internal and outsourced development partners responsible for all 
+> stages of design and development for complex products and platforms, 
+> including solution design, analysis, coding, testing, and integration
+> 
+> - Work with a range of technologies including Python, Linux,
+> Openstack, 
+> ReSTful APIs, chef, ruby, git, HP labs technology and lots of big
+> servers.
+> 
+> 
+> Salary
+> 
+> 19k euro / annum, pro-rata for the length of internship
+> 
+> 
+> Application
+> 
+> CV and cover letter to duncan.thomas@hp.com
+> 
+> 
+> Useful links
+> 
+> www.hpcloud.com
+> www.openstack.org
+> www.theonion.com/video/hp-on-that-cloud-thing-that-everyone-else-is-talki,28789/ 
+> 
+> 
+> 
+> 
+
+
+
