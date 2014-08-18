@@ -60,6 +60,9 @@
 \usepackage{hyperref}
 \usepackage[numbers]{natbib}
 
+\newcommand{\sectionbreak}{\clearpage}
+
+
 %%% Title
 \title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
 		\huge \strut An Overview of the Recent Development of Indirect Inelastic Data Analysis in Mantid\strut \\
@@ -74,14 +77,16 @@
 
 %%% Begin document
 \begin{document}
+
 \maketitle
 \clearpage
 \tableofcontents
 
-\begin{abstract}
+\clearpage
+\section{Abstract}
 Mantid \cite{mantid}, the Manipulation and Analysis Toolkit for Instrument Data, is an open source and cross platform data analysis application specialising in Neutron and Muon scattering data. Recent development work has been undertaken to improve support for indirect geometry spectrometers, particularly in regards to those based at ISIS. This document aims to provide an overview of the current progress of development and describe from a technical perspective the procedures used in data reduction and analysis. The final section of the document then loosely outlines areas to focus on in further development in relation to the requirements described by instrument scientists.
-\end{abstract}
 
+\clearpage
 \section{Introduction}
 Mantid \cite{mantid} is an open source, cross platform framework for the analysis of Neutron and Muon scattering data. The project is primarily written in C++ with a Python API. The project includes a GUI based off of the QtiPlot project and primarily written using the Qt library.
 
@@ -95,6 +100,7 @@ Up until now the indirect geometry section of Mantid has largely been based off 
 
 This document aims to give an overview of the current stage of development for the indirect geometry instruments section of the application as it currently exists in as much detail as possible to provide a historical snapshot of the progress so far. The remainder of the document then provides a weak outline of suggested directions for future development.
 
+\clearpage
 \section{Indirect Geometry Instruments}
 Indirect geometry time-of-flight instruments, like the IRIS, OSIRIS, TOSCA, and VESUVIO spectrometers at ISIS are those in which the incident beam is polychromatic and crystal analysers are typically used to determine the final energy. Together these instruments cover a broad energy range. IRIS and OSIRIS operate in a low energy range of up to -0.4 to 0.4 meV (depending on the analyser used) and can be used to carry out Quasielastic neutron scattering around the elastic line. This is useful for studying the effects of diffusion  and tunneling. TOSCA covers the 0 to 500 meV range for investigating the lattice and intra-molecular structure of matter. VESUVIO operates at high energies of 5 - 150 eV and is used to perform deep inelastic neutron scattering. Diagram \ref{fig:instrument-energy-range} compares the energy range covered by the indirect geometry instruments at ISIS and the applicable techniques at each energy range.
 
@@ -112,6 +118,7 @@ The final energy for inelastic instruments such as IRIS, OSIRIS and TOSCA is det
 
 VESUVIO operates on the principle of neutron Compton scattering and uses a pair of gold foils which can be moved into different positions for use with the foil cycling technique described in \cite{schooneveld2006foil} which produces a neutron absorption resonance at 4.9 eV, emitting a $\gamma$-ray cascade which is detected by the instrument's Yttrium Aluminium Perovskite $\gamma$-ray detectors \cite{mayers2010user}.
 
+\clearpage
 \section{Theory}
 Neutron scattering experiments are used to probe the structure of materials at a fundamental level. The results of such experiments can be used to learn a great deal about the internal structure of a sample and how it can behave under different conditions. In a neutron scattering experiment, a beam of neutrons is produced at a source (such as the one provided by ISIS) and directed to the various instruments attached to the beam line. These neutrons then scatter from the sample placed in the instrument. The angle and energy at which scattered neutrons are detected can then be used to deduce the structure and dynamics of the sample.
 
@@ -289,6 +296,7 @@ The scattering cross section for the sample can the be calculated as:
 
 There are two routines in Mantid which perform these corrections. Calculate Corrections calculates the attenuation parameters $A_{i,j}$, while Apply Corrections uses them to calculate $\Sigma_s$ based on the geometry as described here.
 
+\clearpage
 \section{Data Reduction with Mantid}
 Mantid provides a collection of graphical user interfaces to specialised indirect inelastic data reduction routines under the menu \textit{Interfaces \textgreater Indirect}. The majority of these routines are based on or directly ported from the MODES3 and IRIS Data Analysis (IDA) packages \citep{wshowells2010, wshowells1996}. As such, the core of the functionality of these routines has mostly remained the same, but the implementation has changed. This section outlines the current development of each of the interfaces and routines available.
 
@@ -552,6 +560,7 @@ This interface allows us to specify the binning we use in Q and in energy and al
 \label{fig:iris-c2e-sofqw-plot}
 \end{figure}
 
+\clearpage
 \section{Data Analysis with Mantid}
 
 After data has been reduced using the convert to energy or diffraction reduction routines described in the previous section the reduced data needs to be analysed. In the indirect section of Mantid, there are two major collections of data analysis scripts that are currently in place. The first  and most important are those included in the Indirect Data Analysis interface which provide a variety of different fit functions and transforms the can be performed on reduced data. The second collection of routines are accessible via the Indirect Bayes interface. This provides a collection of routines that can be used to infer fitting parameters using Bayesian model selection techniques which are complementary to the routines in Indirect Data Analysis.
@@ -849,7 +858,7 @@ As a final example, shown in figure \ref{fig:iris-bayes-jumpfit}, the workspace 
 \label{fig:iris-bayes-jumpfit}
 \end{figure}
 
-
+\clearpage
 \section{Materials Modelling}
 \label{sec:simulation}
 Another important part of experimental analysis involved the comparison of experimental results against theoretical predictions. This is an area of development that is only just beginning and there is only a very small amount of support implemented so far.
@@ -863,6 +872,7 @@ The nMolDyn interface that currently exists is a very simple routine to load dat
 \subsection{Density Of States}
 The DensityofStates algorithm was a new addition to the 3.1 release of Mantid and does not currently have GUI support. It provides loading algorithm for .castep and .phonon files generated by CASTEP simulation program and create workspaces with both total and partial density of states data. Further support for CASTEP is planned in future releases. The code for this file can be found in DensityOfStates.py file under python algorithm plugins section in the Mantid install.
 
+\clearpage
 \section{Planning For the Future}
 This section outlines outstanding work required to fully support indirect geometry instruments within Mantid. This section is not meant as a ``set in stone'' plan for further development but is meant as guide for future development work in the area and a loose record of user and project requirements all of which are subject to change.
 
@@ -981,8 +991,11 @@ The multiple scattering routines from the MODES package are the last major parts
 
 Ideally these routines should be converted from Fortran to C++ code first before including them in Mantid, but if demand is high they can be included in the GUI in the same way Bayes and cylindrical corrections works using the F2Py package. There has already been some existing work to import them into Mantid, but the current versions do not work. Recently, there has also been a goal outlined by the scientific steering committee to provide a general framework for multiple scattering corrections within Mantid. At the time of writing it is uncertain whether the planned implementation of this will be compatible with the existing methods used by the MODES routines.
 
+\clearpage
 \section*{Acknowledgements}
 The author would like to thank S. Mukhopadhyay for her assistance in the writing of this report and in particular for her guidance and support with the theory section of the document. Additional thanks W.S. Howells for his enumerable contributions to the development of the indirect geometry section, particularly in regards to QENS analysis, and F. Fernandez-Alonso for his constructive comments and criticisms.
+
+\clearpage
 \bibliographystyle{unsrtnat_corrected}
 \bibliography{refs}
 \end{document}
