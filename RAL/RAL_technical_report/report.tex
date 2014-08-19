@@ -426,7 +426,7 @@ Each the approach to rebinning taken by each of the algorithms listed in table \
 \centering
 \includegraphics[width=0.4\textwidth]{img/uml/activity_diagrams/SofQWMoments_activity.png}
 \caption{Activity diagram showing the flow of execution for the SofQWMoments algorithm.}
-\label{fig:c2e-transmission-activity-diagram}
+\label{fig:c2e-moments-activity-diagram}
 \end{figure}
 
 This is a new addition in Mantid 3.2 and provides a simple routine for calculating the first four statistical moments of an $S(Q,w)$. This is implemented as a standard Mantid algorithm (SofQWMoments) which is created and called from the interface though the algorithm manager and produces a group workspace with one workspace for each moment for every detector which has been transposed in order to make visualisation of the workspace easier.
@@ -539,7 +539,7 @@ There are lots of additional options that can be configured depending on the use
 \centering
 \includegraphics[width=0.8\textwidth]{img/iris-c2e-reduction-plot.png}
 \caption{Reduced IRIS data plotted as both a contour and spectrum plot}
-\label{fig:iris-c2e-reduction}
+\label{fig:iris-c2e-reduction-plot}
 \end{figure}
 
 Doing this with the settings shown in figure \ref{fig:iris-c2e-reduction} produces a single workspace for run 553664 on the IRIS instrument with units of energy transfer. This workspace can then be used with the Indirect Data Analysis and Indirect Bayes interfaces. We can also run this through the SofQW algorithm to calculate the $S(\mathbf{Q},\omega)$ and convert the workspace to units of momentum transfer using the SofQW tab on same interface.
@@ -800,7 +800,7 @@ Once a file has been reduced using the convert to energy interface as described 
 \centering
 \includegraphics[width=0.9\textwidth]{img/iris-ida-elwin-output.png}
 \caption{Plots of the output workspaces from ElWin.}
-\label{fig:iris-ida-elwin}
+\label{fig:iris-ida-elwin-output}
 \end{figure}
 
 The \*\_eq2 file created by the routine can be passed to the MSDFit routine to perform a linear fit to the data over all spectra. Again, the miniplot can be used to select the range used with the data. Clicking the run button will fit to just the first spectrum, allowing the user to "get a feel" for the range to be used with the data. Running a sequential fit will use the same range an perform a sequential fit across all spectra in the workspace.
@@ -816,7 +816,7 @@ The \*\_eq2 file created by the routine can be passed to the MSDFit routine to p
 \centering
 \includegraphics[width=0.5\textwidth]{img/iris-ida-msd-output.png}
 \caption{Resulting parameter workspace from MSDFit.}
-\label{fig:iris-ida-msd}
+\label{fig:iris-ida-msd-output}
 \end{figure}
 
 The ConvFit interface (section \ref{subsubsec:convfit}) can be used to separate the instrument resolution from the $S(\mathbf{Q}, \omega)$ function by fitting a convolution of the resolution and the appropriate model to the data. A screen shot of the ConvFit interface is shown in figure \ref{fig:iris-ida-convfit}. This interface has lots of configurable options for the model that is to be convolved with the resolution, but works on similar principle to the MSDFit interface. 
