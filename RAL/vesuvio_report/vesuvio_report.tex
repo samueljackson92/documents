@@ -78,10 +78,11 @@
 \clearpage
 \tableofcontents
 \clearpage
-\begin{abstract}
-VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating at high energies in the 1 eV range and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines written for VESUVIO with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
-\end{abstract}
 
+\section{Abstract}
+VESUVIO is an neutron spectrometer at the ISIS pulsed neutron source operating at high energies in the 1 eV range and uses the experimental technique known as neutron Compton scattering to measure the momentum distributions of condensed matter systems \citep{mayers2012vesuvio}. Mantid \citep{mantid} is a data analysis application for neutron and muon scattering data used by multiple facilities across the world. Recently, extensive work has been carried out to integrate the bespoke data reduction and analysis routines written for VESUVIO with the Mantid framework. While the programs described in this document are designed to replicate the functionality of the Fortran and Genie routines already in use, most of them have been written from scratch and are not based on the original code base. This document outlines the current progress of development regarding what has already been implemented and what is remains to be finished.
+
+\clearpage
 \section{Introduction}
 \label{sec:introduction}
 \subsection{VESUVIO Overview}
@@ -377,6 +378,15 @@ ncs_plotting.plot(raw_ws, angles=(30,35))
 \label{lst:plot-angle}
 \end{listing}
 
+\clearpage
+\section*{Acknowledgments}
+The author would like to thank M. Gigg and A. Seel for their knowledgeable assistance in producing this report and for aiding with the parts of the implementation the author had a hand in, and M. Gigg and R. Tolchenov who wrote the majority of the implementation presented in this document. I would also like to thank S. Mukhopadhyay for her contributions to the report.
+
+\clearpage
+\bibliographystyle{unsrtnat_corrected}
+\bibliography{references}
+
+\clearpage
 \begin{appendices}
 \section{Fit Options}
 \label{sec:fit-options}
@@ -415,6 +425,7 @@ Name & Description \\ \hline
 \label{table:mass-parameters}
 \end{table}
 
+\clearpage
 \section{Plotting Options}
 \label{sec:plotting-options}
 
@@ -435,9 +446,5 @@ Name & Description \\ \hline
 \label{table:plotting-parameters}
 \end{table}
 
-\section*{Acknowledgments}
-The author would like to thank M. Gigg and A. Seel for their knowledgeable assistance in producing this report and for aiding with the parts of the implementation the author had a hand in, and M. Gigg and R. Tolchenov who wrote the majority of the implementation presented in this document. I would also like to thank S. Mukhopadhyay for her contributions to the report.
 \end{appendices}
-\bibliographystyle{unsrtnat_corrected}
-\bibliography{references}
 \end{document}
