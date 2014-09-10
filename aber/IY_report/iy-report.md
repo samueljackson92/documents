@@ -1,6 +1,6 @@
 ---
 title:  'Industrial Year Report'
-subtitle: 'Software Developer at STFC, Rutherford Appleton Laboratory'
+subtitle: 'Software Developer at ISIS Neutron Source'
 author:
 - name: Samuel Jackson
   affiliation: University Of Aberystwyth
@@ -19,7 +19,12 @@ In order to fully understand the operation of ISIS and what the Mantid applicati
 
 Broadly speaking, neutron scattering can be split into two categories: elastic and inelastic. elastic scattering is where the final energy of a scattered neutron is equal to the energy of the incident neutron, i.e. there is no transfer of energy to or from the sample. Inelastic scattering (which is the technique generally used by instruments belonging to the MSG) is the more complex case where the energy of the incident neutron and the scattered neutron are not equal, i.e. there is a transfer of energy to or from the sample. From this transfer in energy and from known parameters of the instrument an instrument independent scattering function can be defined which encapsulates the properties of the sample. This function is usually denoted as \(S(Q,\omega)\), where \(Q\) is the momentum transfer and \(\omega\) is energy transfer [@dssivia2011elementary ; @fernandezalonso2013neutron].
 
-![instrument energy chart](instrument-energy-chart.png "Neutron scattering techniques by energy range.")
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/instrument-energy-chart.png}
+\caption{Neutron scattering techniques by energy range.}
+\label{fig:instrument-energy-chart}
+\end{figure}
 
 Two important types of inelastic scattering are quasi-elastic neutron scattering (QENS) and deep inelastic neutron scattering (a.k.a neutron Compton scattering). Quasi-elastic neutron scattering is the case where the energy transfer is very close to zero and the scattering is almost elastic. This is typically performed on low energy spectrometers such as IRIS and OSIRIS [@adams2001iris ; @telling2003osiris]. Deep inelastic neutron scattering (DINS) is the opposite case which uses extremely high energies (>1eV) and is used to measure the momentum distribution of atoms. This technique is still in its developmental phase, with the VESUVIO spectrometer at ISIS currently being the only instrument in the world capable of doing it [@mayers2012vesuvio].
 
