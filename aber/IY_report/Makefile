@@ -1,9 +1,11 @@
 DOCNAME = iy-report.md
 OUTPUTFILE = report.tex
-DOCTEMPLATE = ~/git/documents/templates/template.tex
 BIBFILE = refs.bib
-BIBSTYLE = ~/git/documents/templates/ieee-with-url.csl
+
+DOCTEMPLATE = ~/git/documents/pipeline/template.tex
+BIBSTYLE = ~/git/documents/pipeline/Ieee-with-url.csl
+FILTER = ~/git/documents/pipeline/numerical-reference.hs
 
 doc:
-	pandoc -f markdown+tex_math_single_backslash --biblio $(BIBFILE) --csl $(BIBSTYLE) --template $(DOCTEMPLATE) $(DOCNAME) -o $(OUTPUTFILE)
+	pandoc -f markdown+tex_math_single_backslash --number-sections -t latex --biblio $(BIBFILE) --csl $(BIBSTYLE) --template $(DOCTEMPLATE) $(DOCNAME) -o $(OUTPUTFILE)
 	/usr/texbin/pdflatex $(OUTPUTFILE)
