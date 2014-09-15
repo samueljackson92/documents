@@ -1,0 +1,109 @@
+%% start of file `template.tex'.
+%% Copyright 2006-2013 Xavier Danaux (xdanaux@gmail.com).
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
+
+
+\documentclass[11pt,a4paper,sans]{moderncv}        % possible options include font size ('10pt', '11pt' and '12pt'), paper size ('a4paper', 'letterpaper', 'a5paper', 'legalpaper', 'executivepaper' and 'landscape') and font family ('sans' and 'roman')
+\usepackage{multicol}
+\setlength\tabcolsep{2pt}
+
+% moderncv themes
+\moderncvstyle{casual}                             % style options are 'casual' (default), 'classic', 'oldstyle' and 'banking'
+\moderncvcolor{blue}                               % color options 'blue' (default), 'orange', 'green', 'red', 'purple', 'grey' and 'black'
+%\renewcommand{\familydefault}{\sfdefault}         % to set the default font; use '\sfdefault' for the default sans serif font, '\rmdefault' for the default roman one, or any tex font name
+%\nopagenumbers{}                                  % uncomment to suppress automatic page numbering for CVs longer than one page
+
+% character encoding
+\usepackage[utf8]{inputenc}                       % if you are not using xelatex ou lualatex, replace by the encoding you are using
+%\usepackage{CJKutf8}                              % if you need to use CJK to typeset your resume in Chinese, Japanese or Korean
+
+% adjust the page margins
+\usepackage[scale=0.75]{geometry}
+%\setlength{\hintscolumnwidth}{3cm}                % if you want to change the width of the column with the dates
+%\setlength{\makecvtitlenamewidth}{10cm}           % for the 'classic' style, if you want to force the width allocated to your name and avoid line breaks. be careful though, the length is normally calculated to avoid any overlap with your personal info; use this at your own typographical risks...
+
+% personal data
+\name{Samuel}{Jackson}
+\title{Resumé title}                               % optional, remove / comment the line if not wanted
+\address{54 Rhosendre, Waun Fawr}{Aberystwyth SY23 3PU}{Ceredigion, UK}% optional, remove / comment the line if not wanted; the "postcode city" and and "country" arguments can be omitted or provided empty
+\phone[mobile]{07895 318714}
+\email{slj11@aber.ac.uk}
+\photo[64pt][0.4pt]{picture}                       % optional, remove / comment the line if not wanted; '64pt' is the height the picture must be resized to, 0.4pt is the thickness of the frame around it (put it to 0pt for no frame) and 'picture' is the name of the picture file
+\quote{Some quote}                                 % optional, remove / comment the line if not wanted
+
+% to show numerical labels in the bibliography (default is to show no labels); only useful if you make citations in your resume
+%\makeatletter
+%\renewcommand*{\bibliographyitemlabel}{\@biblabel{\arabic{enumiv}}}
+%\makeatother
+%\renewcommand*{\bibliographyitemlabel}{[\arabic{enumiv}]}% CONSIDER REPLACING THE ABOVE BY THIS
+
+% bibliography with mutiple entries
+%\usepackage{multibib}
+%\newcites{book,misc}{{Books},{Others}}
+%----------------------------------------------------------------------------------
+%            content
+%----------------------------------------------------------------------------------
+\begin{document}
+%-----       letter       ---------------------------------------------------------
+% recipient data
+\recipient{Ni Zhu}{Aberystwyth University\\Aberystwyth\\SY23 3AL}
+\date{\today}
+\opening{Dear Ni Zhu,}
+\closing{Yours faithfully,}
+\makelettertitle
+
+I would like to apply for a position as a demonstrator for either first or second year computer science students with the university. I have already worked as a demonstrator for the university during the second year of my undergraduate and now that I have finished my industrial placement would be eager to volunteer again.
+
+I am keen to join the demonstrating team again for a number of reasons. Firstly, I thoroughly enjoyed the experience the first time round. I like interacting with the new and upcoming undergraduate students and enjoyed helping them with concepts that I found myself found difficult. 
+
+Secondly, I am currently pursuing postgraduate study options which could potentially include more exposure to teaching and assisting in practicals. The experience of demonstrating provides an opportunity to get some first hand practice before reaching this point in my career path.
+
+Thirdly, demonstrating helps me to maintain my knowledge of subjects that I would not of necessarily revisited from becoming rusty. For example, none of the later modules in my course require an understanding of Haskell, but the requirement to be adequately prepared to answer questions on the subject in demonstrating sessions encourages to me refresh myself on a regular basis.
+
+As requested I have attached below a copy of my grades for each of the modules I have completed  at Aberystwyth during my undergraduate.
+
+\textbf{First Year 2011/2012}
+\begin{center}
+    \begin{tabular}{| l | l | l |}
+    \hline
+    Course No. & Name & Grade \\ \hline
+CS10110 & Introduction To Computer Hardware, Operating Systems And Unix Tools &	87 \\ \hline
+CS10410 & The Mathematics Driving License For Computer Science & 95	\\ \hline
+CS12130 & Concepts In Programming & 87 \\ \hline
+PH19510 & Chaos, Communications And Consciousness & 90	\\ \hline
+CS12420 & Software Development & 91	\\ \hline
+CS15020 & Web Development Tools & 94	\\ \hline
+CS15210 & An Introduction To Communications And Telematics & 66	\\ \hline
+CS18010 & Professional And Personal Development & 71 \\ \hline
+    \end{tabular}
+\end{center}
+
+\clearpage
+\textbf{Second Year 2012/2013}
+\begin{center}
+    \begin{tabular}{| l | l | l |}
+    \hline
+    Course No. & Name & Grade \\ \hline
+CS20410 & The Advanced Mathematics Driving License For Computer Science & 70 \\ \hline
+CS23710 & C And Unix Programming & 91 \\ \hline
+CS26110 &The Artificial Intelligence Toolbox Part 1: How To Find Solutions & 87 \\ \hline
+CS21120 & Program Design, Data Structures And Algorithms & 88 \\ \hline
+CS22120 &The Software Development Life Cycle	 & 67 \\ \hline
+CS22310 & User Centred Design And Human Computer Interaction	 & 75 \\ \hline
+CS22510 & C++, C And Java Programming Paradigms & 86 \\ \hline
+CS26410 & Introduction To Robotics & 75 \\ \hline
+CS27020 & Modelling Persistent Data & 96 \\ \hline
+    \end{tabular}
+\end{center}
+
+If you have any further questions please don't hesitate to contact me using the information provided on this letter.
+
+\makeletterclosing
+
+\end{document}
+
+
+%% end of file `template.tex'.
