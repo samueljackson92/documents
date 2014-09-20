@@ -186,6 +186,7 @@ measurements. For a more in-depth introduction to neutron scattering the
 reader is directed to the references, in particular refs. {[}3, 4, 8{]}
 provide the best introductions to those unfamiliar with the subject.
 
+\clearpage
 \section{Organisational Environment}\label{organisational-environment}
 
 \subsection{Organisation of STFC}\label{organisation-of-stfc}
@@ -274,6 +275,7 @@ are the people who we gather requirements from, but this is
 typically an informal relationship and I worked closely with its
 members throughout the year.
 
+\clearpage
 \section{Technical and Application
 Environments}\label{technical-and-application-environments}
 
@@ -356,6 +358,7 @@ to keep a record of the current development progress. The Trac set-up
 used also includes plug ins to automatically capture commits to branches
 on Github and update the relevant ticket with the commit information.
 
+\clearpage
 \section{Description of Job Role and Work
 Done}\label{description-of-job-role-and-work-done}
 
@@ -403,12 +406,19 @@ onwards I spent the majority of my time working on tickets for the MSG.
 
 Apart from maintenance and minor feature requests my first real major
 piece of development work was to write a GUI for a collection of
-bayesian fitting routines that had been provided by one of the
+Bayesian fitting routines that had been provided by one of the
 scientists in the group. These routines are used as part of
 quasi-elastic neutron scattering analysis to determine the shape of the
-scattering function present in the dataset by using bayesian methods to
+scattering function present in the dataset by using Bayesian methods to
 compute the likelihood of a given model. These methods are based on the
 original routines described by Sivia {[}14{]}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/iris-bayes-quasi.png}
+\caption{Screen capture of the Indirect Bayes QENs analysis interface in Mantid.}
+\label{fig:bayes-gui}
+\end{figure}
 
 The purpose of the interface was to provide an easier way for users to
 set up and run a fit to their data than by using the existing scripts
@@ -441,6 +451,13 @@ The new version was built using the Mantid concepts of algorithms and
 workspaces and was intended to be more maintainable than the original. I
 also wrote a couple of unit test suites used to check the quality of the
 calibration using several different sample materials at the same time.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/calib-theta.png}
+\caption{Plot of the calibrated values for $\theta$ from a Pb sample output from the VESUVIO calibration program. Compare this with the $\theta$ plots in reference {[}16{]}.}
+\label{fig:calib-theta}
+\end{figure}
 
 The end product was a pair of Mantid algorithms, one for fitting the
 appropriate line shape to each peak in every spectrum of a sample run
@@ -487,6 +504,13 @@ has happened to the workspace from the moment the data entered the
 application. In practice this feature had only been partially
 implemented and had slowly become more redundant/broken as development
 moved on.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/algorithm-history.png}
+\caption{Screen capture of the algorithm history GUI showing nested algorithms used on a workspace from the INTER spectrometer.}
+\label{fig:algorithm-history}
+\end{figure}
 
 My task was to overhaul this feature to not only properly provide the
 features mentioned above, but also to add functionality to capture
@@ -539,6 +563,7 @@ development for the VESUVIO spectrometer and provides a description of
 how to analyse data from the instrument with the implementation as it
 stands. Both of these reports are publicly available for free via the RAL ePubs system.
 
+\clearpage
 \section{Critical Evaluation of
 Placement}\label{critical-evaluation-of-placement}
 
