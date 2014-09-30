@@ -2,12 +2,10 @@
 
 ## 2014-09-29
 
-### Course examination is split into:
+### Course examination
 
  - 3 worksheets worth 10% in total
  - 1 exam worth the remaining 90%
-
-Suggested reading: *No silver bullet for software systems* - Fred Brooks
 
 ### Problems with software development
 
@@ -26,3 +24,7 @@ Suggested reading: *No silver bullet for software systems* - Fred Brooks
 
  - PRD: Product Requirement Document
  - MRD: Marketing Requirement Document
+
+### Suggested reading
+
+ - *No silver bullet for software systems* - Fred Brooks
