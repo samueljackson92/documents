@@ -108,15 +108,13 @@ Scattering}\label{introduction-to-neutron-scattering}
 In order to fully understand the operation of ISIS and what the Mantid
 application is used to analyse, a small amount of background knowledge
 of the techniques used in neutron scattering experiments is useful along
-with some definitions of key terms used through out this document.
+with some definitions of key terms used throughout this document.
 
 Instruments at the ISIS facility are designed to probe the structure and
 dynamics of materials at the atomic scale. ISIS operates by accelerating
 protons to 84\% the speed of light using a synchrotron. The resulting
 particles are then directed towards a tungsten target in one of the two
-target stations causing a pulsed burst of neutrons which are directed
-towards samples in the spectrometers. The resulting collisions cause a
-scattering pattern which is detected by the spectrometers and analysed
+target stations and from there towards samples in the spectrometers at the end beamlines connecting to the target station. The resulting collisions causes a scattering pattern which is detected by the spectrometers and analysed
 using programs such as Mantid.
 
 All instruments at the ISIS accelerator operate using the time-of-flight
@@ -134,16 +132,16 @@ microseconds on the x-axis.
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{img/instrument-diagram.png}
-\caption{A diagram of an indirect geometry spectrometer. M is the moderator, S is the sample, and D is the detector. $L_1$ is the length of the incident neutron flight path, $L_2$ is the final flight path, $\theta$ is the scattering angle, and $\phi$ is the azimuth angle. In indirect geometry spectrometers the final energy is fixed and is selected using a crystal analyser (typically graphite).}
+\caption{A diagram of an indirect geometry spectrometer. M is the moderator, S is the sample, and D is the detector. $L_1$ is the length of the incident neutron flight path, $L_2$ is the final flight path, $\theta$ is the scattering angle, and $\phi$ is the azimuth angle. In indirect geometry spectrometers the final energy is fixed and is selected using a crystal analyser (typically pyrolytic graphite).}
 \label{fig:instrument-diagram}
 \end{figure}
 
 Broadly speaking, neutron scattering can be split into two categories:
 elastic and inelastic. Elastic scattering is where the final energy of a
 scattered neutron is equal to the energy of the incident neutron,
-i.e.~there is no transfer of energy to or from the sample. Inelastic
+i.e. there is no transfer of energy to or from the sample. Inelastic
 scattering, which is the technique generally used by instruments
-belonging to the molecular spectroscopy group (MSG) I was attached to (see section \ref{organisation-of-the-mantid-project-development-team}),
+belonging to the molecular spectroscopy group (MSG) that I was attached to (see section \ref{organisation-of-the-mantid-project-development-team}),
 is the more complex case where the energy of the incident neutron and
 the scattered neutron are not equal, i.e.~there is a transfer of energy
 to or from the sample. From this transfer in energy and from known
@@ -203,10 +201,10 @@ the Engineering and Physical Sciences Research Council (EPSRC) {[}9{]}.
 While the organisation is funded by the government, it is classified as
 a non-governmental body which acts as an umbrella organisation for an
 array of facilities based across the UK. These include (but are not
-limited to) the central laser facility, diamond light source (which is a
+limited to) the Central Laser Facility, Diamond Light Source (which is a
 publicly limited company of which STFC holds an 86\% share), ISIS
-neutron source, and RAL space; all of which are located at Rutherford
-Appleton Laboratory in Oxfordshire. The organisation also owns the the
+neutron source, and RAL Space; all of which are located at Rutherford
+Appleton Laboratory in Oxfordshire. The organisation also owns the
 Daresbury Laboratory located in Cheshire and the Chilbolton Observatory
 based in Hampshire.
 
@@ -221,9 +219,9 @@ the primary government body controlling STFC.
 \subsection{Organisation of ISIS Neutron
 Source}\label{organisation-of-isis-neutron-source}
 
-ISIS neutron source is a project that is owned, operated and funded by
+ISIS neutron source is a facility that is owned, operated and funded by
 the STFC. The organisational hierarchy of ISIS is headed by the director
-Prof.~Robert McGreevy and includes several division heads for individual
+Prof. Robert McGreevy and includes several division heads for individual
 functional areas within ISIS such as the diffraction, spectroscopy and
 support, experimental operations, instrumentation, design, and
 accelerator divisions.
@@ -240,15 +238,14 @@ can be divided, in practice there tends to be a lot of cross over
 between sections of the organisation depending on a employee's skills
 and responsibilities. For example, while I was employed as part of the
 computing group, my line manager and senior manager were both
-members of the molecular spectroscopy research group whose interests I
+members of the MSG whose interests I
 was responsible for within Mantid. However, I still reported to the
 Mantid project manager on a daily basis.
 
 \subsection{Organisation of the Mantid Project Development
 Team}\label{organisation-of-the-mantid-project-development-team}
 
-The Mantid development team in the UK is a subset of the computing group
-of ISIS. The Mantid group is headed by a single project manager (Nick
+The Mantid development team in the UK is a subset of the computing group. The Mantid group is headed by a single project manager (Nick
 Draper) who is based at ISIS where the project first started and is
 responsible for the overall management and direction of the project. The
 project is primarily split into two teams, one based at ISIS and one at the SNS in
@@ -264,7 +261,7 @@ Abingdon, Oxfordshire. The rest of the development team are directly
 employed by ISIS, or in the case of the Americans, by the SNS. In
 addition there are also several collaborators from facilities such as
 the Institut Laue-Langevin (ILL) and the Paul Scherrer Institute (PSI)
-who work remotely from their respective facilties.
+who work remotely from their respective facilities.
 
 While I was primarily situated within the development team based at
 ISIS, many developers within the team are generally also attached to a
@@ -280,12 +277,12 @@ members throughout the year.
 Environments}\label{technical-and-application-environments}
 
 The development team based in the UK has a single office located in the
-main office building of the ISIS facility. This office consisted of
+main office building of the ISIS facility. This office consists of
 approximately 13 workstations. The number of machines varied throughout
 the year depending on the level of staffing available to the project.
 Each of the machines were reasonably powerful 64-bit Dell workstations
-with between 8-16 Gb of RAM and 8-16 core intel i7 processors. Typical
-hard drive space for the machines was between 512 Gb to 1 Tb with the
+with between 8-16Gb of RAM and 8-16 core Intel i7 processors. Typical
+hard drive space for the machines was between 512Gb to 1Tb with the
 majority still being disk drives, but some of the newer machines had
 flash based storage.
 
@@ -297,7 +294,7 @@ developers using different platforms. I personally chose to run Ubuntu
 12.13 as my operating system of choice for the majority of development
 work, with a dual partition running Windows 7 which could be swapped to
 when circumstances required. Other operating systems used by developers
-in the team included Windows 7 \& 8, Mac OSX Mountain Lion and
+in the team included Windows 7 \& 8, Mac OS X Mountain Lion and
 Mavericks, Red Hat Enterprise Linux 6, and Fedora 20.
 
 Apart from the workstations, the development team also had a collection of
@@ -358,6 +355,8 @@ to keep a record of the current development progress. The Trac set-up
 used also includes plug ins to automatically capture commits to branches
 on Github and update the relevant ticket with the commit information.
 
+The Mantid documentation pipeline was overhaulled during my time on placement. Originally the project used MediaWiki with the documentation for each class residing in the file that contains the code. This was changed to use Sphinx and accompanying reStructured text files for every part of our public python API. For the C++ code we continued to use regular Doxygen documentation. The website continued to use MediaWiki with a custom theme. As part of the upgrade examples of how to use the public API where added to the documentation. These are automatically run by Jenkins and their output is checked against reference results to help prevent the usage examples becoming out of date or broken. They also act as ersatz unit tests.
+
 \clearpage
 \section{Description of Job Role and Work
 Done}\label{description-of-job-role-and-work-done}
@@ -397,7 +396,7 @@ an introduction the the Mantid application and workflow of the team. The
 following week was mostly spent setting up my workstation for
 development before starting my first ticket from the Trac ticket system.
 My first ticket involved writing a couple of algorithms which would take
-some histogram data and perform smoothing or interpolation of the
+some histogram data and perform smoothing and interpolation of the
 workspace using the cubic spline routines in the GSL library, a feature
 that had been requested by one of the MSG scientists. From this point
 onwards I spent the majority of my time working on tickets for the MSG.
@@ -471,8 +470,8 @@ Algorithm}\label{density-of-states-algorithm}
 During my time with the MSG, it became apparent that one of the major
 areas for development that had not been explored was the implementation
 of support for the simulation of a neutron scattering experiment. This
-was an area which my supervisor within the MSG (who has a background in computational
-simulations) was keen to expand because comparison with simulation is
+was an area which my supervisor within the MSG (who has a background in molecular
+simulation) was keen to expand because comparison with simulation is
 one of the most common and useful techniques for analysing experimental
 data.
 
@@ -482,7 +481,7 @@ already had a perl script which could do the calculations she required
 through the command line, but it was infinitely more convenient to have
 this functionality within Mantid.
 
-This involved the creation of a new algorithm which would read the files
+This involved the creation of a new algorithm that could read the files
 output from CASTEP, which contained a list of frequencies predicted by
 theory for a sample. With this information, the density of states could
 be calculated and a workspace containing the simulated spectrum could be
@@ -515,7 +514,7 @@ moved on.
 My task was to overhaul this feature to not only properly provide the
 features mentioned above, but also to add functionality to capture
 nested algorithm history, that is, the history of an algorithm operating
-on a workspace but also the history of an `child' algorithms run as part
+on a workspace but also the history of any `child' algorithms run as part
 of that algorithm. There was also a requirement to make the workspace
 completely reproducible from its history alone and that the full nested
 history could be examined using a GUI from within Mantid.
@@ -537,8 +536,7 @@ development team and with a few minor changes was approved. I then spent
 the next month or so implementing the changes outlined in the design
 document. Along the way we encountered several issues that were not
 covered by the design document, mostly linked technical issues caused by
-the fact that workspaces can be created without a string name and that
-that providing a temporary name to them on the fly can causes many
+the fact that workspaces can be created without a string name and that providing a temporary name to them on the fly can causes many
 issues with reproducing a executable script.
 
 Despite these set backs, I managed to get the majority of the core
@@ -589,8 +587,8 @@ myself an intermediate in both languages. Besides gaining a better
 understanding of new languages though constant exposure, I have also
 gained experience with a variety of supporting libraries and tools. For
 example, I had not worked with the boost library before my placement
-which was used extensively through out the project to provide C++11 like
-features in a cross platform and backwardly compatible way. I have become much more adept at using
+which was used extensively throughout the project to provide C++11 like
+features in a cross platform and backwardly compatible way. I have also become much more adept at using
 development tools such as Git, GDB, CMake, and Valgrind which I had
 little or no experience with previously.
 
@@ -602,13 +600,13 @@ working on to the ISIS faculty which mainly consisted of instrument
 scientists with limited knowledge of the development process. The content of what I presented varied, but I usually
 presented any changes to the indirect inelastic section, but I also
 presented more general topics on occasion (such as the algorithm history
-changes, see section on
+changes, see section
 \ref{improvements-to-algorithm-history-recording}). I was also asked to present directly to
 the MSG during one of their monthly meetings and to present any core
 changes to Mantid during their biweekly development meetings. As I would
 not describe myself as a natural speaker, opportunities to present
 material to a variety of different audiences (both in size and
-demographic) proved to invaluable experience.
+demographic) proved to be an invaluable experience.
 
 Talking to and gathering requirements from users was another skill that
 felt I developed well over the course of the year. I met with members of
@@ -654,7 +652,7 @@ much of which could potentially be combined. Again, I believe this was
 down to a communication problem. The both teams only had a single
 biweekly development meeting via BlueJeans (which often got cancelled)
 and an ongoing Skype IM conversation as the means to contact one
-another. This meant that the people on both sides of the atlantic would
+another. This meant that some people on both sides of the atlantic would
 often not communicate for days or weeks at a time.
 
 I feel the simplest solution to this issue would be to increase the
@@ -691,14 +689,14 @@ occasions was a lack of direction and the conflict of interest between
 developers and instrument scientists. Several of the scientists within
 my group approached me to request features that they would like to see
 or to suggest improvements. This is good because it means we write what
-the use wants, but can become burdensome when there is a lack of
+the user wants, but can become burdensome when there is a lack of
 prioritisation. I often found myself `spinning many plates' for many
 different task masters. Occasionally this led to a conflict either
 between what individual scientists want or between what scientists want
 and the general goals of the project.
 
 Towards the end of the year I felt we began to rectify this by having a
-weekly meeting where myself, my line manager (an MSG scientist) and a
+weekly meeting between myself, my line manager (an MSG scientist) and a
 retired scientist who's profession was QENs data analysis along with
 guests from both the development team and the scientific group. This
 allowed us to better outline what our goals should both in the short an
@@ -709,11 +707,12 @@ All of these issues really outlined to me the importance of good communication w
 In summary, I feel that I had an excellent placement a ISIS. I was given
 responsibilities above and beyond anything I had imagined before
 starting my industrial year. I met and worked with some very interesting
-people and an worked for unusual company. The learning curve was the
+people and worked for unusual company. The learning curve was the
 steepest I've ever experienced, but I enjoyed every moment. Despite
 several negative aspects to the project and making many mistakes along
 the way, I feel that I was able to learn from them all.
 
+\clearpage
 \section*{Bibilography}\label{bibilography}
 \addcontentsline{toc}{section}{Bibilography}
 
