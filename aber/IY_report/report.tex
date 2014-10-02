@@ -297,9 +297,25 @@ when circumstances required. Other operating systems used by developers
 in the team included Windows 7 \& 8, Mac OS X Mountain Lion and
 Mavericks, Red Hat Enterprise Linux 6, and Fedora 20.
 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/GitWorflow-Dev.png}
+\caption{Diagram showing how the team used git branches to work on new features and bugfixes. Work is carried out on a branch from master, then merged to the develop branch for integration testing. Once integration testing is successful the ticket is marked as fixed. Source: {[}11{]}}
+\label{fig:git-dev-flow}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{img/GitWorflow-Testing.png}
+\caption{Diagram showing how the team used git branches to test features/bugfixes. The ticket is merged with a local copy of master and tested by the tester. If testing fails the ticket is reopened. If testing passes the branch is merged with the master on GitHub and the feature branch deleted. Source: {[}11{]}}
+\label{fig:git-testing-flow}
+\end{figure}
+
 Apart from the workstations, the development team also had a collection of
 Jenkins build servers in order to support a continuous integration and
-testing workflow in conjunction with the Gitflow workflow {[}11{]}. The
+testing workflow in conjunction with the Gitflow workflow {[}11{]}. See diagrams \ref{fig:git-dev-flow} and \ref{fig:git-testing-flow} for a description of how this workflow works. The
 build servers are jointly located at both ISIS and the SNS. At the start
 of the placement, the build servers for ISIS and the SNS were completely
 separate and located at different web address. Each individual build was
