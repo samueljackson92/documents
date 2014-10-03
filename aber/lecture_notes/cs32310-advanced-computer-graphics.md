@@ -12,13 +12,10 @@
  - Positioning and viewing
     - matrix transformations
     - perspective, rotation, translation, scaling
-
  - Hidden surface removal
     - z-buffers
-
  - Lighting
     - Surface normals, Gourand, Phong models
-
  - Texture mapping
 
 ### 3D Surface Data
@@ -100,4 +97,4 @@
 
  - Interpolation of the coordinates across triangular faces in 2D doesn't account for perspective
     - Faces appear to have bands and kinks when they shouldn't
- - Need to perform perspective division while interpolating in 2D to correct for the effect. 
+ - Need to perform perspective division while interpolating in 2D to correct for the effect.
