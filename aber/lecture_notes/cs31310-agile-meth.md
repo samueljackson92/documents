@@ -31,6 +31,21 @@
 
 ## 2014-10-03 - The Agile Manifesto
 
+### Agile Alliance Principles
+ - Satisfy the customer early through continuous delivery of valuable and useful software.
+ - Welcome changing requirements, event late in development. Harness change for the customer's competitive benefit.
+ - Deliver software frequently, from a couple of weeks to a few months.
+ - Business people and developers must work together daily.
+ - Build project around motivated individuals.
+ - The most effective method for conveying information within a team is face-to-face communication.
+ - Working software is the primary measure of progress.
+ - Agile processes promote sustainable development.
+ - Continuous attention to technical excellence and good design enhances agility.
+ - Simplicity: Th art of maximising the amount of unnecessary work not done.
+ - The best architectures, requirements, and designs originate from self-organising teams.
+ - At regular intervals the team reflects on how to become more effective.
+
+
 ## 2014-10-06 - Extreme Programming
 
 ### Motivation Behind XP
