@@ -154,3 +154,97 @@
  - We make an assumption about how to represent it (choosing a model)
     - Called the hypotheses function *h*
  - *h* is learned from the many training examples
+
+### Learning as Regression
+
+ - A target function should best fit the experience
+ - We need to optimise an objective function
+    - e.g. least squares
+ - In practice we do not necessarily know the error so we need prior knowledge to define the correct target function
+
+### Performance Measurement
+
+ - Error rate = No. of Errors / No. of Examples
+ - Apparent error rate
+    - Based on the training examples
+    - These are the examples which are used to learn and test
+ - Test sample error rate
+    - Based on testing examples
+    - These are examples that have specifically been held back for testing purposes
+ - True error rate
+    - Based on new, unknown, practical examples
+ - Generally about 2/3 of examples are used for training and 1/3 for testing
+ - Apparent error rate will be overly optimistic
+    - It is not a good indicator of performance
+    - True/Test error rate will be more pessimistic
+
+### Issues with Machine Learning
+
+ - What algorithms exist to learn general target functions?
+ - How do learning design factors influence accuracy?
+    - No. of training examples
+    - Complexity of hypothesis representation
+ - How do learning characteristics influence accuracy?
+    - Noisy data
+    - Multiple data sources
+ - Theoretical limits of learning
+ - What prior knowledge can help the learner?
+ - Clues from biological systems?
+ - How can systems alter their own representation?
+    - This is a major challenge, but very desirable.
+
+### 2014-10-08 Concept Learning
+
+ - Learning a concept from positive and negative examples
+ - Concept: a category used to group similar ideas or things
+    - A way to organise knowledge
+    - Learning concepts may involve either recall or application
+    - Humans can generalise from a small number of positive examples
+
+ - Formalising a concept
+    - Formulate defining features of a concept
+    - Use these to form a test to apply to both positive and negative examples
+    - Examples that violate the test are not counted as part of the concept
+
+### Notation and Basic Terms
+    - Instance space *x*: the set of constraints over which the concept is defined
+    - Target concept *c*: concept as a function that needs to be learned
+    - Training examples *<x, C(x)>*: the set of available training examples denoted as *D*
+    - Hypothesis space *H*: the set of all possible hypotheses considered by the learning algorithm to identify the concept
+
+ - Learning goal: To find a hypothesis such that *h(x)* = *c(x)* for all *x* in *D*
+
+ - A hypothesis is a conjunction of constraints on attributes. Each attribute can be
+    - A specific value (discrete or continuous)
+    - Don't care. (It doesn't matter what the value is)
+    - No value allowed. (If we have a value for this attribute then it is not satisfied)
+
+ - Concept learning as a search
+    - How to search out hypotheses in the hypothesis space that describe your opinions.
+    - Any combination of *h* in the hypothesis space could be learned.
+    - Assume each is a conjunction of all potential hypotheses
+        - Potential list can be cut down by considering which are syntactically and semantically different/similar
+
+### Generality Ordering of Hypotheses
+ - Definition: *x* satisfies *h* if and only if *h(x) = 1*
+ - Definition:
+    - Let *h_i*, *h_j* be boolean functions defined over *X*.
+    - *h_i* is more general or equal (*h_i* > *h_j*) <=> for all *x* in *X*, *h_i(x) = 1*  => *h_j(x) = 1*
+
+ - If this is the case we can say:
+    - *h_i* is more general than *h_j*
+    - *h_j* is more specific than *h_i*
+
+ - The two operators for learning
+    - Generalisation (make the problem less specific)
+        - Remove some constraints
+        - Introduce new variables
+        - Introduce a disjunction
+    - Specialisation
+        - Add more constraints
+        - Instantiate variable with different values
+        - Introduce conjunctions
+
+### The Inductive Hypothesis
+ - The Inductive Learning Hypothesis
+    - Any hypothesis found to approximate a target function well over a sufficiently large set of training examples will also approximate the target function well over other unobserved examples
