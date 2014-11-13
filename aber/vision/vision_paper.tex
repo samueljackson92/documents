@@ -398,12 +398,6 @@ Email: slj11@aber.ac.uk}
 
 % make the title area
 \maketitle
-
-
-\begin{abstract}
-%\boldmath
-The abstract goes here.
-\end{abstract}
 % IEEEtran.cls defaults to using nonbold math in the Abstract.
 % This preserves the distinction between vectors and scalars. However,
 % if the conference you are submitting to favors bold math in the abstract,
@@ -429,9 +423,35 @@ The abstract goes here.
 
 
 \section{Introduction}
+This paper examines the Viola-Jones face detection algorithm \cite{viola2004robust} to the application of counting people in the real world. The Viola-Jones algorithm presented in \cite{viola2004robust} proposes an efficient method of performing face detection at frame rate with reasonably accurate results.
 
-\section{Critique of Method}
-\section{Application of Method}
+Detecting faces is a major challenge in the field of computer vision, and one which has many practical applications. Accurately determining whether a scene or photograph contains a face is provides many challenges. Yang et al. \cite{yang2002detecting} lists a number of different factors affecting human face detection. Faces typically have a wide degree of variation. They have different prominent facial features, skin colour, scars, facial hair, and hair styles. The pose also causes issues. The side of a face is very different from the frontal view. Occlusions prove another major obstacle. In a crowded scene it is easy for a face to be partially or wholly excluded, glasses and sun glasses are also a common source of occlusions. The quality of the capture including the lighting, focus, and contrast can affect the image quality. The characteristics of the camera such as the lenses and sensors also affect final capture.
+
+Another major factor which increases the difficulty of face detection is the complexity of the problem. Photographs and video generally have an incredibly large feature space to search making looking for the face at every pixel and scale an impossibly complex task to practically accomplish at frame rate.
+
+Despite these obstacles efficient detection of faces in a scene continues to be desirable for a multitude of practical applications. One of the most common uses of a face detection system is as part of a larger system, such as a face recognition or image analysis. In order to correctly recognise a face it must first be found. In this way face detection algorithms act as a preprocessor to a larger system. Other applications include uses in image databases, social media, and video conferencing. Automatic detection of faces can be used in image management system to find faces in images as part of a precursor to automatically annotating images with meta data. The most obvious example would be the image tagging feature on sites such as Facebook. Applications to video conferencing include the need to adjust the focus of the camera relative to the speak. 
+
+The approach taken by Viola-Jones in \cite{viola2004robust}, is also not restricted to detecting faces. A cascade classifier such as the one presented in \cite{viola2004robust} can be trained to detect a variety of objects other objects provided that sufficient positive and negative examples can be supplied for training. For example, work based on the Viola-Jones detection algorithm has been used to detect people \cite{viola2003detecting}, license plates \cite{zhang2006learning}, and facial features (eyes, nose, and mouth) \cite{wilson2006facial}.
+
+The major contribution that the Viola-Jones algorithm makes is in the speed at which the algorithm can detect a face. Many approaches prior to Viola-Jones could offer reasonably good detection rates \cite{sung1998example} \cite{schneiderman2000statistical} \cite{rowley1998neural}, but the Viola-Jones algorithm's strength is in the speed ups offered by their method.
+
+Viola-Jones solves the problem of rapid object detection through the use of three key components. The First component is that the Haar features used to detect faces are computed using an integral image representation. This representation allows for rapid evaluation of Haar features in constant time. The second component is to use the AdaBoost algorithm to choose a small number of features that classify the training set well. The third component is to combine the weak classifiers into a cascade of classifier, with the least complex classifiers at the beginning of the cascade. This ensures that the majority of negative examples are rejected early using classifiers that are quick to evaluate, but that later, more complex nodes in the classifier minimise the occurrence of false positives. Once the cascade of classifiers has been trained it is very efficient to classify new examples by running the image through the cascade.
+
+The rest of this paper is dedicated to reviewing the performance of Viola-Jones object detection in various circumstances and discussing its application to the titular problem. Section \ref{sec:critique-of-method} reviews the what problems Viola-Jones can be used to solve and what it cannot solve. Section \ref{sec:application-of-method} discusses how the technique could be applied to the titular problem and what issues the like issues encountered would be. Section \ref{sec:conclusion} rounds off the the paper with conclusions drawn from the preceding sections. Finally, section \ref{sec:self-evaluation} provides my self evaluation of this paper.
+
+\section{Critique of Method} \label{sec:critique-of-method}
+Viola-Jones object detection represents a major breakthrough in the computer vision community by bringing practical speed ups in face detection through intelligent data structures and clever use of the AdaBoost algorithm to make face detection in real time a possibility. However, success of the technique is not without its limitations and the technique has several possible failure modes.
+
+At the time of publication of the technique had results that had ``detection and false positive rates which [were] equivalent to the best published results'' \cite{viola2004robust} but executed in in a much smaller amount of time. Comparisons between the major approaches published at the time are given at the end of the paper, but the results are not entirely definitive due to most approaches not providing a full receiver operating characteristic (ROC) curves for their classifiers or did not publish there best results. In the case of Sung and Poggio \cite{sung1998example} only the MIT part of the common dataset was used (as the CMU dataset did not yet exist). In spite of this, the authors show that their technique provides roughly equivalent levels of performance given the available data. The authors note that the best performance was achieved using a voting regime between three classifiers trained with different negative examples, different negative vs. positive errors, and different criteria for also positives vs. classifier size.
+
+Unfortunately the Viola-Jones has quite a few failure modes in which it will give a high number of either false positives or false negatives. One of the biggest drawbacks of the vanilla implementation presented in the paper is that it can only detect frontal images of faces. Faces viewed for the side or in a different rotation or orientation are unlikely to be correctly detected. The technique can be used to correct detect faces as viewed from the side profile by training a different classifier with sufficient positive and negative examples. Both sides of the face could be accounted for by training a classifier for one side of the face, testing the image then flipping the image and running the classifier again to account for the other side. Similar problems occur when the classifier is presented with faces that are rotated, either in or out of the image plane. Jones and Viola \cite{jones2003fast} attempted to alleviate these issues by training multiple classifiers for each of the poses and using additional diagonal Haar like features. The choice of classifier used is decided using a decision tree. This gives a two step approach to classification in which the first step estimates the pose and the second runs selected pose classifier.
+
+Further work by Lienhart et al. \cite{lienhart2002extended} provides empirical evidence that better results can be obtained from the Viola-Jones approach though the use of a number of extensions such using the gentle AdaBoost algorithm in favour of the original discrete AdaBoost implementation. They also performed experiments with a broader set of Haar features which were formed from rotated versions of the original features. These appeared to produce more accurate results despite complicating the learning procedure by successfully encoding more domain knowledge into the learning procedure that it would otherwise have difficulty learning.
+
+More recent work published by Brubaker et al. \cite{brubaker2008design} achieved improved the speed of the detector as well as reducing the training time without sacrificing accuracy.
+
+
+\section{Application of Method} \label{sec:application-of-method}
 
 % An example of a floating figure using the graphicx package.
 % Note that \label must occur AFTER (or within) \caption.
@@ -517,22 +537,12 @@ The abstract goes here.
 
 
 
-\section{Conclusion}
-The conclusion goes here.\cite{viola2004robust}
+\section{Conclusion} \label{sec:conclusion}
 
 
-\section{Self-Evaluation}
+\section{Self-Evaluation} \label{sec:self-evaluation}
 
 % conference papers do not normally have an appendix
-
-
-% use section* for acknowledgement
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
-
-
 
 
 
@@ -560,14 +570,6 @@ The authors would like to thank...
 % (used to reserve space for the reference number labels box)
 \bibliographystyle{IEEEtran}
 \bibliography{references}
-
-
-
-
-
-
-
-
 
 % that's all folks
 \end{document}
