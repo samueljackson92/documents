@@ -1,83 +1,427 @@
-%%% LaTeX Template
-%%% This template can be used for both articles and reports.
-%%%
-%%% Copyright: http://www.howtotex.com/
-%%% Date: February 2011
 
-%%% Preamble
-\documentclass[paper=a4, fontsize=11pt]{scrartcl}	% Article class of KOMA-script with 11pt font and a4 format
+%% bare_conf.tex
+%% V1.3
+%% 2007/01/11
+%% by Michael Shell
+%% See:
+%% http://www.michaelshell.org/
+%% for current contact information.
+%%
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.7 or later) with an IEEE conference paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/tex-archive/macros/latex/contrib/IEEEtran/
+%% and
+%% http://www.ieee.org/
 
-\usepackage[margin=0.7in]{geometry}
-\setcounter{secnumdepth}{4}
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%
+%% File list of work: IEEEtran.cls, IEEEtran_HOWTO.pdf, bare_adv.tex,
+%%                    bare_conf.tex, bare_jrnl.tex, bare_jrnl_compsoc.tex
+%%*************************************************************************
 
-\usepackage[english]{babel}															% English language/hyphenation
-\usepackage[protrusion=true,expansion=true]{microtype}				% Better typography
-\usepackage{amsmath,amsfonts,amsthm}										% Math packages
-\usepackage[pdftex]{graphicx}														% Enable pdflatex
-\usepackage{seqsplit}
-%\usepackage{color,transparent}													% If you use color and/or transparency
-\usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption}	% Custom captions under/above floats
-\usepackage{epstopdf}																	% Converts .eps to .pdf
-\usepackage{subfig}																		% Subfigures
-\usepackage{booktabs}																	% Nicer tables
-
-
-%%% Advanced verbatim environment
-\usepackage{verbatim}
-\usepackage{fancyvrb}
-\DefineShortVerb{\|}								% delimiter to display inline verbatim text
-
-
-%%% Custom sectioning (sectsty package)
-\usepackage{sectsty}								% Custom sectioning (see below)
-\allsectionsfont{%									% Change font of al section commands
-	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
-%	\hspace{15pt}%									% Uncomment for indentation
-	}
-
-\sectionfont{%										% Change font of \section command
-	\usefont{OT1}{bch}{b}{n}%					% bch-b-n: CharterBT-Bold font
-	\sectionrule{0pt}{0pt}{-5pt}{0.8pt}%	% Horizontal rule below section
-	}
-
-
-%%% Custom headers/footers (fancyhdr package)
-\usepackage{fancyhdr}
-\pagestyle{fancyplain}
-\fancyhead{}														% No page header
-\fancyfoot[C]{\thepage}										% Pagenumbering at center of footer
-\renewcommand{\headrulewidth}{0pt}				% Remove header underlines
-\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
-\setlength{\headheight}{13.6pt}
-
-%%% Equation and float numbering
-\numberwithin{equation}{section}															% Equationnumbering: section.eq#
-\numberwithin{figure}{section}																% Figurenumbering: section.fig#
-\numberwithin{table}{section}																% Tablenumbering: section.tab#
-\usepackage[parfill]{parskip}
-\usepackage{float}
-\usepackage{graphicx}
-\usepackage{hyperref}
-\usepackage[numbers]{natbib}
-
-\newcommand{\sectionbreak}{\clearpage}
+% *** Authors should verify (and, if needed, correct) their LaTeX system  ***
+% *** with the testflow diagnostic prior to trusting their LaTeX platform ***
+% *** with production work. IEEE's font choices can trigger bugs that do  ***
+% *** not appear when using other class files.                            ***
+% The testflow support page is at:
+% http://www.michaelshell.org/tex/testflow/
 
 
-%%% Title
-\title{ \vspace{-1in} 	\usefont{OT1}{bch}{b}{n}
-		\huge \strut CS32310: A Virtual Orrery\strut \\
-}
-\author{ 									\usefont{OT1}{bch}{m}{n}
-        Samuel Jackson\\		\usefont{OT1}{bch}{m}{n}
-		Department Of Computer Science\\	\usefont{OT1}{bch}{m}{n}
-        Aberystwyth University\\
-        \texttt{slj11@aber.ac.uk}
-}
-\date{\today}
 
-%%% Begin document
+% Note that the a4paper option is mainly intended so that authors in
+% countries using A4 can easily print to A4 and see how their papers will
+% look in print - the typesetting of the document will not typically be
+% affected with changes in paper size (but the bottom and side margins will).
+% Use the testflow package mentioned above to verify correct handling of
+% both paper sizes by the user's LaTeX system.
+%
+% Also note that the "draftcls" or "draftclsnofoot", not "draft", option
+% should be used if it is desired that the figures are to be displayed in
+% draft mode.
+%
+\documentclass[conference]{IEEEtran}
+% Add the compsoc option for Computer Society conferences.
+%
+% If IEEEtran.cls has not been installed into the LaTeX system files,
+% manually specify the path to it like:
+% \documentclass[conference]{../sty/IEEEtran}
+
+
+
+
+
+% Some very useful LaTeX packages include:
+% (uncomment the ones you want to load)
+
+
+% *** MISC UTILITY PACKAGES ***
+%
+%\usepackage{ifpdf}
+% Heiko Oberdiek's ifpdf.sty is very useful if you need conditional
+% compilation based on whether the output is pdf or dvi.
+% usage:
+% \ifpdf
+%   % pdf code
+% \else
+%   % dvi code
+% \fi
+% The latest version of ifpdf.sty can be obtained from:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/oberdiek/
+% Also, note that IEEEtran.cls V1.7 and later provides a builtin
+% \ifCLASSINFOpdf conditional that works the same way.
+% When switching from latex to pdflatex and vice-versa, the compiler may
+% have to be run twice to clear warning/error messages.
+
+
+
+
+
+
+% *** CITATION PACKAGES ***
+%
+%\usepackage{cite}
+% cite.sty was written by Donald Arseneau
+% V1.6 and later of IEEEtran pre-defines the format of the cite.sty package
+% \cite{} output to follow that of IEEE. Loading the cite package will
+% result in citation numbers being automatically sorted and properly
+% "compressed/ranged". e.g., [1], [9], [2], [7], [5], [6] without using
+% cite.sty will become [1], [2], [5]--[7], [9] using cite.sty. cite.sty's
+% \cite will automatically add leading space, if needed. Use cite.sty's
+% noadjust option (cite.sty V3.8 and later) if you want to turn this off.
+% cite.sty is already installed on most LaTeX systems. Be sure and use
+% version 4.0 (2003-05-27) and later if using hyperref.sty. cite.sty does
+% not currently provide for hyperlinked citations.
+% The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/cite/
+% The documentation is contained in the cite.sty file itself.
+
+
+
+
+
+
+% *** GRAPHICS RELATED PACKAGES ***
+%
+\ifCLASSINFOpdf
+  \usepackage[pdftex]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../pdf/}{../jpeg/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+\else
+  % or other class option (dvipsone, dvipdf, if not using dvips). graphicx
+  % will default to the driver specified in the system graphics.cfg if no
+  % driver is specified.
+  % \usepackage[dvips]{graphicx}
+  % declare the path(s) where your graphic files are
+  % \graphicspath{{../eps/}}
+  % and their extensions so you won't have to specify these with
+  % every instance of \includegraphics
+  % \DeclareGraphicsExtensions{.eps}
+\fi
+% graphicx was written by David Carlisle and Sebastian Rahtz. It is
+% required if you want graphics, photos, etc. graphicx.sty is already
+% installed on most LaTeX systems. The latest version and documentation can
+% be obtained at: 
+% http://www.ctan.org/tex-archive/macros/latex/required/graphics/
+% Another good source of documentation is "Using Imported Graphics in
+% LaTeX2e" by Keith Reckdahl which can be found as epslatex.ps or
+% epslatex.pdf at: http://www.ctan.org/tex-archive/info/
+%
+% latex, and pdflatex in dvi mode, support graphics in encapsulated
+% postscript (.eps) format. pdflatex in pdf mode supports graphics
+% in .pdf, .jpeg, .png and .mps (metapost) formats. Users should ensure
+% that all non-photo figures use a vector format (.eps, .pdf, .mps) and
+% not a bitmapped formats (.jpeg, .png). IEEE frowns on bitmapped formats
+% which can result in "jaggedy"/blurry rendering of lines and letters as
+% well as large increases in file sizes.
+%
+% You can find documentation about the pdfTeX application at:
+% http://www.tug.org/applications/pdftex
+
+
+
+
+
+% *** MATH PACKAGES ***
+%
+%\usepackage[cmex10]{amsmath}
+% A popular package from the American Mathematical Society that provides
+% many useful and powerful commands for dealing with mathematics. If using
+% it, be sure to load this package with the cmex10 option to ensure that
+% only type 1 fonts will utilized at all point sizes. Without this option,
+% it is possible that some math symbols, particularly those within
+% footnotes, will be rendered in bitmap form which will result in a
+% document that can not be IEEE Xplore compliant!
+%
+% Also, note that the amsmath package sets \interdisplaylinepenalty to 10000
+% thus preventing page breaks from occurring within multiline equations. Use:
+%\interdisplaylinepenalty=2500
+% after loading amsmath to restore such page breaks as IEEEtran.cls normally
+% does. amsmath.sty is already installed on most LaTeX systems. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/amslatex/math/
+
+
+
+
+
+% *** SPECIALIZED LIST PACKAGES ***
+%
+%\usepackage{algorithmic}
+% algorithmic.sty was written by Peter Williams and Rogerio Brito.
+% This package provides an algorithmic environment fo describing algorithms.
+% You can use the algorithmic environment in-text or within a figure
+% environment to provide for a floating algorithm. Do NOT use the algorithm
+% floating environment provided by algorithm.sty (by the same authors) or
+% algorithm2e.sty (by Christophe Fiorio) as IEEE does not use dedicated
+% algorithm float types and packages that provide these will not provide
+% correct IEEE style captions. The latest version and documentation of
+% algorithmic.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithms/
+% There is also a support site at:
+% http://algorithms.berlios.de/index.html
+% Also of interest may be the (relatively newer and more customizable)
+% algorithmicx.sty package by Szasz Janos:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/algorithmicx/
+
+
+
+
+% *** ALIGNMENT PACKAGES ***
+%
+%\usepackage{array}
+% Frank Mittelbach's and David Carlisle's array.sty patches and improves
+% the standard LaTeX2e array and tabular environments to provide better
+% appearance and additional user controls. As the default LaTeX2e table
+% generation code is lacking to the point of almost being broken with
+% respect to the quality of the end results, all users are strongly
+% advised to use an enhanced (at the very least that provided by array.sty)
+% set of table tools. array.sty is already installed on most systems. The
+% latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/required/tools/
+
+
+%\usepackage{mdwmath}
+%\usepackage{mdwtab}
+% Also highly recommended is Mark Wooding's extremely powerful MDW tools,
+% especially mdwmath.sty and mdwtab.sty which are used to format equations
+% and tables, respectively. The MDWtools set is already installed on most
+% LaTeX systems. The lastest version and documentation is available at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/mdwtools/
+
+
+% IEEEtran contains the IEEEeqnarray family of commands that can be used to
+% generate multiline equations as well as matrices, tables, etc., of high
+% quality.
+
+
+%\usepackage{eqparbox}
+% Also of notable interest is Scott Pakin's eqparbox package for creating
+% (automatically sized) equal width boxes - aka "natural width parboxes".
+% Available at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/eqparbox/
+
+
+
+
+
+% *** SUBFIGURE PACKAGES ***
+%\usepackage[tight,footnotesize]{subfigure}
+% subfigure.sty was written by Steven Douglas Cochran. This package makes it
+% easy to put subfigures in your figures. e.g., "Figure 1a and 1b". For IEEE
+% work, it is a good idea to load it with the tight package option to reduce
+% the amount of white space around the subfigures. subfigure.sty is already
+% installed on most LaTeX systems. The latest version and documentation can
+% be obtained at:
+% http://www.ctan.org/tex-archive/obsolete/macros/latex/contrib/subfigure/
+% subfigure.sty has been superceeded by subfig.sty.
+
+
+%\usepackage[caption=false]{caption}
+%\usepackage[font=footnotesize]{subfig}
+% subfig.sty, also written by Steven Douglas Cochran, is the modern
+% replacement for subfigure.sty. However, subfig.sty requires and
+% automatically loads Axel Sommerfeldt's caption.sty which will override
+% IEEEtran.cls handling of captions and this will result in nonIEEE style
+% figure/table captions. To prevent this problem, be sure and preload
+% caption.sty with its "caption=false" package option. This is will preserve
+% IEEEtran.cls handing of captions. Version 1.3 (2005/06/28) and later 
+% (recommended due to many improvements over 1.2) of subfig.sty supports
+% the caption=false option directly:
+%\usepackage[caption=false,font=footnotesize]{subfig}
+%
+% The latest version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/subfig/
+% The latest version and documentation of caption.sty can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/caption/
+
+
+
+
+% *** FLOAT PACKAGES ***
+%
+%\usepackage{fixltx2e}
+% fixltx2e, the successor to the earlier fix2col.sty, was written by
+% Frank Mittelbach and David Carlisle. This package corrects a few problems
+% in the LaTeX2e kernel, the most notable of which is that in current
+% LaTeX2e releases, the ordering of single and double column floats is not
+% guaranteed to be preserved. Thus, an unpatched LaTeX2e can allow a
+% single column figure to be placed prior to an earlier double column
+% figure. The latest version and documentation can be found at:
+% http://www.ctan.org/tex-archive/macros/latex/base/
+
+
+
+%\usepackage{stfloats}
+% stfloats.sty was written by Sigitas Tolusis. This package gives LaTeX2e
+% the ability to do double column floats at the bottom of the page as well
+% as the top. (e.g., "\begin{figure*}[!b]" is not normally possible in
+% LaTeX2e). It also provides a command:
+%\fnbelowfloat
+% to enable the placement of footnotes below bottom floats (the standard
+% LaTeX2e kernel puts them above bottom floats). This is an invasive package
+% which rewrites many portions of the LaTeX2e float routines. It may not work
+% with other packages that modify the LaTeX2e float routines. The latest
+% version and documentation can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/sttools/
+% Documentation is contained in the stfloats.sty comments as well as in the
+% presfull.pdf file. Do not use the stfloats baselinefloat ability as IEEE
+% does not allow \baselineskip to stretch. Authors submitting work to the
+% IEEE should note that IEEE rarely uses double column equations and
+% that authors should try to avoid such use. Do not be tempted to use the
+% cuted.sty or midfloat.sty packages (also by Sigitas Tolusis) as IEEE does
+% not format its papers in such ways.
+
+
+
+
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+%
+%\usepackage{url}
+% url.sty was written by Donald Arseneau. It provides better support for
+% handling and breaking URLs. url.sty is already installed on most LaTeX
+% systems. The latest version can be obtained at:
+% http://www.ctan.org/tex-archive/macros/latex/contrib/misc/
+% Read the url.sty source comments for usage information. Basically,
+% \url{my_url_here}.
+
+
+
+
+
+% *** Do not adjust lengths that control margins, column widths, etc. ***
+% *** Do not use packages that alter fonts (such as pslatex).         ***
+% There should be no need to do such things with IEEEtran.cls V1.6 and later.
+% (Unless specifically asked to do so by the journal or conference you plan
+% to submit to, of course. )
+
+
+% correct bad hyphenation here
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
 \begin{document}
+%
+% paper title
+% can use linebreaks \\ within to get better formatting as desired
+\title{CS32310: A Virtual Orrery}
+
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{\IEEEauthorblockN{Samuel Jackson}
+\IEEEauthorblockA{Department of Computer Science\\
+University Of Aberystwyth\\
+Aberystwyth, Ceredigion, SY23 3FL\\
+Email: slj11@aber.ac.uk}
+}
+
+% conference papers do not typically use \thanks and this command
+% is locked out in conference mode. If really needed, such as for
+% the acknowledgment of grants, issue a \IEEEoverridecommandlockouts
+% after \documentclass
+
+% for over three affiliations, or if they all won't fit within the width
+% of the page, use this alternative format:
+% 
+%\author{\IEEEauthorblockN{Michael Shell\IEEEauthorrefmark{1},
+%Homer Simpson\IEEEauthorrefmark{2},
+%James Kirk\IEEEauthorrefmark{3}, 
+%Montgomery Scott\IEEEauthorrefmark{3} and
+%Eldon Tyrell\IEEEauthorrefmark{4}}
+%\IEEEauthorblockA{\IEEEauthorrefmark{1}School of Electrical and Computer Engineering\\
+%Georgia Institute of Technology,
+%Atlanta, Georgia 30332--0250\\ Email: see http://www.michaelshell.org/contact.html}
+%\IEEEauthorblockA{\IEEEauthorrefmark{2}Twentieth Century Fox, Springfield, USA\\
+%Email: homer@thesimpsons.com}
+%\IEEEauthorblockA{\IEEEauthorrefmark{3}Starfleet Academy, San Francisco, California 96678-2391\\
+%Telephone: (800) 555--1212, Fax: (888) 555--1212}
+%\IEEEauthorblockA{\IEEEauthorrefmark{4}Tyrell Inc., 123 Replicant Street, Los Angeles, California 90210--4321}}
+
+
+
+
+% use for special paper notices
+%\IEEEspecialpapernotice{(Invited Paper)}
+
+
+
+
+% make the title area
 \maketitle
+% IEEEtran.cls defaults to using nonbold math in the Abstract.
+% This preserves the distinction between vectors and scalars. However,
+% if the conference you are submitting to favors bold math in the abstract,
+% then you can use LaTeX's standard command \boldmath at the very start
+% of the abstract to achieve this. Many IEEE journals/conferences frown on
+% math in the abstract anyway.
+
+% no keywords
+
+
+
+
+% For peer review papers, you can put extra information on the cover
+% page as needed:
+% \ifCLASSOPTIONpeerreview
+% \begin{center} \bfseries EDICS Category: 3-BBND \end{center}
+% \fi
+%
+% For peerreview papers, this IEEEtran command inserts a page break and
+% creates the second title. It will be ignored for other modes.
+\IEEEpeerreviewmaketitle
+
+\begin{abstract}
+We present an overview of an implementation of a virtual orrery application written in WebGL, HTML5 and Javascript. The simulation presented implements a full Phong shading lighting model with light attenuation. Advanced special effect features include transparent rings of Saturn, multi-texturing for a richer rendering of the Earth's complex surface, and elliptical orbits based on Kelpler's first two laws. Finally we present a summary of the existing work undertaken and offer some points for future development.
+\end{abstract}
 
 \section{Introduction}
 This report documents the CS32310 Advanced Graphics assignment. The task for this assignment was to build a virtual orrery of the solar system using WebGL, HTML5, and Javascript. The finished implementation presented here has both the basic functionality outlined in the assignment brief (i.e. drawing, texture mapping, lighting, and animating spheres) along with some non-trivial additional functionality such as multi-texturing, elliptical orbits, and transparency. 
@@ -86,15 +430,17 @@ All of the files required for this project are supplied in the requested zip fol
 
 The first section of this report outlines the basic functionality and overall structure of the application produced while the second section outlines the more advanced features implemented in the application. The final section concludes the report with a brief description of the problems I encountered throughout the assignment and what I would of done differently with hindsight.
 
-\section{Basic Implementation}
+\section{Methods and Basic Implementation}
 In this assignment I have heavily relied upon Javascript objects and prototypes to implement most of the functionality for the project. As Javascript has no support for classes, I have simulated classes by using objects with methods and attributes added to the prototypes which can be accessed using the \textit{this} keyword. Copies of an object can be created using the Javascript \textit{new} keyword. To simulate inheritance, I have used a small utility function called \textit{extends} which copies the prototype of a parent to a child.
+
+Entry to the program begins in a file called \textit{main.js} which contains many high level functions such as those used to initialise the WebGL environment on the canvas object in the HTML webpage, the main rendering loop for the program (with the timing of the loop handled using Google's WebGL Utils \cite{webgl-utils}) and the code for the initial creation and set-up of the models in the scene.
 
 \subsection{Models}
 In my implementation I have created a collection of model objects that define how something that is drawable in the scene should look and how it should be positioned. This is achieved using a hierarchy of extended prototypes, each adding additional functionality to the previous one. The most basic of these models is the Drawable object. This has very little implementation and only defines some common functions and attributes that are shared between all models. These include initialising the vertex, texture, index, and normal buffers, drawing the buffers, setting the drawable object's position etc. From this model two slightly more complex models are defined called Sphere and Cube. Unsurprisingly these have constructor functions which create vertex, index, texture, and normal data for objects that are spherical and cubic respectively.
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.5\textwidth]{img/model-uml.png}
+\includegraphics[width=0.3\textwidth]{img/model-uml.png}
 \caption{UML diagram of the hierarchy of ``inheritance'' of prototypes for models in the  application.}
 \label{fig:uml-models}
 \end{figure}
@@ -111,12 +457,12 @@ In a similar way, the scene graph is also responsible for calling the animate fu
 \subsection{Textures}
 The textures used throughout the program are loaded in a separate Javascript object called the TextureLoader. This iterates over a dictionary of textures that defines the name of the texture as the key and the location of the file as the value. A new dictionary is created using the keys of the original but with the value of the loaded texture. If the value of an item in the original dictionary is not one file path but a list of file paths the TextureLoader assumes that this is a cube map and will load it as such. The returned dictionary is stored with global access within the program which allows access to the loaded textures when the drawable objects are drawn. Note that only one copy of every texture is ever loaded and this is shared between multiple uses of the texture, such as the texture for the moons.
 
-\subsubsection{Shaders}
+\subsection{Shaders}
 I have implemented two different shader programs for this assignment. The first and main one is the shader which is used to render the sun, planets and moons in the solar system. This shader program also adds support for a full Phong shading lighting model within the fragement shader. This shader also has support for multi-texturing and light attenuation (see section \ref{sec:advanced-features}).
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.8\textwidth]{img/shader-uml.png}
+\includegraphics[width=0.4\textwidth]{img/shader-uml.png}
 \caption{UML class diagram showing the relationship between the SceneGraph, Drawables, and the Javascript shader programs.}
 \label{fig:shaders-uml}
 \end{figure}
@@ -126,9 +472,71 @@ The second shader is much more basic. This is just used to render the cube mappe
 To accompany these two shader programs there are two Javascript objects which set-up all of the shader uniforms prior to drawing a model. Each of these Javascript shader objects are passed a dictionary of shader uniforms that apply globally to all objects drawn with this shader program upon instantiation. Each instance of a model object stores a dictionary of uniforms that are applicable to that specific object. These individual uniforms are passed to the shader program object before drawing the model so that the specific configuration for the current drawable object is correctly set-up beforehand. Both of the Javascript shader objects are stored in a global object called shaders.
 
 \subsection{Cameras and Control}
-A Javascript object called SphericalCamera is used to control the current position of the perspective matrix. This listens for input from the user from the keyboard according to a predefined list of key commands (see section \ref{sec:controlling-the-simulation}). This is implemented using a spherical coordinate system. The camera has a reference to a CelestialBody which it is currently focussed on. The camera uses the position of the focused CelestialBody to determine the direction that the camera should be looking using the glMatrix library \textit{lookAt} function. Keyboard commands are listened to in an object called the KeyController. This listens for keyboard events from the user before calling the callback functions for the camera.
+A Javascript object called SphericalCamera is used to control the current position of the perspective matrix. This listens for input from the user from the keyboard according to a predefined list of key commands (see table \ref{table:keyboard-controls}). This is implemented using a spherical coordinate system. The camera has a reference to a CelestialBody which it is currently focussed on. The camera uses the position of the focused CelestialBody to determine the direction that the camera should be looking using the glMatrix library \cite{glmatrix} \textit{lookAt} function. Keyboard commands are listened to in an object called the KeyController. This listens for keyboard events from the user before calling the callback functions for the camera.
 
-\section{Advanced Features}
+\subsection{Control Panel}
+As part of the simulation I have implemented a basic control panel that allows the user to control some aspects of the scene. Upon starting the simulation a control panel will be visible on the right hand side of the page. The panel gives a brief listing of the controls that can be used within the application and also has options to adjust parameters controlling the lighting in the scene. The options for controlling the scene are listed in table \ref{table:keyboard-controls}.
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+\caption{Table listing the key commands that are used in the simulation.}
+\label{table:keyboard-controls}
+\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+\begin{tabular}{|c|c|}
+\hline
+Key Command & Action \\ 
+\hline
+\textit{Q} & Open/Close the control panel \\ 
+\hline
+\textit{W} & Zoom in on the currently selected planet \\ 
+\hline
+\textit{S} & Zoom out from the currently selected planet \\ 
+\hline
+\textit{Arrow Keys} & Move the camera around the currently selected planet \\ 
+\hline
+\textit{F1-10} & Change the currently selected planet \\ 
+\hline
+\end{tabular}
+\end{table}
+
+The control panel lists five configurable options to do with the lighting of the scene. The parameters that each of these options controls are listed in table \ref{table:lighting-controls}.
+
+The implementation of the sliding control panel uses an additional library called Classie \cite{classie} for adding and removing classes to HTML elements. The code for the sliding menu is largely adapted from ref. \cite{slidingmenu}. 
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.3}
+% if using array.sty, it might be a good idea to tweak the value of
+% \extrarowheight as needed to properly center the text within the cells
+\caption{Table listing the lighting controls that are used in the simulation.}
+\label{table:lighting-controls}
+\centering
+%% Some packages, such as MDW tools, offer better commands for making tables
+%% than the plain LaTeX2e tabular which is used here.
+\begin{tabular}{|c|p{5cm}|}
+\hline
+Control & Description \\ 
+\hline
+\textit{Intensity} & Uniformly increases/decreases the RGB values for the point light colour \\ 
+\hline
+\textit{Shininess} & Increases/decreases the material shininess of the specular lighting\\ 
+\hline
+\textit{Constant attenuation} & Sets the value of the constant term of light attenuation \\ 
+\hline
+\textit{Linear attenuation} & Sets the value of the linear term of light attenuation \\ 
+\hline
+\textit{Quadratic attenuation} & Sets the value of the quadratic term of light attenuation \\ 
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Camera Control}
+The camera uses the glMatrix \cite{glmatrix} library \textit{lookAt} function to generate a matrix that is always looking at the center of a planet. The arrow keys (see table \ref{table:keyboard-controls}) can be used to rotate around the planet along two axes. When looking at a planet other than the sun the camera will move with the planet's orbit so that the viewer may gain a decent view of the planet as it moves. When swapping between planets the zoom distance is automatically reset to a distance that is proportional to the radius of the currently selected planet. This is to ensure that the camera does not end up starting inside a larger planet or very far way from a smaller one.
+
+\section{Results}
 \label{sec:advanced-features}
 Alongside the basic functionality requested by the assignment brief, I have also implemented an number of additional features to extend the simulation further. This section documents these additional features and discusses how they're implemented within the project.
 
@@ -144,9 +552,9 @@ Where $c_1$,$c_2$, and $c_3$ are the supplied coefficients and $r$ is the distan
 \subsection{Rings of Saturn}
 The next additional feature that I have implemented in this assignment is to create the rings of Saturn using the RGBA texture provided. The implementation uses the alpha information provided in the texture together with the blending functionality provided by WebGL to make the rings appear ``see through''. To accomplish this effect I created a very thin texture mapped cube and created a new extension of the Cube model called Rings. 
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.5\textwidth]{img/saturns_rings.png}
+\includegraphics[width=0.4\textwidth]{img/saturns_rings.png}
 \caption{Saturn's rings with transparency and blending.}
 \label{fig:saturns-rings}
 \end{figure}
@@ -158,7 +566,7 @@ Currently the rings of Saturn are the only object that exists in the scene that 
 \subsection{Elliptical Orbits}
 Another feature that I have implemented in this project is elliptical orbits for the planetary bodies using Kepler's first two laws of orbital motion. Parameters for the constants of angular velocity and eccentricity can be set as options during the creation of a CelestialBody. The orbital radius parameter describes the starting point of the body relative to the centre of the body that it orbits; in the case of the sun this is just the origin. Correct positioning is handled as part of the scene graph where a body orbiting a planet first has all of its parent's transformations applied and then adjusts the model view matrix to position itself. This is extremely useful as it means that the radius of a planet's orbitals do not need to be changed when the position of the planet changes.
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
 \includegraphics[width=0.4\textwidth]{img/jupiter_moons.png}
 \caption{Jupiter with four moons in elliptical orbits.}
@@ -168,7 +576,7 @@ Another feature that I have implemented in this project is elliptical orbits for
 \subsection{Multi-texturing}
 
 \subsubsection{Earth's Atmosphere}
-I have used two different types of multi-texturing to make the earth appear more realistic. The first use of multi-texturing was to use another texture for the atmosphere of earth. This is supplied as a few additional parameters to the shader. One indicates if a  cloud texture is being used, one for the texture itself and one specifying the current rotation of the atmosphere texture about the surface of the planet.
+I have used two different types of multi-texturing to make the earth appear more realistic. The first use of multi-texturing was to use another texture for the atmosphere of earth. This texture was acquired from ref. \cite{skytexture}. This is supplied as a few additional parameters to the shader. One indicates if a cloud texture is being used, one for the texture itself and one specifying the current rotation of the atmosphere texture about the surface of the planet.
 
 If a texture for the atmosphere is supplied to a CelestialBody, the texture is sampled in the fragment shader using the current texture coordinates passed from the vertex shader, but with the current x position rotated by the parameter specifying the current position of rotation of the atmosphere about the earth's surface. This gives the effect that the atmosphere is rotating independently to the rotation of the earth. Updating the current position of the atmosphere's rotation is calculated in the animate method in the CelestialBody object and the speed of the rotation is a configurable parameter. The alpha information in the texture for the atmosphere is then weighted according to the equation:
 
@@ -178,73 +586,31 @@ I = (1-a)I_1 + aI_2
 
 Where $I_1$ is the sampled texture of the earth, $I_2$ the sampled texture of the atmosphere, and $a$ is the alpha information from the atmosphere. This weights the sampled texture colour so that the non-transparent clouds appear instead of the earth texture but still allow the texture of the earth to show through where there are no clouds.
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.6\textwidth]{img/earth.png}
+\includegraphics[width=0.4\textwidth]{img/earth.png}
 \caption{Earth with multi-textured atmosphere. The night lights on the dark side of the earth can just be made out on the left side of the earth in this image.}
 \label{fig:earth-multi-texture}
 \end{figure}
 
 \subsubsection{Dark Side of the Earth}
-The second use of multi-texturing is the use of a night texture for the dark side of the earth. This texture shows the earth at night as a dark blue texture with lights positioned at the major cities on the planet. As the earth rotates about its axis the day time texture slowly transforms into the night texture, giving the appearance of the lights of the major cities appearing as the earth rotates away from the sun. 
+The second use of multi-texturing is the use of a night texture for the dark side of the earth. This texture shows the earth at night as a dark blue texture with lights positioned at the major cities on the planet. The texture used is from the Nexus texture pack \cite{nexustextures}. As the earth rotates about its axis the day time texture slowly transforms into the night texture, giving the appearance of the lights of the major cities appearing as the earth rotates away from the sun. 
 
 To achieve this effect an additional two parameters were supplied to the shader, one for whether a dark texture should be used and one for the dark texture itself. If a dark texture is used the dark texture is sampled using the same coordinates that are used for the light texture. The amount of information from each texture is then weighted using the same equation as \ref{eq:transparent-texture} but with the atmosphere alpha information replaced by the factor for the amount of diffuse lighting at this fragment and the atmosphere texture replaced by the dark side texture. This means that both the light and dark textures for the earth's surface are sampled proportionally to the amount of light falling on a fragment.
 
-\begin{figure}[H]
+\begin{figure}[!t]
 \centering
-\includegraphics[width=0.6\textwidth]{img/earth_dark.png}
+\includegraphics[width=0.4\textwidth]{img/earth_dark.png}
 \caption{Slightly better shot of the dark texture on earth. The night lights can be seen to the right of the screen shot over north America.}
 \label{fig:earth-dark}
 \end{figure}
 
 \subsection{Cube Mapped Background}
-One final minor feature that I have added to the simulation is a cube mapped background which is textured to look like a picture of our galaxy. This background is created by using six different images; one for each face of the cube. The images are then loaded and assigned the correct position in the cube map texture. This texture is then applied to a very large cube drawn around the scene giving the appearance of the solar system being within a galaxy. This cube is drawn with a completely different shader program from the one used by the solar system. This is because the cube map only requires a constant ambient lighting term and should not be affected by directional lighting which would also impact efficiency as much larger number of fragment shader operations would have to be performed.
+One final minor feature that I have added to the simulation is a cube mapped background which is textured to look like a picture of our galaxy. This texture was from ref. \cite{galaxytexture}. This background is created by using six different images; one for each face of the cube. The images are then loaded and assigned the correct position in the cube map texture. This texture is then applied to a very large cube drawn around the scene giving the appearance of the solar system being within a galaxy. This cube is drawn with a completely different shader program from the one used by the solar system. This is because the cube map only requires a constant ambient lighting term and should not be affected by directional lighting which would also impact efficiency as much larger number of fragment shader operations would have to be performed.
 
-\section{Controlling the Simulation}
-\label{sec:controlling-the-simulation}
-As part of the simulation I have implemented a basic control panel that allows the user to control some aspects of the scene. I have also included a camera that can be used to move around the simulation and look at different planets.
-
-\subsection{Control Panel}
-Upon starting the simulation a control panel will be visible on the right hand side of the page. The panel gives a brief listing of the controls that can be used within the application and also has options to adjust parameters controlling the lighting in the scene. The options for controlling the scene are listed as follows:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l p{12cm}}
-Key Command & Action \\ \hline
-\textit{Q} & Open/Close the control panel \\ \hline
-\textit{W} & Zoom in on the currently selected planet \\ \hline
-\textit{S} & Zoom out from the currently selected planet \\ \hline
-\textit{Arrow Keys} & Move the camera around the currently selected planet \\ \hline
-\textit{F1-10} & Change the currently selected planet \\ \hline
-
-\end{tabular}
-\caption{Table listing the key commands that are used in the simulation.}
-\label{table:keyboard-controls}
-\end{table}
-
-The control panel lists five configurable options to do with the lighting of the scene. The parameters that each of these options controls are listed in the following table:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{ l p{12cm}}
-Control & Description \\ \hline
-\textit{Intensity} & Uniformly increases/decreases the RGB values for the point light colour \\ \hline
-\textit{Shininess} & Increases/decreases the material shininess of the specular lighting\\ \hline
-\textit{Constant attenuation} & Sets the value of the constant term of light attenuation \\ \hline
-\textit{Linear attenuation} & Sets the value of the linear term of light attenuation \\ \hline
-\textit{Quadratic attenuation} & Sets the value of the quadratic term of light attenuation \\ \hline
-
-\end{tabular}
-\caption{Table listing the lighting controls that are used in the simulation.}
-\label{table:lighting-controls}
-\end{table}
-
-\subsection{Camera Control}
-The camera uses the glMatrix library \textit{lookAt} function to generate a matrix that is always looking at the center of a planet. The arrow keys (see table \ref{table:keyboard-controls}) can be used to rotate around the planet along two axes. When looking at a planet other than the sun the camera will move with the planet's orbit so that the viewer may gain a decent view of the planet as it moves. When swapping between planets the zoom distance is automatically reset to a distance that is proportional to the radius of the currently selected planet. This is to ensure that the camera does not end up starting inside a larger planet or very far way from a smaller one.
-
-\section{Conclusion}
-\label{sec:conclusion}
-In conclusion, I would like to outline some areas where I encountered problems along the way, some of the things which I felt worked well, and some suggestions for further improvements upon the existing work. 
+\section{Discussion}
+\label{sec:discussion}
+I feel that I have achieved the majority of the work outlined in the brief successfully. All of the basic features requested in the assignment outline are implemented along with a large number of additional features suggested in order to achieve top marks. In addition I have also implemented a couple of extensions which are not suggested or required by the brief therefore going beyond what is asked.
 
 One area of the project which I felt worked quite well was the use of a tree like structure for the organisation of planets. This meant that the correct model-view matrix could be applied to each planet and have the parent planet's transforms applied to it at the same time, but also prevented the incorrect transformation from being applied to a planet as a copy could be made and passed to the children, so the original would remain unaffected. This was a useful aspect to get right early in the project as it meant that positioning objects in the scene became drastically simplified.
 
@@ -255,6 +621,18 @@ The area which I found most difficult in this project was how to structure a Web
 Another area I found fairly difficult regarded the testing of the project. In WebGL generally the only way in which the output of the program can be effectively tested is to load it up and check if it works. However, looking at the project with hindsight I feel that I now have a better understanding of what the WebGL library does for you and what you have to write yourself. In retrospect I think that a lot of the supporting code for a WebGL project can be unit tested, even if it is difficult to check the output of what is actually drawn to the screen. Prime examples of this would be the model prototypes I have created for Spheres, Cubes, etc. Unit testing could be used to check that a Sphere of the correct size and shape is created given the radius, longitude and latitude bands for example. This would help with maintaining code integrity and lead to a reduction in the number of bugs I encountered when implementing new features.
 
 One final issue that I encountered with this assignment which is fairly unrelated to it's content is the fact that there are only a handful of resources available which talk about the techniques required for the assignment which don't use a higher level library such as Three.js. While most of the techniques required can be learnt from examining similar code written for OpenGL (particularly the shader code) it is often difficult to determine what functionality is present in WebGL and what is missing.
-\bibliographystyle{unsrtnat_corrected}
+
+\section{Conclusions}
+\label{sec:conclusions}
+In conclusion, I have implemented a virtual orrery in WebGL meeting all of the requested features outlined in the brief such as a Phong lighting model, basic planetary motion, and rendering textured spheres as well as implementing some additional functionality such as multi-texturing, light attenuation, elliptical orbits and transparency for Saturn's rings. I have demonstrated my ability to implement all of these features in pure WebGL without the use of external libraries such as Three.js, with the exception of the glMatrix library \cite{glmatrix} for matrix transformations on the Javascript side and the use of Google's WebGL Utils \cite{webgl-utils} for timing the rendering loop.
+
+There were two major challenges involved with this project. The first was my personal unfamiliarity with the WebGL and the second my unfamiliarity with 3D graphics in general. This lead to some bad design choices that resulted in a large amount of refactoring later on in the project and a longer development time that usual. Despite these issues, this paper clearly illustrates that a large amount of advanced features have been successfully implemented.
+
+Further enhancements to the simulation would include implementing a binary space partition tree to correctly render multiple blending objects without z-ordering issues. This would also pave the way for adding support for more advanced features such as making the planets in the simulation cast shadows as they eclipse the sun. Another major enhancement which I failed to achieve in the allotted amount of time was the implementation of bump mapping. This would was the only advanced feature suggested in the brief that was left out of the final implementation. I would be keen to get a full implementation of bump mapping implemented in a future version of the simulation as the effect would ad greater realism without too much additional work. The only key issue is the correct calculation of tangent vectors for the surface normals of the planets.
+
+\bibliographystyle{IEEEtran}
 \bibliography{refs}
+% that's all folks
 \end{document}
+
+
