@@ -1,13 +1,13 @@
 # Fdb version 3
-["bibtex 110036072_CS313_worksheet3"] 1419000946 "110036072_CS313_worksheet3.aux" "110036072_CS313_worksheet3.bbl" "110036072_CS313_worksheet3" 1419000951
+["bibtex 110036072_CS313_worksheet3"] 1419244096 "110036072_CS313_worksheet3.aux" "110036072_CS313_worksheet3.bbl" "110036072_CS313_worksheet3" 1419244101
   "/usr/local/texlive/2013/texmf-dist/bibtex/bst/natbib/unsrtnat.bst" 1233624470 24550 a41a6405f4de768c43e871d9fbce2bc8 ""
-  "110036072_CS313_worksheet3.aux" 1419000948 861 fdbbce13eef32a098e48e5a1e9482fc9 ""
+  "110036072_CS313_worksheet3.aux" 1419244098 861 fdbbce13eef32a098e48e5a1e9482fc9 ""
   "110036072_CS313_worksheet3.bcf" 0 -1 0 ""
   "references.bib" 0 -1 0 ""
   (generated)
   "110036072_CS313_worksheet3.bbl"
   "110036072_CS313_worksheet3.blg"
-["pdflatex"] 1419000946 "110036072_CS313_worksheet3.tex" "110036072_CS313_worksheet3.pdf" "110036072_CS313_worksheet3" 1419000951
+["pdflatex"] 1419244096 "110036072_CS313_worksheet3.tex" "110036072_CS313_worksheet3.pdf" "110036072_CS313_worksheet3" 1419244101
   "/usr/local/texlive/2013/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2013/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/local/texlive/2013/texmf-dist/fonts/tfm/bitstrea/charter/bchb7t.tfm" 1136768653 2732 006d846b4d54f9b40899c7c3eecd771a ""
@@ -90,10 +90,10 @@
   "/usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1369923225 1072746 3ce1f23f203cb4a0015ca3c8411dee4a ""
   "/usr/local/texlive/2013/texmf-var/web2c/pdftex/pdflatex.fmt" 1397600571 3827029 7d2814ca0ac16f8bcab88bce99e82277 ""
   "/usr/local/texlive/2013/texmf.cnf" 1369923207 577 cbc827f6294276973a1952e86e8ad73a ""
-  "110036072_CS313_worksheet3.aux" 1419000948 861 fdbbce13eef32a098e48e5a1e9482fc9 ""
+  "110036072_CS313_worksheet3.aux" 1419244098 861 fdbbce13eef32a098e48e5a1e9482fc9 ""
   "110036072_CS313_worksheet3.bbl" 0 -1 0 "bibtex 110036072_CS313_worksheet3"
-  "110036072_CS313_worksheet3.out" 1419000948 0 d41d8cd98f00b204e9800998ecf8427e ""
-  "110036072_CS313_worksheet3.tex" 1419000943 11255 166f95a73378e5c45faa19603bf735f3 ""
+  "110036072_CS313_worksheet3.out" 1419244098 0 d41d8cd98f00b204e9800998ecf8427e ""
+  "110036072_CS313_worksheet3.tex" 1419244094 11111 41272d07c265addf3251ca768e75382e ""
   (generated)
   "110036072_CS313_worksheet3.aux"
   "110036072_CS313_worksheet3.log"
