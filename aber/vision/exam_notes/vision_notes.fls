@@ -1,4 +1,4 @@
-PWD /Users/samuel/Desktop
+PWD /Users/samuel/git/documents/aber/vision/exam_notes
 INPUT /usr/local/texlive/2013/texmf.cnf
 INPUT /usr/local/texlive/2013/texmf-dist/web2c/texmf.cnf
 INPUT /usr/local/texlive/2013/texmf-var/web2c/pdftex/pdflatex.fmt
@@ -55,6 +55,8 @@ INPUT /usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/infwarerr.sty
 INPUT /usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/infwarerr.sty
 INPUT /usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
 INPUT /usr/local/texlive/2013/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+INPUT /usr/local/texlive/2013/texmf-dist/tex/latex/natbib/natbib.sty
+INPUT /usr/local/texlive/2013/texmf-dist/tex/latex/natbib/natbib.sty
 INPUT vision_notes.aux
 INPUT vision_notes.aux
 OUTPUT vision_notes.aux
@@ -93,7 +95,10 @@ INPUT /usr/local/texlive/2013/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8
 INPUT /usr/local/texlive/2013/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/local/texlive/2013/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
 INPUT /usr/local/texlive/2013/texmf-dist/fonts/tfm/public/cm/cmti8.tfm
+INPUT Hough_transform_diagram.png
+INPUT ./Hough_transform_diagram.png
 OUTPUT vision_notes.pdf
+INPUT ./Hough_transform_diagram.png
 INPUT /usr/local/texlive/2013/texmf-var/fonts/map/pdftex/updmap/pdftex.map
 INPUT Kalman_filter.png
 INPUT ./Kalman_filter.png
@@ -119,6 +124,8 @@ INPUT ./roc_curve.png
 INPUT bounding_box.png
 INPUT ./bounding_box.png
 INPUT ./bounding_box.png
+INPUT vision_notes.bbl
+INPUT vision_notes.bbl
 INPUT vision_notes.aux
 INPUT /usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 INPUT /usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb

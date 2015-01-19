@@ -17,9 +17,10 @@ Computer vision is going from an image to understanding what's in an image.
 \subsubsection{Visual Shortcuts}
 \begin{compactitem}
     \item Light comes from above
-    \item Light comes from above
     \item Objects have largely convex borders
-    \item Lines are expected to be continuous Objects are normally not viewed from below Faces are upright
+    \item Lines are expected to be continuous
+    \item Objects are normally not viewed from below
+    \item Faces are upright
 \end{compactitem}
 
 \subsubsection{Gesalt principles}
@@ -114,9 +115,9 @@ Computer vision is going from an image to understanding what's in an image.
     \begin{equation}
         \nabla^2I(x,y) = \frac{\partial^2 I(x,y)}{\partial x^2} + \frac{\partial^2 I(x,y)}{\partial y^2}
     \end{equation}
-    To reduce the noise of the second derivative we can blur the image with a Gaussian function, smoothing the resulting 2nd order derivatives. We must choose the $\sigma$ parameter for blurring. Process for LoG edge detector: choose small $\sigma$, blurr image, filter with laplacian (zeros are edges), increase sigma \& repeat. This accumulates a pyramid of edge detections.
+    To reduce the noise of the second derivative we can blur the image with a Gaussian function, smoothing the resulting 2nd order derivatives. We must choose the $\sigma$ parameter for blurring. Process for LoG edge detector: choose small $\sigma$, blur image, filter with laplacian (zeros are edges), increase sigma \& repeat. This accumulates a pyramid of edge detections.
 
-\textbf{Canny Edge Detector}: Keypoints:
+\textbf{Canny Edge Detector}: Key points:
     \begin{compactitem}
         \item Uses first order derivatives.
         \item Iterated Gaussian blur.
@@ -125,7 +126,7 @@ Computer vision is going from an image to understanding what's in an image.
     \end{compactitem}
 
 \subsection{Grouping Edges}
-Edge detection only extracts single or small groups of pixels. We need higher level features (straight lines, curves, geometric shapes). The apporach to grouping can either be top down or bottom up.
+Edge detection only extracts single or small groups of pixels. We need higher level features (straight lines, curves, geometric shapes). The approach to grouping can either be top down or bottom up.
 
 \begin{compactitem}
     \item \textbf{Bottom up}: Pixels are grouped by edge following. Move from one edge pixel along direction until you find the next. Issues: camera \& digitisation noise, gaps, complex topology, starting point dependancy, and multiple paths.
@@ -136,6 +137,14 @@ Edge detection only extracts single or small groups of pixels. We need higher le
 \subsubsection{Approaches}
 
 \textbf{Hough Transform}: All lines going through a pixel create a curve in \textit{line space} (rho, theta space) of the line parameters, painted in an accumulator array. Voting from all edge pixels. High values in accumulator indicate lines (use threshold). Same principle can be used with other geometric shapes. For practical reasons the equation of a line used is defined by $x cos(\theta) + y sin(\theta) + r = 0$.\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{Hough_transform_diagram.png}
+    \caption{Diagram showing the parameterised lines used in the hough transform.}
+    \label{fig:hough-transform}
+\end{figure}
+
 Pros:
 \begin{compactitem}
     \item Good solution to geometrical feature matching
