@@ -1,0 +1,209 @@
+\documentclass[8pt]{extarticle}
+\usepackage{multicol}
+\usepackage[margin=0.3in]{geometry}
+\usepackage{paralist}
+\usepackage{parskip}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{natbib}
+
+\begin{document}
+\begin{multicols}{2}
+
+\section{Limits}
+Limit of $f(x)$ is $L$ as $x$ approaches $a$:
+\begin{equation}
+	\lim_{x \to a} f(x) = L
+\end{equation}
+
+Right handed limit, i.e. a limit that is approaching from the positive direction and converging on $a$ is denoted by:
+
+\begin{equation}
+	\lim_{x \to a^{+}} f(x) = L 
+\end{equation}
+
+Similarly a left handed limit, i.e. one that is approaching from the negative direction and converging on $a$ is denoted by:
+
+\begin{equation}
+	\lim_{x \to a^{-}} f(x) = L 
+\end{equation}
+
+A couple of additional points about handed limits:
+\begin{itemize}
+	\item They are useful in the case of ``difficult'' functions such as step functions.
+	\item If both the left and right limits are equal then a normal limit exists. 
+\end{itemize}
+
+\subsection{Properties of Limits}
+\begin{enumerate}
+	\item Constants can be factored out: 
+	
+	\begin{equation}
+		\lim_{x \to a} [cf(x)] = c \lim_{x \to a} f(x)
+	\end{equation}
+	
+	\item Limits of a sum or difference is just the limit of their parts:
+
+	\begin{equation}
+		\lim_{x \to a} [f(x) \pm g(x)] = \lim_{x \to a} f(x) \pm \lim_{x \to a} g(x)
+	\end{equation}
+	
+	\item Similarly, limits applied to the product and quotient of two functions is just the limit of their parts:
+
+	\begin{equation}
+		\lim_{x \to a} f(x)g(x) = \lim_{x \to a} f(x) \lim_{x \to a} g(x)
+	\end{equation}
+	
+	\begin{equation}
+		\lim_{x \to a} \left[\frac{f(x)}{g(x)}\right] = \frac{\lim_{x \to a}f(x)}{\lim_{x \to a} g(x)}
+	\end{equation}
+	
+	\item Powers can be factored out:
+
+	\begin{equation}
+		\lim_{x \to a} [f(x)]^n = [\lim_{x \to a} f(x)]^n
+	\end{equation}
+	
+	\item Limits of constants are just themselves:
+	
+	\begin{equation}
+		\lim_{x \to a} c = c
+	\end{equation}
+	
+	\item Limits of the variable are simply the limit value itself:
+
+ 	\begin{equation}
+		\lim_{x \to a} x = a
+	\end{equation}
+	
+\subsection{Continuity}
+
+A function is continuous at $x=a$ if:
+
+\begin{equation}
+	\lim_{x \to a} f(x) = f(a)
+\end{equation}
+
+A function is continuous over an interval $[a,b]$ if it is continuous at each point in the interval.
+
+If $f(x)$ is continuous at $x=a$ then:
+
+\begin{equation}
+\begin{split}
+	\lim_{x \to a} f(x) \\
+	\lim_{x \to a^+} f(x) \\ 
+	\lim_{x \to a^-} f(x)
+\end{split}
+\end{equation}
+
+Two types of discontinuity:
+\begin{itemize}
+	\item {\bf Jump Discontinuity:} occurs where graphs have a break in them
+	\item {\bf Removable Discontinuity:} occurs where there is a hole in the graph
+\end{itemize}
+
+\end{enumerate}
+
+\section{Derivatives}
+The derivative of $f(x)$ with respect to $x$ is $f'(x)$. This is formally defined as being:
+
+\begin{equation}
+	f'(x) = \lim_{x \to 0} \frac{f(x+h) - f(x)}{h}
+\end{equation}
+
+Intuitively this is form the function takes as the difference between two points ($x$ and $x+h$ shrinks to zero).
+
+\subsection{Rules for Computing Derivatives}
+
+\begin{itemize}
+	\item The derivative of the sum and difference of two functions is simply the derivative of the respective functions:
+
+	\begin{equation}
+		(f(x) \pm g(x))' = f'(x) \pm g'(x)
+	\end{equation}
+	
+	\item Constants may be factored out of the derivative:
+	
+	\begin{equation}
+		(cf(x))' = c f'(x)
+	\end{equation}
+	
+	\item The derivative of a constant is always zero:
+
+	\begin{equation}
+		f(x) = c \implies f'(x) = 0
+	\end{equation}
+	
+	\item The power rule can be used to compute the derivative of terms raised to a power:
+
+	\begin{equation}
+		f(x) = x^n \implies f'(x) = nx^{(n-1)}
+	\end{equation}
+	
+	\item The product rule can be used to compute the derivative of a the product of two functions:
+	
+	\begin{equation}
+		(f(x)g(x))' = f'(x)g(x) + f(x)g'(x)
+	\end{equation}
+	
+	\item Similarly the quotient rule can be used to compute the derivative of the quotient of two functions:
+	
+	\begin{equation}
+		\left(\frac{f(x)}{g(x)}\right)' = \frac{f'(x)g(x) - f(x)g'(x)}{g(x)^2}
+	\end{equation}
+	
+	\item The chain rule can be used to compute the derivative of more complicated functions where the derivative is a composition of two functions:
+	
+	\begin{equation}
+		(f \circ g)'(x) = f'(g(x))g'(x)
+	\end{equation}
+	
+\subsection{Table of Useful Derivatives}
+
+\begin{table}[H]
+\centering
+\label{my-label}
+\begin{tabular}{l | l}
+ $\frac{d}{dx} cos(x)$ &  $-sin(x)$ \\
+ $\frac{d}{dx} e^x$ &  $e^x$ \\
+ $\frac{d}{dx} a^x$ &  $a^xln(a)$ \\
+ $\frac{d}{dx} ln(x)$ &  $\frac{1}{x}$ \\
+ $\frac{d}{dx} log_a(x)$ &  $\frac{1}{x ln(a)}$ \\
+\end{tabular}
+\end{table}
+
+\section{Applications of Derivatives}
+\subsection{Critical Points}
+$x=c$ is a critical point if $f(c)$ exists and the following is true:
+
+\begin{equation}
+\begin{split}
+	f'(c) = 0 \\
+	f'(c) = \text{doesn't exists}
+\end{split}
+\end{equation}
+
+\subsection{Minimum and Maximum Values}
+
+\begin{itemize}
+	\item {\bf Global minimum:} $f(x) \geq f(c)$ for every $x$ in a domain.
+	\item {\bf Local minimum:} $f(x) \geq f(c)$ for every $x$ over an interval.
+	\item {\bf Global maximum:} $f(x) \leq f(c)$ for every $x$ in a domain.
+	\item {\bf Local maximum:} $f(x) \leq f(c)$ for every $x$ over an interval.
+\end{itemize}
+
+\subsection{Extreme Value Theorem}
+If $f(x)$ is continuous on $[a,b}$ then there exist two numbers such that $a \eq c$, $d \leq b$ such that $f(c)$ is the global maximum and $f(d)$ is the global minimum.
+
+
+\subsection{Finding Absolute Extrema}
+\begin{itemize}
+	\item Verify the function is continuous over the interval.
+	\item Find all critical points in the interval
+	\item Evaluate critical points and end points.
+	\item Identify the extrema
+\end{itemize}
+
+\end{multicols}
+\end{document}
