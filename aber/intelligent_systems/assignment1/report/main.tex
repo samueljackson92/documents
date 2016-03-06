@@ -489,11 +489,123 @@
 \IEEEpeerreviewmaketitle
 
 \begin{abstract}
-	This paper provides a review of Riddick et al. \cite{riddick2011predicting} and their work on predicting drug sensitivity using random forests. The purpose of this paper is to identify the main issues associated with drug sensitivity prediction, discuss the methods used by the authors, and to propose and alternative machine learning approach appropriate for the problem at hand. Finally, justification of the alternate method and future directions of investigation are proposed.
+	This paper provides a review of Riddick et al. \cite{riddick2011predicting} and their work on predicting drug sensitivity using random forests. The purpose of this paper is to identify the main issues associated with drug sensitivity prediction and summarise the methods used by the authors. An alternative machine learning (BART-BMA \cite{hernandez2015bayesian}) is introduced and proposed. Finally, justification of the alternate method and future directions for research are discussed.
 \end{abstract}
 
 \section{Introduction}
+Riddick et al. \cite{riddick2011predicting} propose a novel method for predicting drug sensitivity from a panel of human cell lines. In their paper they propose a machine learning approach to drug sensitivity prediction using Random Forests (RFs). The utilise several important benefits of RFs to aide them with feature selection and model training, namely variable importance and proximity matrices. 
 
+The authors evaluate their methodology on two different test datasets: firstly sensitivity of two cancer drugs are predicted from a collection of human cell lines known as the NCI-60 dataset. Secondly, sensitivity values for 40 FDA drugs are predicted using the same NCI-60 dataset. The authors show that their method correctly identifies the top and bottom 10 most sensitive drugs. 
+
+In this paper an alternative relatively new ensemble method called BART-BMA is proposed that shares many of the benefits offered by RFs but which could lead to some additional benefits over the original author's methodology, including quantifiable prediction uncertainty and potentially better accuracy. The rest of the paper proceeds as follows: section \ref{sec:original-methodology} outlines the methodology used by Riddick et al in more detail. Section \ref{sec:methodology-discussion} discusses their approach and outlines strengths and weaknesses. Section \ref{sec:alternate-method} proposes the alternative methodology and provides a discussion and justification.
+
+\section{Summary of Methodology}
+\label{sec:original-methodology}
+
+The authors of \cite{riddick2011predicting} use a panel of 60 cell lines derived from cancerous cells across 9 different types of tissue. The authors propose a method for using the pattern of drug inhibition response across these cell lines as a means to predict an unknown (unlabelled) drug response. The IC$_{50}$ measure, which is defined as the amount of a drug required for 50\% inhibition \cite{FDA-IC50}, was used as a response variable.
+
+This dataset is challenging to work with. Firstly, examining the data used by the authors shows that the response variable is missing a number of entries. Secondly and more importantly, the dataset is a classic example of what is referred to as ``large \textit{p} small \textit{n}''. This means that the number of features (\textit{p}) is much larger than the number of samples (\textit{n}). Such high dimensionality can cause issues for many machine learning algorithms due to the ``curse of dimensionality'' \cite{bellman1957dynamic}. The Hughes effect \cite{hughes1968mean} states that predictive power decreases in proportion to the increase in dimensions, given a fixed number of training samples.
+
+Riddick et al. chose to use RFs as the main component of their methodology. The strength of this predictor relative to their dataset is that RFs can be used to measure how important a variable is likely to be for prediction. The authors of \cite{riddick2011predicting} first train an RF on the full dataset (consisting of 16,644 features) using a large number of trees (25,000). This first RF would likely produce a bad generalisation for predicting new data, but does it allow the RF to measure the importance of each variable as a by product of training. From this measure of variable importance a subset of the best features can be chosen (Riddick et al. select those which are $2 \sigma > \mu$, typically 100-500 probesets).
+
+Using this subset of features, they train another RF with a reduced number of trees (10,000). This second model should be more accurate than the first as well as faster to train and execute. However, before using this tree for drug sensitivity regression outlying cell lines in the model are removed using the proximity matrix of features generated from the second model. The proximity matrix of a RF is defined number of instances two cases are assigned to the same terminal node. Cell lines which showed high correlation (using Person's correlation coefficient) were retained in the IC$_{50}$ and NCI-60 datasets. They note that they use the Bonferroni correction method \cite{abdi2007bonferonni} when applying multiple hypothesis testing. A regression is obviously sensitive to outliers and with such a low number of sample to feature ratio (60) it is important to ensure that the examples you do have are not simply noise.
+
+Finally, Riddick et al. retrain their second model with the outlying cases removed and use this to infer drug sensitivity on unseen examples.
+
+\section{Discussion of the Problem}
+\label{sec:problem-discussion}
+As mentioned in the previous section, predicting drug sensitivity from a large number of gene expression signatures is challenge task. The high dimensionality of the dataset immediately rules out many machine learning techniques which will not work well in this situation. A form of dimensionality reduction is almost a prerequisite for data of this size. This problem is exacerbated by the small number of samples (only 60, even less with outliers removed).
+
+Another major challenge in applying machine learning to this problem is the essence of accuracy. In general, the ultimate goal of any application of machine learning is to achieve high generalisation and low error on previously unseen data. However due to the application domain (drug sensitivity) and problem nature (regression) it is essential that a high degree of prediction accuracy is achieved. Incorrect or inaccurate predictions about drug sensitivity could obviously have bad repercussions if applied in the real world. In this problem the authors are attempting to infer not only if a drug is sensitive but also the degree of sensitivity. Therefore any machine learning approach must yield a high degree of accuracy. This is in contrast, for example, a naive Bayes which notoriously gives bad estimates for class probabilities, but often gives good classification rates. A naive Bayes regression algorithm would most likely perform poorly because the probabilities it infers are often unreliable. An estimator applied to this problem should have a low degree of accuracy.
+
+In a regression problem such as this, an important aspect is the presence of outliers in your data. This is especially an issue when there are only a small number of data points from which to generalise from. Even a small number of outliers has the potential to drastically move the regression line from a good fit to a bad one. Here the authors have attempted to remove outliers using their proximity measurement technique. Any machine learning technique applied to this problem should be robust to outliers.
+
+One issue that the authors of the paper neglect with their approach and which the alternative approach presented in this paper offers is an estimate of the uncertainty in an estimate. While it is useful to make a prediction about a specific drug response, it would also be useful to have information about confidence we have in the estimate. There is no point in predicting that a drug is highly sensitive when the margins of error of are so large as to render the prediction useless.
+
+Additional practical considerations applicable to any machine learning problem are things such as the speed of training, the speed prediction, and the number and complexity of parameters. For the specific problem of drug sensitivity, algorithmic training and prediction speed are probably less important that in other problems, such as online learning problems. It probably does not matter if a hypothetical machine learning approach takes several hours to train or to yield a prediction provided that the prediction is accurate. The number and complexity of parameters is probably more relevant to this problem. RFs generally require little parameter tuning. Having too many ``knobs to turn'' can easily lead to overfitting and increased tuning times.
+
+One final issue for consideration is the interpretation of predictions. RFs are often said to be black box approaches which give good predictions but offer little explanation for the prediction. Variable importance can be used to gain an insight, but this is still based on the predictive ability of each feature rather than an interpretable explanation.
+
+\section{An Alternative Method}
+\label{sec:alternate-method}
+This section discusses an alternative machine learning algorithm that could be applied to the problem described in section \ref{sec:original-methodology}. This method offers some potential advantages over RFs which will be discussed in \ref{subsec:discussion-alternate} as well as outlining some drawbacks. Definitions in the following two subsections are liberally borrowed from \cite{hernandez2015bayesian, chipman2010bart}.
+
+\subsection{Outline of BART}
+Bayesian Additive Regression Trees (BART) \cite{chipman2010bart} are a tree based ensemble method which share many similarities with RFs. BART is a sum of trees model, where each individual tree is a weaker learn that is fit to the residuals of the previous trees in the current iteration. Therefore BART is an additive method rather than taking an average as in RFs. BART is a Bayesian method which generates the full posterior. BART is primarily a regression algorithm, but can be adapted in to a classified by means of a latent variable probit approach. Because BART offers access to the full posterior distribution it is able to yield credible intervals for a prediction, directly quantifying our uncertainty about the prediction. 
+
+The BART model can be defined as follows. Let $x_k \in X$ be the $k^{th}$ observation of $p$ features. The basic BART model is
+
+\begin{equation}
+	Y_k = \sum_{j=1}^{m} g(x_i; T_j, M_j) + \epsilon_k
+\end{equation}
+
+where $g$ is a Bayesian CART model \cite{chipman1998bayesian}, $m$ is the total number of trees, $T_j$ is single decision tree which has terminal node parameters $M_j$, and $\epsilon$ is a Gaussian with zero mean and $\sigma^2$ of the residual variance. The BART model is fitted using a back-fitting Gibbs sampler using draws from the joint posterior of all trees, terminal node parameters, and $\sigma^2$ given the data.
+
+BART has shown to be competitive with RFs in terms of prediction accuracy. However, it does come with some drawbacks. BART is know to require large amounts of memory when working with higher dimensional data. This is neatly summarised in \cite{hernandez2015bayesian} as being for two reasons:
+
+\begin{enumerate}
+	\item Using a uniform prior to choose splits that result in a high rejection rate when there are large number of dimensions. Intuitively if there are many dimensions to choose from, it should be possible to do better than random selection.
+	\item BART become memory hungry for large datasets because each tree for each iteration of each MCMC chain must be stored for prediction. 
+\end{enumerate}
+
+\subsection{Outline of BART-BMA}
+BART with Bayesian Model Averaging (BART-BMA) \cite{hernandez2015bayesian} proposes some modifications to address these issues in an attempt gain the benefits of both RFs and BART. Like BART, BART-BMA is an ensemble of Bayesian CARTs which are summed together to produce a strong learner. The modifications are as follow: Firstly BART-BMA performs a greedy search for the most predictive splits. Secondly, BART-BMA uses Bayesian model averaging rather than MCMC to average of the ensemble of models.
+
+BART-BMA greedily searches for predictive splits using one of two options. The first option uses a change point detection algorithm called Pruned Exact Linear Time (PELT) which attempts to minimise a cost function to find optimal splits. The second option is to use a grid search where each variable is split into $n$ splits and each split point is used as a potential split point. The best split rules are then chosen based on the residual squared error.
+
+BART-BMA also differs in the way that it calculates the sum of trees likelihood. BART computes the likelihood for each individual tree in the model. In contrast BART-BMA specifies directly specifies the sum of trees in it's model. For each tree model $T_{hil}$ (with terminal node $i$, in tree $l$ using split $h$) the posterior probability of the sum of threes containing $T_{hil}$ can be approximated as $ST_{hil}$ using Bayesian Information Criterion (BIC) as follows
+
+\begin{equation}
+	BIC = -2(log(p(Y|X,ST_{hil})) + log(p(ST_{hil}))) + B log(n)
+\end{equation}
+
+where $p(Y|X,ST_{hil})$ is the likelihood of the sum of tree models containing $T_{hil}$ and $p(ST_{hil})$ is the prior for the sum of trees model. In a large sample size, BART-BMA should produce the model which is \textit{a posteriori} more probable.
+
+Finally, in order to focus the search on only the most likely trees, a greedy and efficient version of Bayesian Model Averaging (BMA) called Occam's Window is used. Using Occam's Window, only the best models are averaged over according to
+
+\begin{equation}
+	log(BIC_l) - argmin_l(log(BIC)) \leq log(o)
+\end{equation}
+
+where $o$ is a threshold parameter determining the size of the window. Any model which falls outside of Occam's Window is discarded. This is what allows BART-BMA to keep only the models from which there is a reasonable high support from the data.
+
+Once a sum of trees model has been produced the predicted response is calculated from a weighted average of the response from the models. Each model is weighted proportionally to it's $BIC_l$ value according to equation \ref{eq:weighting}.
+
+\begin{equation}
+\label{eq:weighting}
+\begin{split}
+	w_l = exp(-0.5 BIC_l - v)\\
+	v = max_l(-0.5 BIC_l)
+\end{split}
+\end{equation}
+
+\subsection{Application of Method to Problem}
+Being an ensemble tree based method, BART-BMA shares many similarities with RFs. As such the application of BART-BMA could be achieved in a similar manner to random forests. The variable importance measure offer shows good agreement to the one offered by RFs, so the initial feature selection process could be implemented identically. Likewise, the final prediction stage on the subset of the data could be performed in same way as in \cite{riddick2011predicting}.
+
+The real difficulty with replacing RFs in this methodology with BART-BMA is the middle step which uses the proximity matrices derived from a RF to identify outliers and remove them. A simple option would be to use the same approach as the authors and train a RF and extract the case proximities before training a BART-BMA model on the final (outlier removed) data. It might be however that this alternative approach is robust enough to outliers in the data so as to not require the second step in the original methodology. If this was not the case an alternative approach might be be to adjust the probability model to account for outliers \cite{chipmanPresentation}.
+
+\subsection{Discussion of Alternative Method}
+\label{subsec:discussion-alternate}
+The first two subsections have outlined BART and BART-BMA. This subsection discusses the implications of this choice of machine learning approach in terms of the problem described in \ref{sec:original-methodology}. 
+
+As suggested in section \ref{sec:problem-discussion} one major downside to RFs is that they provide no confidence in the estimates produced. A Bayesian approach such as BART-BMA offers direct access to credible intervals for the predictions it makes. As mentioned previously this is very useful when making predictions about drug sensitivity. Quantifiable uncertainty can help us make better choices and to have greater confidence in our predictions. I also provides us with an additional metric for how good the model is.
+
+The second reason choosing BART-BMA is that it has been specifically designed for problems with higher dimensional data (HDD). The major weakness with BART and strength of RFs is there performance on HDD. BART-BMA has been developed as an attempt to bridge the gap between two allowing a BART like algorithm to run on a standard laptop. Performance in terms of speed shows that RFs would still beat BART-BMA, but the algorithm is much faster and more memory efficient than BART. This would therefore likely make BART-BMA a feasible technique for the drug sensitivity dataset. The author's also used BART-BMA to make predictions on two different biological datasets with near identical accuracy to RFs. This suggests that BART-BMA may have promising applications to datasets such as the one presented in \cite{riddick2011predicting}.
+
+Furthermore, while BART-BMA is still a fairly black box method, the authors note that BART-BMA tends to choose ``shallower and more interpretable'' \cite{hernandez2015bayesian} trees than RFs. Also, variable importance scores generated from BART-BMA are in good agreement with those generated from RFs.
+
+However, BART-BMA isn't without a weakness. Firstly, it is a fairly new technique and while promising has yet to be experimented with to the same extent as RFs. Time is still needed to ensure the viability of such a new technique. Secondly, BART-BMA does bring with it an assumption that the most probable models are the ones with the best predictive power. In particular, because Occam's Window necessarily discards some choices model there is obviously the potential that models which are ignored could have still provided use contributions to the final prediction.
+
+Finally, it should be noted that there have been recent efforts to derive confidence intervals for the predictions made by RFs \cite{wager2014confidence}. This would render the main benefit of this approach fairly redundant. However there's an argument to be made that approaching the problem directly from a Bayesian point for view rather than using frequentist tricks is a more natural approach to quantifying uncertainty.
+
+\section{Future Directions and Work}
+There is an argument to be made that uncertainty in the predictions that a model makes are an essential factor if automated predictions for drug sensitivity are going to be feasible in the wild. Additionally, the interpretability of a model is another important factor. A major downside of both methods outlined in this paper is that, unlike decision trees, they offer a prediction but are not informative about how the prediction was made.
+
+Due to the high dimensional nature of the data, ensemble based methods are are good choice for this problem. Another alternative to this methodology which would be worth experimenting might be Gradient Boosting \cite{friedman2001greedy} which share many of the same properties with RFs and BART-BMA.
+
+As the authors of the original paper noted outlier removal remains an essential challenge when working with a drug sensitivity dataset such as this one. Automated removal is obviously a  desirable feature, however simply using a method that is robust to outliers in the first place would most likely reduce the training time required. Therefore an interesting direction for future research would be to explore modifying techniques the techniques mentioned here to be more robust.
+
+Finally, another direction worth exploring, as suggested by the authors of BART-BMA would be the modify the algorithm to better handle missing data would be of interest, if not in direction application to this dataset, then to biological data in general.
 
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
