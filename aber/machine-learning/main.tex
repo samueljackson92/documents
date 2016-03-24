@@ -66,6 +66,7 @@
 \documentclass[journal]{IEEEtran}
 \usepackage{blindtext}
 \usepackage{graphicx}
+\usepackage{float}
 
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
@@ -385,11 +386,13 @@
 \hyphenation{op-tical net-works semi-conduc-tor}
 
 
+
+
 \begin{document}
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Modern Approaches to Reducing the Complexity of Neural Networks}
+\title{A Review of Predicting \textit{in vitro} Drug Sensitivity using Random Forests}
 %
 %
 % author names and IEEE memberships
@@ -424,8 +427,8 @@
 
 
 % The paper headers
-%\markboth{Journal of \LaTeX\ Class Files,~Vol.~6, No.~1, January~2007}%
-%{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
+\markboth{\today}%
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
 % 
@@ -486,212 +489,139 @@
 % creates the second title. It will be ignored for other modes.
 \IEEEpeerreviewmaketitle
 
-
+\begin{abstract}
+	This paper provides a review of Riddick et al. \cite{riddick2011predicting} and their work on predicting drug sensitivity using random forests. The purpose of this paper is to identify the main issues associated with drug sensitivity prediction and summarise the methods used by the authors. An alternative machine learning algorithm (BART-BMA \cite{hernandez2015bayesian}) is proposed with the potential benefit of providing credible intervals for drug sensitivity predictions. Finally, justification of the choice of alternate method and future directions of research are discussed.
+\end{abstract}
 
 \section{Introduction}
+Riddick et al. \cite{riddick2011predicting} propose a novel method for predicting drug sensitivity from a panel of human cell lines. They propose a machine learning approach to drug sensitivity prediction using Random Forests (RFs). Their method utilises several important advantages of RFs for feature selection and model training, namely variable importance and proximity matrices. 
 
-\noindent 
-Neural networks (NN) are a collection of perceptrons (figure \ref{fig:perceptron}) organised into multiple layers \cite{murphy2012machine}. The input to the network, usually represented as a vector, is passed (forward propagated) from one layer to another through the activation function of each unit. The activation of each unit is dependant upon the weighted input of the activation from the previous layer. The activation of the final layer $l_n$ is interpreted as the output. The matrix equation governing the forward propagation between layers is given by:
+The authors evaluate their methodology on two different test datasets: firstly the sensitivity of two cancer drugs are predicted from a collection of human cell lines from the NCI-60 gene expression dataset. Secondly, sensitivity values for 40 FDA drugs are predicted using the same NCI-60 gene expression dataset. The authors show that their method correctly identifies the top and bottom 10 most sensitive drugs. 
 
-\begin{equation}
-\label{eq:feedforward}
-	\bm{a}^l = g(\bm{W}^l \bm{a}^{l-1} + \bm{b}^l)
-\end{equation}
+In this paper an alternative ensemble method called BART-BMA is proposed that shares many of the benefits offered by RFs but which could offer additional benefits over the original author's methodology, including quantifiable uncertainty in sensitivity predictions and potentially better accuracy. 
 
-Where $\bm{a}^l$ is the activation of layer $l$ as a vector, $g(x)$ is the activation function, $\bm{W}^l$ is the weight matrix associated with layer $l$, $\bm{a}^{l-1}$ is the activation of previous layer, and $\bm{b}^l$ is the bias of layer $l$. For computational simplicity the bias is usually represented as an additional weight in $\bm{W}$ and the input vector has an additional element fixed to $1$ for all examples. This is known as the bias trick. The activation function $g(x)$ is traditionally a sigmoid function (often the logistic or tanh functions) \cite{lecun2012efficient} although more recent research has shown that rectified linear units (ReLU) \cite{glorot2011deep} can often be used to avoid the ``vanishing gradient'' problem associated with sigmoid perceptrons.
+The rest of the paper proceeds as follows: section \ref{sec:original-methodology} outlines the methodology used by Riddick et al. in more detail. Section \ref{sec:problem-discussion} discusses their approach and outlines strengths and weaknesses. Section \ref{sec:alternate-method} proposes the alternative methodology and provides a discussion and justification.
 
-\begin{figure}[h!]
+\section{Summary of Methodology}
+\label{sec:original-methodology}
+
+The authors of \cite{riddick2011predicting} propose a method for using the pattern of gene expression for a variety of cell lines as a means to predict the sensitivity of a particular drug. For their training data the authors use the NCI-60 datasets which contains a panel of 60 cell lines derived from cancerous cells across 9 different types of human tissue. The IC$_{50}$ measure, which is defined as the amount of a drug required for 50\% inhibition of a biological process \cite{FDA-IC50}, was used as a response variable for a single drug.
+
+This dataset is challenging to work with. Firstly, examining the data used by the authors shows that the response variable is missing a number of entries. Secondly and more importantly, the dataset is a classic example of what is referred to as ``large \textit{p} small \textit{n}''. This means that the number of features (\textit{p}) is much larger than the number of samples (\textit{n}). Such high dimensionality can cause issues for many machine learning algorithms due to the ``curse of dimensionality'' \cite{bellman1957dynamic}. The Hughes effect \cite{hughes1968mean} states that predictive power decreases in proportion to the increase in dimensions, given a fixed number of training samples.
+
+Riddick et al. chose to use RFs as the main component of their methodology. A major strength of this learning algorithm relative to their dataset is that RFs can be used to measure how important a variable is likely to be for prediction. The authors of \cite{riddick2011predicting} first train a RF on the full set of gene expression data (consisting of 16,644 features) using a large number of trees (25,000). This first RF would likely exhibit poor generalisation, but it does it allow the RF to measure the importance of each variable as a by product of training. This measure is calculated by taking the average difference between the out-of-bag (OOB) error before and after permuting the values of the $j^{th}$ feature. From this measure of variable importance a subset of the best features can be chosen (Riddick et al. select those which are $2 \sigma > \mu$, typically 100-500 probesets).
+
+
+% insert a single centred image into a LaTeX document.
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.4\textwidth]{diagrams/perceptron/perceptron.png}
-\caption{Diagram of a basic perceptron units of a neural network. The weighted input of the training data is passed through an activation function to produce an output vector. Based on the diagram by Russell and Norvig \cite{russell1995artificial}.}
-\label{fig:perceptron}
+\includegraphics[width=0.4\textwidth]{img/riddick.png}
+\caption{Diagram from \cite{riddick2011predicting} showing the three stages of building their random forests model. A) feature selection using variable importance, B) outlier removal using proximity matrices, C) predicting IC$_{50}$ values.}
+\label{fig:riddick-diagram}
 \end{figure}
 
-Training neural networks is typically performed using the back-propagation algorithm \cite{lecun2012efficient}. Back-propagation first computes the error between the actual and expected output for a given training example in the final layer. The error in previous layers can be computed by ``back-propagating'' the error backwards from the final layer towards the input \cite{nnanddeeplearning}. More formally, the error in the final layer $L$ is given in matrix form by:
+Using this subset of features, they train another RF with a reduced number of trees (10,000). This second model should be more accurate than the first as well as being faster to train and execute. However, before using this tree for drug sensitivity regression, outlying cell lines in the model are removed using the proximity matrix of features generated from the second model. The proximity matrix of a RF is defined as the number of times two cases are assigned to the same terminal node. Cell lines which showed high correlation (using Person's correlation coefficient) were retained in the IC$_{50}$ and NCI-60 datasets. They note that they use the Bonferroni correction method \cite{abdi2007bonferonni} to correct for multiple hypothesis testing. A regression is obviously sensitive to outliers and with such a low ratio of samples (60) to features it is important to ensure that each case is not simply noise.
+
+Finally, Riddick et al. retrain their second model with the outlying cases removed and use this to infer drug sensitivity from unseen gene expression samples. Figure \ref{fig:riddick-diagram} gives a high level overview of their methodology.
+
+\section{Discussion of the Problem}
+\label{sec:problem-discussion}
+As mentioned in the previously, predicting drug sensitivity from a large number of gene expression signatures is challenging task. The high dimensionality of the dataset immediately rules out many machine learning techniques which will not work well in this situation. A form of dimensionality reduction is almost a prerequisite for data of this size. This problem is exacerbated by the small number of samples (only 60, even less with outliers removed).
+
+Another major challenge in applying machine learning to this problem is the essence of accuracy. In general, the ultimate goal of any application of machine learning is to achieve high generalisation and low error on previously unseen data. However due to the application domain (drug sensitivity) and problem nature (regression) it is essential that a high degree of prediction accuracy is achieved. In this problem the authors are attempting to infer not only if a drug is sensitive but also the degree of sensitivity. Regression values which are falsely indicative of sensitivity must be minimised to reduce the misapplication of a drug. Therefore any estimator applied to this problem should have both an extremely high degree of accuracy and precision.
+
+In a regression problem like this, an important aspect is the presence of outliers in the data. This is especially an issue when there are only a small number of data points from which to generalise from. Even a small number of outliers has the potential to drastically move the regression line from a good fit to a bad one. Here the authors have attempted to remove outliers using their proximity measurement technique. Any machine learning technique applied to this problem should provide some robustness to outliers.
+
+A problem specific consideration is that fact that any approach applied to this problem needs to take into account the interaction effects of combinations of different genes. RFs are able to account for this because they composed of decision trees which are combinations of splits of variables.
+
+One issue that the authors of the paper neglect with their approach and which the alternative approach presented in this paper offers is quantification of the uncertainty in an estimate. While making a prediction about a specific drug response is useful, it would also be useful to have information about confidence we have in the estimate. There is no point in predicting that a drug is highly sensitive when the margins of error are so large as to render the prediction useless.
+
+Additional practical considerations applicable to any machine learning problem are things such as the speed of training, the speed prediction, and the number and complexity of parameters. For the specific problem of drug sensitivity, algorithmic training and prediction speed are probably less important that in other problems, such as online learning problems. It probably does not matter if a hypothetical machine learning approach takes several hours to train or to yield a prediction provided that the prediction is accurate. The number and complexity of parameters is probably more relevant to this problem. RFs generally require little parameter tuning. Having too many ``knobs to turn'' can easily lead to overfitting and increased tuning times.
+
+One final issue for consideration is the interpretation of predictions. RFs are often said to be black box approaches which give good predictions but offer little explanation for the prediction. Variable importance can be used to gain an insight, but this is still based on the predictive ability of each feature rather than an interpretable explanation.
+
+\section{An Alternative Method}
+\label{sec:alternate-method}
+This section discusses an alternative machine learning algorithm that could be applied to the problem described in section \ref{sec:original-methodology}. This method offers some potential advantages over RFs which will be discussed in \ref{subsec:discussion-alternate} as well as outlining some drawbacks. Definitions in the following two subsections are liberally borrowed from \cite{hernandez2015bayesian} and \cite{chipman2010bart}.
+
+\subsection{Outline of BART}
+Bayesian Additive Regression Trees (BART) \cite{chipman2010bart} are a tree based ensemble method which shares many similarities with RFs. BART is a sum of trees model, where each individual tree is a weak learner that is fit to the residuals of the previous trees in the current iteration. Therefore BART is an additive method rather than taking an average as in RFs. BART is a Bayesian method which generates the full posterior distribution model parameters. BART is primarily a regression algorithm, but can be adapted in to a classifier. Because BART offers access to the full posterior distribution it is able to yield credible intervals for a prediction, directly quantifying our uncertainty in the prediction. 
+
+The BART model can be defined as follows. Let $x_k \in X$ be the $k^{th}$ observation of $p$ features. The basic BART model is
 
 \begin{equation}
-\label{eq:backprop1}
-	\bm{\delta}^L = \nabla_a C \odot g'(\bm{z}^L)
+	Y_k = \sum_{j=1}^{m} g(x_i; T_j, M_j) + \epsilon_k
 \end{equation}
 
-Where $\bm{\delta}^L$ is the error in the final layer, $\nabla_a C$ is the vector of partial derivatives of the cost $C$ function (typically quadratic cost or cross-entropy), $\bm{z}^L$ is the weighted vector of inputs to the final layer ($\bm{W}^L\bm{a}^{L-1}$), and $\odot$ is the Hadamard product. The vector $\bm{\delta}^L$ is then used to compute the error in previous layers as follows:
+where $g$ is a Bayesian CART model \cite{chipman1998bayesian}, $m$ is the total number of trees, $T_j$ is single decision tree which has terminal node parameters $M_j$, and $\epsilon$ is a Gaussian with zero mean and $\sigma^2$ of the residual variance. The BART model is fitted using a back-fitting Gibbs sampler using draws from the joint posterior of all trees, terminal node parameters, and $\sigma^2$ given the data. The priors for BART are formulated so as to regularise the fit to favour small trees.
+
+BART has been shown to be competitive with RFs in terms of prediction accuracy. However, it does come with some drawbacks which make it unsuitable for direct application to the drug sensitivity problem. BART is known to require large amounts of memory when working with higher dimensional data. This is neatly summarised in \cite{hernandez2015bayesian} as being for two reasons:
+
+\begin{enumerate}
+	\item Using a uniform prior to choose variable splits results in a high rejection rate when there are a large number of dimensions. Intuitively if there are many dimensions to choose from, it should be possible to do better than random selection.
+	\item BART becomes memory hungry for large datasets because each tree at each iteration of each MCMC chain must be stored so it can be used for future predictions. 
+\end{enumerate}
+
+\subsection{Outline of BART-BMA}
+BART with Bayesian Model Averaging (BART-BMA) \cite{hernandez2015bayesian} proposes some modifications to address these issues in an attempt to offer a compromise between both RFs and BART. Like BART, BART-BMA is an ensemble of Bayesian CART models which are summed together to produce a strong learner. The modifications are as follows: Firstly BART-BMA performs a greedy search for the most predictive splits. Secondly, BART-BMA uses Bayesian model averaging rather than MCMC to average over the posterior of many models.
+
+BART-BMA greedily searches for predictive splits using one of two options. The first option uses a change point detection algorithm called Pruned Exact Linear Time (PELT) which attempts to minimise a cost function to find optimal splits. The second option is to use a grid search where each variable is split into $n$ points and each point is used as a potential split point. The best split rules are then chosen based on the residual squared error.
+
+BART-BMA also differs in the way that it calculates the sum of trees likelihood. BART computes the likelihood for each individual tree in the model. In contrast BART-BMA directly specifies the sum of trees in its model. For each tree model $T_{hil}$ (with terminal node $i$ in tree $l$ using split $h$) the posterior probability of the sum of trees containing $T_{hil}$ can be approximated as $ST_{hil}$ using the Bayesian Information Criterion (BIC)
 
 \begin{equation}
-\label{eq:backprop2}
-	\bm{\delta}^l = ((\bm{W}^{l+1})^T \delta^{l+1} \odot g'(\bm{z}^l)
+	BIC = -2(log(p(Y|X,ST_{hil})) + log(p(ST_{hil}))) + B log(n)
 \end{equation}
 
-Once the gradient vectors $\bm{\delta}^l$ have been computed for every layer in the network the weights can be updated using an optimisation algorithm. The simplest optimisation approach is gradient descent \cite{lecun2012efficient}. In gradient descent the weights for each layer are updated according to:
+where $p(Y|X,ST_{hil})$ is the likelihood of the sum of trees model containing $T_{hil}$ and $p(ST_{hil})$ is the prior for the sum of trees model. $B$ is the number of model parameters. In a large sample size BART-BMA should produce the model which is a posteriori more probable.
+
+Finally, in order to focus the search on only the most likely trees, a greedy and efficient version of Bayesian Model Averaging (BMA) called Occam's Window is used. Using Occam's Window, only the best models are averaged over according to
 
 \begin{equation}
-	\bm{W}^l \leftarrow \bm{W}^l - \alpha \bm{\delta}^l
+	log(BIC_l) - argmin_l(log(BIC)) \leq log(o)
 \end{equation}
 
-Where $\alpha$ is parameter controlling the step size and in the simplest implementation is $\alpha$ is a constant. Alternative approaches can make use of Newton or Quasi-Newton methods \cite{lecun2012efficient}. Gradient descent training can either preformed in ``batches'' where the update is the sum of the error over all training examples, or stochastically after each example.
+where $o$ is a threshold parameter determining the size of the window. Any model which falls outside of Occam's Window is discarded. This is what allows BART-BMA to keep only the models from which there is a reasonably high support from the data.
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.4\textwidth]{diagrams/network.png}
-\caption{Diagram of a very simple fully connected neural network architecture. The connections between the nodes are represented using the weight matrix $\bm{W}$. Each node is an activation function for a single element in the weighted input vector $\bm{z}^l$. Image source: \cite{multilayernetwork}}
-\label{fig:neural-network}
-\end{figure}
-
-
-The basic architecture of a classical neural network is structured so that every node in one layer is connected to every node in the next via the weight matrix. This architecture is known as a ``fully connected'' network. Fully connected networks are feasible on a small scale. However, the complexity of a network rapidly grows in proportion on the size of the training examples and the number of layers used. This particularly becomes an issue when attempting to process very high dimensional data such as images.
-
-Subsequently, much of the current research in neural networks is focused on the reducing the complexity of the architecture and the number of weight parameters used. Denil et al. \cite{denil2013predicting} demonstrated that there is a significant amount of redundancy in the parameterisation of neural networks. By reducing the number of parameters used or simplifying the architecture of the neural networks it is hoped that significant gains in time and memory complexity can be achieved. A reduction in network parameters also leads to a model that is potentially easier to train as there are less ``knobs'' to turn in order to fine tune the network.
-
-There have been several notable prior methods to compress neural networks. In the simplest sense, the driving intuition behind convolutional neural networks \cite{krizhevsky2012imagenet} is that weights are effectively tied for a receptive field, forcing the network to only learn locally connected features. This combined with pooling layers \cite{zeiler2013stochastic} forms an architectural approach to parameter sharing. Early techniques such as ``Optimal Brain Damage'' by LeCun et al. \cite{lecun1989optimal} looked at the effect of removing parameters after training from a network based on the second order derivative. Nowlan \& Hinton \cite{nowlan1992simplifying} experimented with soft weight sharing with Gaussian mixtures as part of weight regularisation. More recently Srivastava et al. \cite{srivastava2014dropout} proposed Dropout for probabilistically dropping weights.
-
-In the remainder of this paper we will examine three recent papers ($\textless 3$ years old) each taking a different approach to the problem of reducing the complexity of neural networks. Specifically we shall critique the work of Chen et al. on \textit{HashedNets} \cite{chen2015compressing}, Han et al. on ``\textit{Learning both Weights and Connections for Effcient Neural Networks}'' \cite{han2015learning}, and Denil et al. on \textit{Low-Rank Decomposition} \cite{denil2013predicting}.
-
-\section{HashedNets}
-\label{sec:hashednets}
-
-\subsection{Research Undertaken}
-\textit{HashedNets} by Chen et al. \cite{chen2015compressing} uses random weight sharing between layers in order to reduce the number of connections and utilises a hash function in order to avoid additional memory overheads and to automatically pool weights. 
-
-More formally, in their design, the connections between each layer is represented by a ``virtual'' weight matrix $\bm{V}^l$ in which the elements of each matrix are mapped to a vector of real weights $\bm{w}^l$ containing $K$ elements where $K \ll N$ and where $N$ is the total number of connections between layers. The connections are mapped from $\bm{V}^l$ to $\bm{w}^l$ using a hash function $\phi : \mathbf{R}^m \rightarrow \mathbf{R}^n$. Weights are pooled by taking advantage of the fact that hash collisions will happen when $K \textless N$. This has the effect of allowing a virtual number of parameters to be represented using only a $K$ sized vector. Theoretically the size of $\bm{V}^l$ may be increased or decreased while the memory footprint of the network remains the same.
-
- The mapping from the virtual matrix to the actual weight vector causes the feed forward equation (equation \ref{eq:feedforward} in element wise form for just two layers) to be modified as follows:
+Once a sum of trees model has been produced the predicted response is calculated from a weighted average of the response from the models. Each model is weighted proportionally to its $BIC_l$ value according to equation \ref{eq:weighting}.
 
 \begin{equation}
-	a_i = g(\sum_{j=1}^m V_{ij}a_j) = g(\sum_{j=1}^m w_{\phi(i,j)}a_j)
+\label{eq:weighting}
+\begin{split}
+	w_l = exp(-0.5 BIC_l - v)\\
+	v = max_l(-0.5 BIC_l)
+\end{split}
 \end{equation}
 
-Instead of using a hash function to transform $\bm{V}^l$ to $\bm{w}^l$ they hash the activation from the previous layer into a $K$ dimensional vector. This avoids the need for a matrix explicitly mapping virtual weights to real weights, saving memory. Therefore the final feed-forward equation becomes:
+\subsection{Application of Method to the Problem}
+Being an ensemble tree based method, BART-BMA shares many similarities with RFs. As such the application of BART-BMA could be achieved in a similar manner to random forests. The variable importance measure offer shows good agreement to the one offered by RFs, so the initial feature selection process could be implemented identically. Likewise, the final prediction stage on the subset of the data could be performed in same way as in \cite{riddick2011predicting}.
 
-\begin{equation}
-	a_i = g(\bm{w}^T \phi_i(\bm{a}))
-\end{equation}
+The real difficulty with replacing RFs in this methodology with BART-BMA is the middle step which uses the proximity matrices derived from a RF to identify outliers and remove them. One option would be to use the same approach as the authors and train a RF and extract the case proximities before subsequently training a BART-BMA model on the final (outlier removed) data. It might be however that BART-BMA is robust enough to outliers in the data so as to not require the second step in the original methodology. If this was not the case an alternative approach might be to adjust the probability model to account for outliers \cite{chipmanPresentation}.
 
-Where the hash function $\phi$ is defined as the sum of activations from the previous layer hashed into the $k^{th}$ bucket. The authors provide a proof that the two formulations are equivalent in \cite{chen2015compressing}. 
+The original implementation of BART would most likely be able to handle the small subset of features in the third training stage in \cite{riddick2011predicting}. Therefore, for a fast implementation RFs could be used to implement first two components of the system with either BART or BART-BMA just being used in the final prediction stage. Alternatively BART-BMA could be used for the first stage to counter the high dimensionality of the first input dataset and either BART or BART-BMA could be applied for subsequent stages. Further exploratory analysis is required to comment further on the combination of RFs, BART, and BART-BMA that would give best results. It is difficult to say which combination will work best without first applying the model to some actual data.
 
-Additionally, and perhaps most importantly, the authors provide a derivation of a modified version of the back-propagation equations (equations \ref{eq:backprop1} and \ref{eq:backprop2}) which we have omitted here for brevity.
+\subsection{Discussion of Alternative Method}
+\label{subsec:discussion-alternate}
+The first two subsections have outlined BART and BART-BMA. This subsection discusses the implications of this choice of machine learning approach in terms of the problem described in \ref{sec:original-methodology}. 
 
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{diagrams/hashnets.png}
-\caption{Conceptual view of the relationship between virtual and weights in \textit{HashedNets}. In practice it is the inputs which get hashed. Image source: \cite{chen2015compressing}}
-\label{fig:hashednets}
-\end{figure}
+As suggested in section \ref{sec:problem-discussion} one major downside to RFs is that they provide no confidence in the estimates produced. A Bayesian approach such as BART-BMA offers credible intervals for the predictions it makes. This is likely to be useful when making predictions about drug sensitivity. Quantifiable uncertainty can help us make better choices and to have greater confidence in our predictions. It also provides an additional dimension to measure how well the model performs.
 
+The second reason for choosing BART-BMA is that it has been specifically designed for problems with higher dimensional data (HDD). The major weakness with BART and strength of RFs is their performance on HDD. BART-BMA has been developed as an attempt to bridge the gap between the two allowing a Bayesian ensemble algorithm to run on a standard laptop with HDD. Performance in terms of speed shows that RFs would still beat BART-BMA, but the algorithm is much faster and more memory efficient than BART. This would therefore likely make BART-BMA a feasible technique for the drug sensitivity dataset. The authors of BART-BMA also used BART-BMA to make predictions on two different biological datasets with near identical accuracy to RFs. This suggests that BART-BMA may have promising applications to datasets such as the one presented in \cite{riddick2011predicting}.
 
-\subsection{Critique of Research}
-Chen et al. clearly show that they have formulated a neural network architecture that can reduce the actual number of parameters used by a neural network by exploiting the hashing trick. While the method has its limitations, some of which are listed by the authors themselves, none are significant enough to render the study irrelevant. The results of the study are quite promising, providing good results in contrast to baseline methods with a design that is both easy to understand and implement.
- 
-They begin by clearly stating the motivation for their research by relating it to one of the major challenges facing modern neural network: the complexity of the models needed to work with modern datasets. Their justification for their specific direction of research is based on the work of Denil et al. \cite{denil2013predicting} who showed that there is a great deal of redundancy in neural network weight matrices. They argue that they can use the well known feature hashing trick to reduce this redundancy. Based on reading around this subject we would agree that this is both a fully justified motivation and sensible direction of research provided that compression gains are well balanced with the performance deterioration incurred by pooling weights.
+Furthermore, while BART-BMA is still a black box method, the authors note that BART-BMA tends to choose ``shallower and more interpretable'' \cite{hernandez2015bayesian} trees than RFs. This could have the duel benefit of reducing overfitting while being easier to interpret/visualise. Additionally variable importance scores generated from BART-BMA are in good agreement with those generated from RFs.
 
-The authors clearly state the method they used to implement feature hashing along with the relevant mathematical mechanics. Specifically, they provide two key derivations: firstly the show how the hashing function can be conceptually flipped from the hashing weights to hashing the activation output. Secondly they provide a derivation of the modified back propagation algorithm with the hash function included, necessarily proving that the network still can be trained conventionally. The derivations and their accompanying explanations are clear and accessible to the reader.
+However, BART-BMA isn't without a weakness. Firstly, it is a fairly new technique and while promising has yet to be experimented with to the same extent as RFs. Time is still needed to ensure the viability of such a new approach. Secondly, BART-BMA does bring with it an assumption that the most probable models are the ones with the best predictive power. In particular, because Occam's Window necessarily discards some choices of model there is obviously the potential that models which are ignored could have still provided useful contributions to the final prediction.
 
-There are several limitations mentioned by the authors about their method which should be noted but are not significant enough for the method to not be useful in some dimension. The first is that feature hashing works best on sparse input where many features will be zero. The authors therefore encourage this by using ReLUs in activation. While these units are frequently used in modern NN approaches it would be interesting to see the effect of using a sigmoid function or very dense data and seeing how much this reduces the benefit of compression. Although this may be limited more by the ability to successfully train the network with different activations than by the compression technique.
+Finally, it should be noted that there have been recent efforts to derive confidence intervals for the predictions made by RFs \cite{wager2014confidence}. This would render the main benefit of this approach fairly redundant. However there's an argument to be made that approaching the problem directly from a Bayesian point for view rather than resorting to  frequentist tricks is a more natural approach to quantifying uncertainty.
 
-Another limitation mentioned by the authors is that they have not managed to optimise their approach for GPU architectures where random memory access imposed by hash functions becomes an issue. It is noted that one of the authors is a NVIDIA employee which perhaps lowers the bias of the authors in relation to their own opinion as to how limiting this criticism is. Lack of an efficient GPU implementation is a major limiting factor for this methodology. However, if the parameter reduction achieved is significant enough a drop in GPU efficiency might be offset.
+\section{Future Directions and Work}
+There is an argument to be made that uncertainty in the predictions that a model makes are an essential factor if automated predictions for drug sensitivity are going to be feasible in the wild. Additionally, the interpretability of a model is another important factor. A major downside of both methods outlined in this paper is that, unlike decision trees, they offer a prediction but are not particularly informative about why that prediction was made.
 
-In the results of the paper the authors clearly demonstrate that their method out performs or is comparable to \textit{Low-Rank Decomposition} \cite{denil2013predicting} and \textit{Random Edge Removal} \cite{cirecsan2011high} over all chosen datasets and compression factors. It would have been better if they had provided some additional results regarding the training or convergence time compared to a standard network. This would give a sense of if it is more difficult to train compared to a standard approach or even if the methodology actually accelerates learning.
+Due to the high dimensionality of the data, ensemble based methods are a good choice for this problem. Another alternative to this methodology which would be worth experimenting might be Gradient Boosting \cite{friedman2001greedy} which shares many of the same properties with RFs and BART-BMA.
 
-Importantly the datasets used are all variations well known neural network community. Specifically they use MNIST \cite{lecun1998gradient} and a couple of variations \cite{larochelle2007empirical} and two artificial datasets CONVEX and RECT \cite{larochelle2007empirical}. However, this study could of perhaps gone further in this area and experimented with a more challenging real world natural image dataset such as CIFAR-10 \cite{krizhevsky2009learning} or ImageNet \cite{deng2009imagenet}. This would of given some results for a more realistic real world yard stick in comparison with the fairly dated MNIST. They could have also combined complex image datasets with different types of layers (i.e. convolution) with hashed layers for more practical performance results. Additionally, it would have been nice to see some results on larger architectures or commonly used models such as those that are available in Caffe \cite{jia2014caffe}.
+As the authors of the original paper noted outlier removal remains an essential challenge when working with a drug sensitivity dataset. Automated removal is obviously a desirable feature, however using a method that is robust to outliers in the first place would most likely reduce the training time required. Therefore an interesting direction for future research would be to explore modifying the techniques mentioned to improve robustness.
 
-Their choice to produce results combined with the ``Dark Knowledge'' approach of Hinton et al. \cite{hinton2015distilling} is quite interesting. The results of their experiments show that best result were achieved using the combination of feature hashing and a distilled model. The difference between the vanilla HashNet and a joined model is not hugely significant. However, this does show a good example of how the author's methodology lends itself to being combined with alternative approaches.
-
-\section{Pruning Connections and Neurons}
-\label{sec:pruning}
-
-\subsection{Research Undertaken}
-In their recent paper Han et al. \cite{han2015learning} propose a simple technique to enable a neural network to learn sparse connectivity between neurons. The high level view of their methodology is to initially train a large network, then prune weights which only contribute a small amount using a threshold parameter. Neurons which are left with no incoming or outgoing connections are removed from the network. The pruning and retraining phases are repeated many times in order to find the minimum number of connections required by the network. In the experiments described the pruning threshold was chosen to be a parameter multiplied by the standard deviation of the layer's weights.
-
-To prevent over-fitting during the retraining stages the authors made use of the Dropout \cite{srivastava2014dropout} technique. The authors note that they must make an adjustment to the dropout ratio due to the ``hard pruning'' effect in the connection pruning phase. The authors suggest a derivation for the ratio, suggesting the correct dropout rate is proportional to the square root of the quotient of connections to a layer before and after pruning.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.48\textwidth]{diagrams/iterative-pruning.png}
-\caption{Left: Overview of the iterative pruning approach. Right: How connectivity is leant, first weights are dropped, then neurons. Image source: \cite{han2015learning}}
-\label{fig:iterative-pruning}
-\end{figure}
-
-The authors also experimented, based on prior literature and their own research, with a couple of implementation specifics to give optimum results in their own tests. L2 regularisation was shown to be the best choice overall despite L1 regularisation giving better accuracy after the pruning phase (as it forces more weights towards zero). The authors also make the case that training the network from the surviving parameters rather than reinitialising trained layers produces better results. This also has the advantage that only the pruned layers need to be retrained, which can be done using regular back propagation.
-
-\subsection{Critique of Research}
-Han et al. \cite{han2015learning} show that they have developed an effective method of training a NN to produce a sparse architecture with solid and verifiable results to back their conclusions.
-
-Their proposed method is based on the prior work of Srivastava et al. \cite{srivastava2014dropout} but modified so that weights cannot be brought back into existence once dropped. Some of the subsections outlining the methodology they used appears to be a little terse in places. In particular subsection 3.3 could use expansion and possibly a diagram to more clearly express their method and their justification for the retraining procedure.
-
-The authors clearly show that they have a method of achieving excellent compression vs. test accuracy rates compared to recent competing methods in the field. They carried out all of their experiments using the well known NN framework Caffe \cite{jia2014caffe} and used reference models making their methodology easier to validate in comparison with \textit{HashedNets}. The authors show strong compression results across several different well known network implementations across two datasets. Beginning with MNIST \cite{lecun1998gradient} the authors show compression rates of up to 12x for LeNet-300-100 and LeNet-5 with only a small ($< 0.06$) drop in accuracy. As well as testing on MNIST, the authors show good compression results on the more complex ImageNet database \cite{deng2009imagenet}.
-
-A higher compression vs. test error rate seems likely compared with a effectively random technique such as \textit{HashedNets} because they are training the network to lose only irrelevant parameters. In other words they can achieve a high compression rate and high test accuracy because they are making a choice about which weights to keep. This is better than choosing at random which is the case with \textit{HashedNets}. This is reflected in the deterioration in accuracy seen in the 5 layer versions of HashNets where a larger network could lead to randomly pooling weights having a greater attenuation effect across layers.
-
-A strong advantage to this methodology over approaches such as \textit{HashedNets} is that the level of compression is automatically chosen by the algorithm. Only the hyper-parameter controlling the pruning threshold need be selected, either globally or layer by layer. This means that the technique is perhaps easier to tune that other approaches. This could also be interpreted as a weakness because the rate of compression is effectively heavily dependant on the sparsity of the data which will change between datasets.
-
-A major limitation of this approach in comparison with that of \textit{HashedNets} in section \ref{sec:hashednets} is a full, ``uncompressed'' neural network must first be trained, then pruned and retrained instead of starting at a smaller size initially. If the network needs to be constrained with restricted memory then this approach would not work. This is a big issue for extremely large networks where a distributed implementation is required in order to train them. If the purpose of reducing the number of parameters so that the network may be trained on a single machine then this method may not be appropriate. Using this approach also requires the network to be retrained after the pruning stage, while in contrast \textit{HashedNets} are simply trained in a compressed state.
-
-One element of the paper which was particularly insightful was the visualisation of a layer's sparsity pattern. NNs are notorious black boxes and this paper contributed an interesting visualisation of a layer's sparsity and linked it with the characteristics of the MNIST dataset. Such techniques may be helpful in understanding of a dataset and tweaking the design of a NN accordingly.
-
-\section{Low-Rank Decomposition}
-
-\subsection{Research Undertaken}
-Denil et al. \cite{denil2013predicting} illustrate an approach to compression known in literature as \textit{Low-Rank Decomposition}. The basic principle behind their methodology is to take the weight matrix $\bm{W}$ and decompose the matrix into two smaller matrices:
-
-\begin{equation}
-\label{eq:low-rank}
-	\bm{W} = \bm{UV}
-\end{equation}
-
-Where $\bm{U}$ has the same number of rows as the input vector $\bm{a}^{l-1}$ and $\bm{V}$ has the same number of columns as the size of the output vector $\bm{a}^{l}$. The remaining dimension $n_\alpha$ (the columns of $\bm{U}$ and the rows of $\bm{V}$) determines the level of compression. The smaller $n_\alpha$ becomes the less effective parameters a layer has. 
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{diagrams/low-rank.jpg}
-\caption{Visualisation of the decomposition of the weight matrix $\bm{W}$ into two smaller matrices $\bm{U}$ and $\bm{V}$}
-\label{fig:low-rank}
-\end{figure}
-
-
-In their method they propose to fix the value of $\bm{U}$ and let only $\bm{V}$ be learned. This intuitively makes sense because the two matrices will still have redundancies as they are both linear combinations of each other. Subsequently the matrix $\bm{U}$ can be chosen to be a matrix where the columns are bases for $\bm{V}$. The rest of their methodology concerns finding good choices for $\bm{U}$.
-
-The authors present a number of different methods for choosing the columns of $\bm{U}$. One choice is to randomly choose columns for the identity function which equates to just picking random connections. Another is to choose the  columns to be random unit vectors orthogonal to each other, as in random projections. They also present more advanced choices that encode prior knowledge about the feature space through the use of a kernel. Complex features are shown to be predicted using the kernel ridge predictor \cite{welling2013kernel}:
-
-\begin{equation}
-\label{eq:ridge-predictor}
-	\bm{w} = \bm{k_\alpha}^T(\bm{K_\alpha} + \lambda I)\bm{w_\alpha}
-\end{equation}
-
-The preceding equation is predicting a single column $\bm{w}$ of the final weight matrix $\bm{W}$ given a subset of the original weight vector $\bm{w_\alpha}$. Note that this can be parallelised by giving multiple example inputs as a matrix $\bm{W_\alpha}$. Equation \ref{eq:ridge-predictor} can be also be intuitively broken apart and equated to $\bm{U}$ and $\bm{V}$:
-
-\begin{equation}
-	\bm{U} = \bm{k_\alpha}^T(\bm{K_\alpha} + \lambda I)
-\end{equation}
-\begin{equation}
-	\bm{V} = \bm{w_\alpha}
-\end{equation}
-
-The choice of kernel function used for $\bm{k_\alpha}$ and $\bm{K_\alpha}$ are experimented with as part of the author's research. For example, in the case of an image this could be the Gaussian radial basis kernel. They also show that construction of the kernel also be inferred by the data by training a layer as an autoencoder. 
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=0.5\textwidth]{diagrams/low-rank-columns.png}
-\caption{Columnar architecture of a fully connected (left) and convolutional (right) network. Each column corresponds to a different set of weight indices ($\alpha$). Image source: \cite{denil2013predicting}}
-\label{fig:low-rank-columns}
-\end{figure}
-
-The authors also propose an architectural structure (figure \ref{fig:low-rank-columns}) in which multiple basis dictionaries can be be used in the case that one such dictionary is too restrictive. They propose that a sub matrix $\bm{U}_{\alpha j}$ can be created and used to predict the a corresponding feature matrix $\bm{W}_j = \bm{U}_{\alpha j} \bm{W}_{\alpha j}$ where $j \in J$ is the index of the number of sub matrices. Each sub matrix can then be concatenated to produce the final matrix $\bm{W}$.
-
-\subsection{Critique of Research}
-Denil et al. \cite{denil2013predicting} show a flexible solution for reducing the parameters of a neural network using matrix decomposition in an influential paper that also showed that NN weights have a great deal of redundancy.
-
-One of the biggest strengths of this technique, outlined by the authors, is that the formulation is independent of many of the peripheral choices when designing a neural network architecture. The performance of their approach is not dependant on the activation function, choice of regularisation, architecture of layers etc. This is very useful both because it means that the technique is likely to be applicable to a wide variety of practical uses. This also makes it readily applicable to being combined with other compression approaches.
-
-A major advantage in contrast with techniques like the one presented in section \ref{sec:pruning} is that, like \textit{HashedNets}, a the network is trained with the compressed representation. A full neural network is never grown at any point. This means it is suitable for making a very large network small enough to be trained on a single physical machine and could avoid the need for a distributed architecture.
-
-The choice of the basis dictionary $\bm{U}$ in their formulation is highly flexible. The authors propose a number of different approaches for choosing $\bm{U}$. This means that given a specific neural network $\bm{U}$ can be tailored to its requirements using methods such as kernel ridge regression and pre-training layers as autoencoders. However, this is also a weakness of the method because it adds an additional number of choices we must make about our system. The question: ``what basis dictionary is best for my input?'' is not trivial to answer and highly dependant on the dataset. Additionally, the choice of indices ($\alpha$) used suffers from the same problems. The authors propose just choosing randomly, but if we wish to do better than this we must carefully formulate a selection criteria, which is again likely to be data specific.
-
-While the proposed method is perhaps not the easiest choice to work with in practice, their paper did show a high level of redundancy in the parameters of both fully connected and convolutional neural networks. Based on their results they provide a strong and enjoyable write up of future directions of research.
-
-The results of the paper are detailed and interesting. The authors provide several different implementations of their design using different basis dictionaries and showed how almost all of them can be trained to give good performance compared to a conventional network. The fact that the authors used two common datasets (MNIST and CIFAR-10) makes their results easily verifiable. It was also encouraging to see results of their approach combined with an alternative architecture (i.e. convolutional), showing that the approach will work with other architectures.
-
-In terms of the papers discussed here, the authors of \textit{HashedNets} directly compared their approach with the low rank approach presented in this section. It is worth noting that low-rank decomposition was shown to be inferior to the plain \textit{HashedNets} implementation. The authors of \textit{HashedNets} used a zero-mean Gaussian distribution as their fixed matrix. However, it may be the case that a better choice for the basis dictionary would of yielded better results over a relatively naive Gaussian distribution implementation. 
-
-
-
+Finally, another direction worth exploring, noted by the authors of BART-BMA would be the modify the algorithm to handle missing data. While this is not directly applicable to this dataset it would be useful for biological data in general.
 
 % needed in second column of first page if using \IEEEpubid
 %\IEEEpubidadjcol
@@ -840,7 +770,7 @@ In terms of the papers discussed here, the authors of \textit{HashedNets} direct
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\bibliographystyle{plain}
+\bibliographystyle{IEEEtran}
 \bibliography{references}
 %\begin{thebibliography}{1}
 %

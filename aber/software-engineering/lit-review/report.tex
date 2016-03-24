@@ -349,6 +349,11 @@
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
 
+% custom includes
+\usepackage{cite}
+\usepackage{amsmath, amssymb}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
 %
@@ -358,7 +363,7 @@
 % not capitalized unless they are the first or last word of the title.
 % Linebreaks \\ can be used within to get better formatting as desired.
 % Do not put math or special symbols in the title.
-\title{Computational Approaches to RNA Structure Prediction}
+\title{Computational RNA Structure Prediction}
 %
 %
 % author names and IEEE memberships
@@ -475,14 +480,166 @@ The way in which nucleotides in an RNA strand form hydrogen bonds with one each 
 
 \section{RNA secondary structure prediction}
 \label{sec:rna-secondary-structure}
+The challenge of accurately predicting the secondary structure of RNA has a long and varied history. There are two major schools of thought in secondary structure prediction, with folding algorithms being loosely categorised as being either thermodynamic or probabilistic using stochastic context free grammar (SCFG) models. Most of the approaches to folding share deep similarities in how structure is determined. The major differences are in the scoring schemes and the parametrisation used. This section provides an overview of history prediction starting from early thermodynamic models and working forwards chronologically to more recent probabilistic models.
 
-\subsection{Single Sequence Methods}
-\label{subsec:single-sequence}
-\subsubsection{Thermodynamic models and Free Energy Minimisation}
-\subsubsection{Stochastic Context Free Grammars}
+\begin{table*}[t]
+\centering
+\caption{Summary of Approaches to Secondary Structure Prediction}
+\label{my-label}
+\begin{tabular}{|l|l|l|l|p{5cm}|}
+\hline
+\textbf{Paper}                             & \textbf{Year} & \textbf{Criteria}                     & \textbf{Weighting} & \textbf{Contributions}                                                           \\ \hline
+Nussinov \cite{nussinov1980fast}           & 1980          & Maximum Base Pairing                  & Binary             & Dynamic programming algorithm for base pairs                                     \\ \hline
+Zuker and Stieglar \cite{zuker1981optimal} & 1981          & Minimum Free Energy                   & Thermodynamic      & Minimum free energy algorithm                                                    \\ \hline
+McCaskill \cite{mccaskill1990equilibrium}  & 1990          & Partition Function Probability \& MFE & Thermodynamic      & Partition function, base pair probability matrix, melting behaviour description. \\ \hline
+\end{tabular}
+\end{table*}
 
-\subsection{Comparative Methods}
-\label{subsec:comparative-methods}
+\subsection{Thermodynamic Models}
+\label{subsec:thermodynamic-models}
+
+One of the earliest influential approaches to secondary structure prediction is the Nussinov algorithm \cite{nussinov1980fast}. The Nussinov algorithm is used to find the maximum base pairing of a sequence of nucleotides. The algorithm recursively calculates the maximum pairing for subsections of a RNA sequence. The recursive definition can be sped up using a dynamic programming table to yield an algorithm with $O(n^3)$ time and $O(n^2)$ space complexity. Little improvement on algorithmic complexity has been achieved since. 
+
+While the Nussinov algorithm is guaranteed to produce the structure with maximum base pairs it has some major flaws. Firstly the algorithm assumes base pairs are non-crossing and cannot handle pseudo-knotted structures. Secondly, it usually does not produce biologically plausible structures. For example, the stacking orientation of base pairs and loop length are not weighted in any way. Thirdly, the algorithm only predicts a single structure. It is known that the space of possible secondary structures will often have many plausible instances close to the optimum structure \cite{mccaskill1990equilibrium}. The Nussinov algorithm provides no way of differentiating between possible sub optimum structures. 
+
+A much more biologically feasible criteria of determining whether two bases will pair is to minimise the free energy exhibited by a structure. This is the method proposed by Zuker and Stieglar \cite{zuker1981optimal}. The underlying algorithm shares a very similar formulation as the Nussinov method but with a few key differences. Firstly their algorithm associates energy with the regions between bonds, as opposed to the bonds themselves (which is effectively what Nussinov uses). Secondly two energy functions are defined for subsequences of the string of nucleotides. These are the energy of the subsequence with and without base pairing between two given indices. Energy for the structure is recursively computed in a bottom-up fashion by taking the minimum energy at each point. The final computation should yield the secondary structure with minimum free energy (MFE).
+
+The MFE formulation can be used to produce much more biologically plausible structures in contrast to base pair maximisation. The thermodynamic weights are used to push the algorithm away from impossible or implausible structures (such as very short hairpin loops) and towards the correct structure by giving them highly positive weights. The method also has a certain biological backing because of its basis in thermodynamics which is more realistic to how cell processes work than base pair maximisation. 
+
+However, this method and thermodynamic based approaches in general, are limited by the accuracy of experimental studies of RNA. Many approaches rely on custom scoring rules or simply ignore aspects of reality in the model. For example, sequence dependance in RNA loop structures are often ignored due to the lack of experimental tools for assessing their free energy contribution \cite{do2006contrafold}. Many more recent prediction algorithms utilise the thermodynamic parameters used by Turner's group \cite{mathews1999expanded} as opposed to the weights used in the original paper. 
+
+Furthermore, this still shares some of the limitations of \cite{nussinov1980fast}. The MFE algorithm cannot handle pseudo-knotted structures and can only produces a single structure rather than a distribution of likely structures. Despite these limitations thermodynamic models based on this approach are still used in abundance for secondary structure prediction and produce some of the best available results \cite{laing2010computational} \cite{rivas2013four}.
+
+Moving forward in time, another key contribution to the area was the equilibrium partition function formulation by McCaskill \cite{mccaskill1990equilibrium}. The aim of this paper was to not only produce the MFE structure for a given sequence but to produce a visual picture of the full ensemble of alternative equilibrium structures and provides a practical method for computing probability of bases pairing. 
+
+McCaskill describes the ensemble of RNA structures using the partition function
+
+\begin{equation}
+	Q = \sum_s e^{-(E(A)/kT)}
+\end{equation} 
+
+where $A$ is a specific structure, $E$ is the energy of a structure, $T$ is the absolute temperature in Kelvin, and $k$ is the Boltzmann constant. The probability of a specific structure $A$ given sequence $S$ is then given by
+
+\begin{equation}
+	P(A|S) = \frac{1}{Q} e^{-(E(A)/kT)}	
+\end{equation}
+
+Finally the probability of two bases $(i, j)$ pairing is given by
+
+\begin{equation}
+	P((i,j)|S) = Q_{ij} / Q
+\end{equation}
+where
+\begin{equation}
+	Q_{ij} = \sum_{(i,j) \in A} e^{-(E(A)/kT)}
+\end{equation}
+
+More complicated interactions where bases pair at hairpin loops, internal loops, and junctions are handled in further derivations excluded for brevity. McCaskill also outlines how to reduce the computational time and space complexity of the final algorithm to be $O(n^3)$ and $O(n^2)$ respectively.
+
+Further contributions by the paper include the ``box matrix'' plot visualise the probabilities for each base pair predicted by the algorithm alongside the predicted optimal and experimental pairings. This takes the form of a matrix where each element is the probability that bases $i$ and $j$ will pair shown on a logarithmic scale in the upper left corner of the matrix. The lower right side of the matrix is then used to show the optimal pairings and optionally where the experimentally confirmed structure differs. 
+
+The partition function formulation also encodes information about the phase transitions for the ensemble with respect to change in temperature. This provides another window into the structural properties of a RNA sequence.
+
+A more modern free energy minimisation approach was created by Deigan et al. \cite{deigan2009accurate} which incorporates additional experimental information from SHAPE experiments into there approach. Selective 2'-hydroxyl acylation analysed by primer extension (SHAPE) experiments report differences in local nucleotide flexibility. Base pairing reduces the local flexibility associated with a nucleotide which can be related to the probability that a particular nucleotide will form a base pair. The author's propose a ``pseudo-free energy change'' term which can be added to a regular free energy model. The term has the form
+
+\begin{equation}
+	\Delta G_{SHAPE}(i) = m \cdot ln[SHAPEreactivity(i) + 1] + b
+\end{equation}
+
+where $i$ is the nucleotide number, $m$ is a parameter that penalises base pairing in nucleotides with high SHAPE reactivities and $b$ is parameter which is negative and represents an increment in free energy for nucleotides which exhibit low SHAPE reactivity. The author's fit these parameters against 23S rRNA which exhibits a large number of distinct structural motifs.
+
+The author's report a high degree of accuracy compared with conventional thermodynamic parameters. The author's note that the errors in prediction are not only less, but are generally of a shorter range.
+
+Another method based on the thermodynamic viewpoint is the work of Ding et al. \cite{ding2003statistical, ding2005rna}. Their work can largely been seen as a logical extension of McCaskill's work in \cite{mccaskill1990equilibrium}. Their first paper \cite{ding2003statistical} presents a method for drawing a statistically representative sample from the Boltzmann ensemble of possible secondary structures. This method allows them to gain valuable insights RNA structure from a statistical mechanics point of view. The sampled distribution allows them to calculate information relating to RNA:RNA interaction sites, density of states, and predict alternative structures.
+
+In \cite{ding2005rna} the author's continue their work to include prediction of the ``best'' secondary structure using the Boltzmann ensemble samples using cluster centroids. They first generate a sample from the ensemble using the method developed in \cite{ding2003statistical}. The samples are then clustered using a top-down method from \cite{rousseeuw1990finding}. They note that they use the CH index to choose the number of clusters and the base pair distance as the distance metric. They define the cluster centroid as the instance which has the shortest possible distance to all others in the in the cluster.
+
+Interestingly the authors note that there appears to be a fixed number of clusters regardless of sequence length. Furthermore the author's concluded that the MFE approach breaks down when the MFE structure is in the wrong cluster from the true structure. The limitation of this method is that the ensemble centroid is likely to be quite far removed from many sampled structures. The centroid for the cluster containing the correct structure will be far more accurate. However, it is difficult to determine the cluster containing the ``correct'' centroid without prior knowledge. On the other hand, probable sub optimal structures are also of great interest and the list of centroids provides yet another method for accessing this information.
+
+
+\subsection{Probabilistic Models}
+\label{subsec:probalistic-models}
+The major alternative school of thought for RNA secondary structure prediction is through the use of Stochastic Context Free Grammars (SCFGs). Before diving into how SCFGs are applied to RNA secondary structure prediction it is useful to define what a CFG and therefore proceed to define a SCFG. 
+
+According to Giegerich\cite{giegerich2014introduction} a context free grammar is a formal system of rules $G$ that produce a language $L$ from finite set of symbols (including the empty string $\epsilon$) called an alphabet and denoted $\mathcal{A}$. A language is simply a combination of multiple elements from $\mathcal{A}$. A grammar $G$ is a collection of $V$ non terminal symbols and a set of production rules of the form $X \rightarrow \alpha$ where $X \in V$ and $\alpha \in \{V \cup \mathcal{A}^*\}$ and where $\mathcal{A}^*$ is set of all combinations of $A$.
+
+An example grammar from \cite{rivas2013four} which expresses the Nussinov method \cite{nussinov1980fast} of RNA folding discussed previously is
+
+\begin{equation}
+	\label{eq:nussinov-grammar}
+	S \rightarrow S a | S a S \hat{a} | \epsilon
+\end{equation} 
+
+Where $a$ and $\hat{a}$ are paired bases of some string of bases $S$. The vertical bar represents logical OR for brevity.
+
+Checking whether a word $w \in \mathcal{A}^*$ exists in language $L(G)$ can be achieved by creating a parse tree for $w$. If such a tree exists then $w \in L(G)$ else it does not. If more than one parse tree exists for a given $w$ the language is said to be ambiguous (unlike the grammar in equation \ref{eq:nussinov-grammar} which is unambiguous).
+
+In order for a parsing algorithm to choose between multiple potential parse trees some form of scoring function must be used. One such function might favour the smallest possible parse tree for example. If the scoring function is based on probabilities then the CFG is said to be a SCFG. More formally, each production rule $r$ has a probability $\pi_r$ associated with it. The probability of one possible parse tree is the product of $\pi_{ri}$ for all uses of $r_i$. The probability of $w$ is then given as the sum of the probability of a parse tree over all possible parse trees for $w$.
+
+The main algorithm used to parse ambiguous SCFGs is the Cocke-Younger-Kasami (CYK) algorithm \cite{giegerich2014introduction, cocke1969programming, younger1967recognition, kasami1965efficient} . The CYK algorithm used for efficiently evaluating a SCFG is essentially the same as that which is used for finding the MFE \cite{zuker1981optimal}. The difference is in how the probabilities used in the ``stochastic'' part of a SCFG are derived.
+
+The probabilities for the production rules can be computed from the probability of individual terminals reasonably efficiently using the inside-outside algorithm \cite{lari1990estimation}. The inside-outside algorithm defines how to compute the probability of a non-terminal, a production rule, and the total probability of all parse trees of a sequence. The algorithm is used so that all parse trees need not be enumerated and can be efficiently implemented using a dynamic programming table. The fitting of the probabilities used in the SCFG can achieved using expectation maximisation. 
+
+Note that the inside-outside algorithm can be seen as equivalent to the method used by McCaskill \cite{mccaskill1990equilibrium} to derive an equilibrium potential function based on thermodynamic parameters. The inside-outside algorithm could be seen as a generalisation to a generic potential function. In theory the thermodynamic parameters of McCaskill's model could be replaced by appropriate probabilities and achieve similar results.
+
+A notable early attempt at RNA secondary structure prediction using SCFGs is the work of Knudsen and Hein \cite{knudsen1999rna, knudsen2003pfold} in producing Pfold. In \cite{knudsen1999rna} they define a grammar which is so concise that it can be stated here in full:
+
+\begin{equation}
+\begin{split}
+	& S \rightarrow LS | S \\
+	& F \rightarrow dFd | LS \\
+	& L \rightarrow s | dFd 
+\end{split}
+\end{equation}
+
+with $S$ producing loops, $F$ producing stems, and $L$ choosing between a whether a position in a loop should be a continuation of the loop or the start of a stem.
+
+The probability associated with a production rule is created using a selection of known RNA secondary structures consisting of a number of different types of RNA. In this way Pfold uses multiple sequences (in contrast to single sequence prediction). The work in \cite{knudsen1999rna} first calculates the probabilities for each pairing and non-pairing columns of aligned sequences using a rate matrix to capture information about mutation between sequences. From individual columns the probability of an alignment may be obtained given a known phylogenetic tree. Finally a MAP estimate of the RNA structure can be obtained as
+
+\begin{equation}
+	\sigma^{MAP} = \argmax_{\sigma} P(D | \sigma, T^{ML}, M)P(\sigma | M)
+\end{equation}
+
+where $\sigma$ is the list of all possible secondary structures, $M$ is the model (SCFG and mutational model), $D$ the ordered set of columns, and $T^{ML}$ the maximum likelihood estimate of the tree. The probability of each of the production rules was found using the inside-outside algorithm and expectation maximisation.
+
+The author's further modified there work in \cite{knudsen2003pfold} to add a number of different enhancements to their first paper. Notable additions are further robustness to alignment and sequencing errors as well as better handling of gaps and unknown nucleotides. They also refactored their implementation to only estimate the tree once before the structure is estimated to reduce execution time. Finally the method also chooses the structure with the highest expected number of correct predictions, instead of the most likely parse reported by the CYK algorithm.
+
+Pfold has a number of strengths in contrast to thermodynamic models and single sequence prediction methods. Firstly it is not reliant on the thermodynamic parameters obtained by experimentation. This both reduces the number of parameters needed and removes the potential limitations of experimental accuracy of the parameters. Incorporating knowledge from a full set of known sequences allows a problem formation that beings to resemble something more like a traditional machine learning problem.
+
+However, there are some obvious limitations to this technique. Most notable is the dependance on having multiple known, aligned sequences in the first place. The accuracy of prediction from any multiple technique will be limited by the accuracy of alignment. This also raises issues such as sequencing and alignment errors which must be accounted for.
+
+Do et al. \cite{do2006contrafold} produced the CONTRAfold model that takes more inspiration from the world of natural language processing. They replace the SCFG representation with a conditional log-linear model (CLLM). CLLMs have the form
+
+\begin{equation}
+	\label{eq:cllm}
+	P(\sigma|x) = \frac{exp(\mathbf{w}^T \mathbf{F}(x, \sigma))}{\Sigma_{\sigma'\in \Omega(x)} exp(\mathbf{w}^T \mathbf{F}(x, \sigma))} 
+\end{equation}
+
+where $\mathbf{w}$ is a vector of weights to be learned and $\mathbf{F}(x, \sigma)$ is a feature vector. CLLMs are a very flexible and powerful method for using rich set of possible features to create a probabilistic model. In traditional text processing applications elements of the feature vector $\mathbf{F}(x, \sigma)$ are a collection of binary functions activated based on contextual information surrounding a word. For example $\mathbf{F}_k(x, \sigma)$ might model whether the previous word was an adjective. 
+
+In the application to RNA structure prediction the elements of the feature vector correspond to a scoring related to contextual information from the RNA sequence. For example the score for a hairpin between $i$ and $j$ accounts for terminal mismatch interactions, hairpin length, and the loop base. The feature vectors are derived from known thermodynamic weights such as those from \cite{mathews1999expanded}.
+
+CONTRAfold also diverts from the use of MFE/CYK approach to recovering the best structure. Instead the authors propose a method of Maximum Expected Accuracy (MEA). MEA incorporates a parameter $\gamma$ which controls a sensitivity vs. specificity tradeoff. This is defined as
+
+\begin{equation}
+	\hat{y}_{mea} = \argmax_{\hat{y}} \mathbb{E}[accuracy_{\gamma}(y, \hat{y})]
+\end{equation}
+
+where $\hat{y}$ is a candidate structure and $y$ is the true structure. $accuracy_{\gamma}$ is defined as the number of correctly unpaired positions plus the product of $\gamma$ and the number of correctly paired positions. 
+
+\subsection{Handling Pseudoknots}
+\label{subsec:secondary-pseudoknots}
+The majority of methods mentioned in the preceding two sections make any realistic attempt at handling pseudoknotted structures within RNA sequences. This is mostly due to the algorithmic time increase required to handle such structures. For example, an early attempt by Rivas and Eddy \cite{rivas1999dynamic} was able to predict a restricted subset of pseudoknots but with the associated time and space complexity of $O(n^6)$ and $O(n^4)$ respectively. Obviously such an approach is intractable for anything but the most short sequences. Despite being hard to predict, these structures are of great biological interest as they often play a key role in biological processes \cite{citation required} such as ... In this section two methods which tackle the pseudoknot prediction from different paradigms are presented.
+
+Reeder et al. \cite{reeder2007pknotsrg} produced a method that was largely based on the MFE method by Matthew's et al. \cite{mathews1999expanded} but with added support for what they term \textit{canonical simple recursive pseudoknots}. The note that the majority of known examples of pseudoknots are fairly simple in structure. This allows them to make some simplifying assumptions: only two stems are allowed, bugles and internal loops are disallowed within the pseduoknot and stems at either end of the knot must be maximal. If the stems overlap then one stem is prioritised over another. 
+
+These simplifications allow them to utilise a $O(n^4)$ loop to compute the maximal length of both stems within the subsequence bounded by locations $i$ and $j$ for all interior pointer $k$ and $l$ such that $i < k < l < j$. The total energy of the pseudoknot can then be computed from the energy of the two loops and two stems for a given $k$ and $l$ to obtain the total energy for the pseudoknot. The values for the pseudoknot are then treated like any other term in the MFE algorithm.
+
+Another more recent attempt at pseudoknot prediction is CyloFold by Bindewald et al. \cite{bindewald2010cylofold}. CyloFold uses a coarse grained 3D simulation of pseudoknotted structures. Their method starts by recovering all the stem structures containing $>3$ base pairs from the nucleotide sequence by conventional MFE (the authors use the ViennaRNA package \cite{lorenz2011viennarna}). 
+
+Once a list of stems has been obtained a number of simulation runs are performed. Stems are added to the simulation one at a time according to Boltzmann weighted probability. Each stem in the simulation is represented by capsule with length proportional to the length of the sequence. The position of the capsules three dimensions are initialised randomly. Single stranded regions between cylinders are represented as distance constraints between the hemispherical ends of each capsule. Distances are constrained by a minimum and maximum bounds. The existing and newly added capsules then optimised to satisfy distance constraints and minimise collisions. If a newly added cylinder collides with existing stems it is reinitialised several times until a threshold where it is detailed to be a failure. Likewise if after optimisation there the capsule still collides it is removed.
+
+The authors showed that their method offered some improvement on several criteria over existing methods such as pknotsRG. The time complexity of the method is difficult to estimate, but the authors suggest that it is roughly proportional to $O(n^4)$ making it comparable to \cite{reeder2007pknotsrg}. The noted benefits of this method are twofold: 1) it avoid some of the simplifying constraints associated with approaches pknotsRG (but possibly does not solve more complex pseudoknots), and 2) provides an automatic check for distance constraints between structures (steric feasiblity).
 
 \section{RNA tertiary structure prediction}
 \label{sec:rna-tertiary-structure}

@@ -66,6 +66,7 @@
 \documentclass[journal]{IEEEtran}
 \usepackage{blindtext}
 \usepackage{graphicx}
+\usepackage{float}
 
 % Some very useful LaTeX packages include:
 % (uncomment the ones you want to load)
@@ -391,7 +392,7 @@
 %
 % paper title
 % can use linebreaks \\ within to get better formatting as desired
-\title{Review of Predicting \textit{in vitro} drug sensitivity using Random Forests}
+\title{A Review of Predicting \textit{in vitro} Drug Sensitivity using Random Forests}
 %
 %
 % author names and IEEE memberships
@@ -426,8 +427,8 @@
 
 
 % The paper headers
-%\markboth{Journal of \LaTeX\ Class Files,~Vol.~6, No.~1, January~2007}%
-%{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
+\markboth{\today}%
+{Shell \MakeLowercase{\textit{et al.}}: Bare Demo of IEEEtran.cls for Journals}
 % The only time the second header will appear is for the odd numbered pages
 % after the title page when using the twoside option.
 % 
@@ -489,28 +490,39 @@
 \IEEEpeerreviewmaketitle
 
 \begin{abstract}
-	This paper provides a review of Riddick et al. \cite{riddick2011predicting} and their work on predicting drug sensitivity using random forests. The purpose of this paper is to identify the main issues associated with drug sensitivity prediction and summarise the methods used by the authors. An alternative machine learning (BART-BMA \cite{hernandez2015bayesian}) is introduced and proposed. Finally, justification of the alternate method and future directions for research are discussed.
+	This paper provides a review of Riddick et al. \cite{riddick2011predicting} and their work on predicting drug sensitivity using random forests. The purpose of this paper is to identify the main issues associated with drug sensitivity prediction and summarise the methods used by the authors. An alternative machine learning (BART-BMA \cite{hernandez2015bayesian}) is proposed with the potential benefit of providing credible intervals for drug sensitivity predictions. Finally, justification of the alternate method and future directions for research are discussed.
 \end{abstract}
 
 \section{Introduction}
-Riddick et al. \cite{riddick2011predicting} propose a novel method for predicting drug sensitivity from a panel of human cell lines. In their paper they propose a machine learning approach to drug sensitivity prediction using Random Forests (RFs). The utilise several important benefits of RFs to aide them with feature selection and model training, namely variable importance and proximity matrices. 
+Riddick et al. \cite{riddick2011predicting} propose a novel method for predicting drug sensitivity from a panel of human cell lines. They propose a machine learning approach to drug sensitivity prediction using Random Forests (RFs). Their method utilises several important advantages of RFs for feature selection and model training, namely variable importance and proximity matrices. 
 
-The authors evaluate their methodology on two different test datasets: firstly sensitivity of two cancer drugs are predicted from a collection of human cell lines known as the NCI-60 dataset. Secondly, sensitivity values for 40 FDA drugs are predicted using the same NCI-60 dataset. The authors show that their method correctly identifies the top and bottom 10 most sensitive drugs. 
+The authors evaluate their methodology on two different test datasets: firstly the sensitivity of two cancer drugs are predicted from a collection of human cell lines from the NCI-60 gene expression dataset. Secondly, sensitivity values for 40 FDA drugs are predicted using the same NCI-60 gene expression dataset. The authors show that their method correctly identifies the top and bottom 10 most sensitive drugs. 
 
-In this paper an alternative relatively new ensemble method called BART-BMA is proposed that shares many of the benefits offered by RFs but which could lead to some additional benefits over the original author's methodology, including quantifiable prediction uncertainty and potentially better accuracy. The rest of the paper proceeds as follows: section \ref{sec:original-methodology} outlines the methodology used by Riddick et al in more detail. Section \ref{sec:methodology-discussion} discusses their approach and outlines strengths and weaknesses. Section \ref{sec:alternate-method} proposes the alternative methodology and provides a discussion and justification.
+In this paper an alternative, relatively new ensemble method called BART-BMA is proposed that shares many of the benefits offered by RFs but which could offer additional benefits over the original author's methodology, including quantifiable uncertainty in sensitivity predictions and potentially better accuracy. 
+
+The rest of the paper proceeds as follows: section \ref{sec:original-methodology} outlines the methodology used by Riddick et al. in more detail. Section \ref{sec:problem-discussion} discusses their approach and outlines strengths and weaknesses. Section \ref{sec:alternate-method} proposes the alternative methodology and provides a discussion and justification.
 
 \section{Summary of Methodology}
 \label{sec:original-methodology}
 
-The authors of \cite{riddick2011predicting} use a panel of 60 cell lines derived from cancerous cells across 9 different types of tissue. The authors propose a method for using the pattern of drug inhibition response across these cell lines as a means to predict an unknown (unlabelled) drug response. The IC$_{50}$ measure, which is defined as the amount of a drug required for 50\% inhibition \cite{FDA-IC50}, was used as a response variable.
+The authors of \cite{riddick2011predicting} propose a method for using the pattern of gene expression for a variety of cell lines as a means to predict the sensitivity of a particular drug. For their training data the authors use the NCI-60 datasets which contains a panel of 60 cell lines derived from cancerous cells across 9 different types of human tissue. The IC$_{50}$ measure, which is defined as the amount of a drug required for 50\% inhibition of a biological process \cite{FDA-IC50}, was used as a response variable for a single drug.
 
 This dataset is challenging to work with. Firstly, examining the data used by the authors shows that the response variable is missing a number of entries. Secondly and more importantly, the dataset is a classic example of what is referred to as ``large \textit{p} small \textit{n}''. This means that the number of features (\textit{p}) is much larger than the number of samples (\textit{n}). Such high dimensionality can cause issues for many machine learning algorithms due to the ``curse of dimensionality'' \cite{bellman1957dynamic}. The Hughes effect \cite{hughes1968mean} states that predictive power decreases in proportion to the increase in dimensions, given a fixed number of training samples.
 
-Riddick et al. chose to use RFs as the main component of their methodology. The strength of this predictor relative to their dataset is that RFs can be used to measure how important a variable is likely to be for prediction. The authors of \cite{riddick2011predicting} first train an RF on the full dataset (consisting of 16,644 features) using a large number of trees (25,000). This first RF would likely produce a bad generalisation for predicting new data, but does it allow the RF to measure the importance of each variable as a by product of training. From this measure of variable importance a subset of the best features can be chosen (Riddick et al. select those which are $2 \sigma > \mu$, typically 100-500 probesets).
+Riddick et al. chose to use RFs as the main component of their methodology. A major strength of this learning algorithm relative to their dataset is that RFs can be used to measure how important a variable is likely to be for prediction. The authors of \cite{riddick2011predicting} first train a RF on the full set of gene expression data (consisting of 16,644 features) using a large number of trees (25,000). This first RF would likely exhibit poor generalisation, but it does it allow the RF to measure the importance of each variable as a by product of training. This measure is calculated by taking the average difference between the out-of-bag (OOB) error before and after permuting the values of the $j^{th}$ feature. From this measure of variable importance a subset of the best features can be chosen (Riddick et al. select those which are $2 \sigma > \mu$, typically 100-500 probesets).
 
-Using this subset of features, they train another RF with a reduced number of trees (10,000). This second model should be more accurate than the first as well as faster to train and execute. However, before using this tree for drug sensitivity regression outlying cell lines in the model are removed using the proximity matrix of features generated from the second model. The proximity matrix of a RF is defined number of instances two cases are assigned to the same terminal node. Cell lines which showed high correlation (using Person's correlation coefficient) were retained in the IC$_{50}$ and NCI-60 datasets. They note that they use the Bonferroni correction method \cite{abdi2007bonferonni} when applying multiple hypothesis testing. A regression is obviously sensitive to outliers and with such a low number of sample to feature ratio (60) it is important to ensure that the examples you do have are not simply noise.
 
-Finally, Riddick et al. retrain their second model with the outlying cases removed and use this to infer drug sensitivity on unseen examples.
+% insert a single centred image into a LaTeX document.
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{img/riddick.png}
+\caption{<image-caption>}
+\label{fig:riddick-diagram}
+\end{figure}
+
+Using this subset of features, they train another RF with a reduced number of trees (10,000). This second model should be more accurate than the first as well as being faster to train and execute. However, before using this tree for drug sensitivity regression outlying cell lines in the model are removed using the proximity matrix of features generated from the second model. The proximity matrix of a RF is defined as the number of times two cases are assigned to the same terminal node. Cell lines which showed high correlation (using Person's correlation coefficient) were retained in the IC$_{50}$ and NCI-60 datasets. They note that they use the Bonferroni correction method \cite{abdi2007bonferonni} to correct for multiple hypothesis testing. A regression is obviously sensitive to outliers and with such a low ratio of samples (60) to features (it is important to ensure that each case is not simply noise.
+
+Finally, Riddick et al. retrain their second model with the outlying cases removed and use this to infer drug sensitivity from unseen gene expression samples.
 
 \section{Discussion of the Problem}
 \label{sec:problem-discussion}
@@ -579,7 +591,7 @@ Once a sum of trees model has been produced the predicted response is calculated
 \end{split}
 \end{equation}
 
-\subsection{Application of Method to Problem}
+\subsection{Application of Method to the Problem}
 Being an ensemble tree based method, BART-BMA shares many similarities with RFs. As such the application of BART-BMA could be achieved in a similar manner to random forests. The variable importance measure offer shows good agreement to the one offered by RFs, so the initial feature selection process could be implemented identically. Likewise, the final prediction stage on the subset of the data could be performed in same way as in \cite{riddick2011predicting}.
 
 The real difficulty with replacing RFs in this methodology with BART-BMA is the middle step which uses the proximity matrices derived from a RF to identify outliers and remove them. A simple option would be to use the same approach as the authors and train a RF and extract the case proximities before training a BART-BMA model on the final (outlier removed) data. It might be however that this alternative approach is robust enough to outliers in the data so as to not require the second step in the original methodology. If this was not the case an alternative approach might be be to adjust the probability model to account for outliers \cite{chipmanPresentation}.
