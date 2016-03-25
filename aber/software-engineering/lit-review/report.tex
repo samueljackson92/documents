@@ -540,6 +540,12 @@ Further contributions by the paper include the ``box matrix'' plot visualise the
 
 The partition function formulation also encodes information about the phase transitions for the ensemble with respect to change in temperature. This provides another window into the structural properties of a RNA sequence.
 
+Both McCaskill's partition function method and Zucker and Stieglar's MFE method remain to this day as the bedrock of many successful approaches to RNA structure prediction. Two notable extensions of these works which should be mentioned for completeness are the papers by Matthews et al. \cite{mathews1999expanded} (often referred to as the Turner group) in producing Mfold and Hofacker et al. \cite{hofacker1994fast} in producing the RNAfold and ViennaRNA packages. 
+
+Matthews et al. improved on the set of thermodynamic parameters by extrapolating free energies obtained from analysis of representative molecules for loop structures and comparative sequence analysis for stability of tetraloops and estimate junction initiation parameters. Hofacker et al. contribute a collective package (ViennaRNA) that incorporates not only RNAfold, a parallelised MFE algorithm based on Zucker's, but also tools for inverse folding and comparison of secondary structures. 
+
+Mfold in particular is often used as a baseline for secondary structure prediction. These methods are also often used in the calculation of secondary structure for the prediction of tertiary RNA structure \cite{laing2010computational, cruz2012rna, miao2015rna}.
+
 A more modern free energy minimisation approach was created by Deigan et al. \cite{deigan2009accurate} which incorporates additional experimental information from SHAPE experiments into there approach. Selective 2'-hydroxyl acylation analysed by primer extension (SHAPE) experiments report differences in local nucleotide flexibility. Base pairing reduces the local flexibility associated with a nucleotide which can be related to the probability that a particular nucleotide will form a base pair. The author's propose a ``pseudo-free energy change'' term which can be added to a regular free energy model. The term has the form
 
 \begin{equation}
@@ -612,7 +618,7 @@ Do et al. \cite{do2006contrafold} produced the CONTRAfold model that takes more 
 
 \begin{equation}
 	\label{eq:cllm}
-	P(\sigma|x) = \frac{exp(\mathbf{w}^T \mathbf{F}(x, \sigma))}{\Sigma_{\sigma'\in \Omega(x)} exp(\mathbf{w}^T \mathbf{F}(x, \sigma))} 
+	P(\sigma|x) = \frac{exp(\mathbf{w}^T \mathbf{F}(x, \sigma))}{\Sigma_{\sigma'\in \Omega(x)} exp(\mathbf{w}^T \mathbf{F}(x, \sigma'))} 
 \end{equation}
 
 where $\mathbf{w}$ is a vector of weights to be learned and $\mathbf{F}(x, \sigma)$ is a feature vector. CLLMs are a very flexible and powerful method for using rich set of possible features to create a probabilistic model. In traditional text processing applications elements of the feature vector $\mathbf{F}(x, \sigma)$ are a collection of binary functions activated based on contextual information surrounding a word. For example $\mathbf{F}_k(x, \sigma)$ might model whether the previous word was an adjective. 
@@ -627,9 +633,59 @@ CONTRAfold also diverts from the use of MFE/CYK approach to recovering the best 
 
 where $\hat{y}$ is a candidate structure and $y$ is the true structure. $accuracy_{\gamma}$ is defined as the number of correctly unpaired positions plus the product of $\gamma$ and the number of correctly paired positions. 
 
+Bindewald and Shapiro et al. \cite{bindewald2006rna} created KNetFold which uses an entropy based measure which captures the mutual information between two aligned columns and a hierarchical network of k-nearest neighbour classifiers to infer secondary structure. 
+
+Their mutual information measure is the difference between information in aligned columns $R_i$ with the information of a column pair $R_{ij}$. The formula for the individual information in a column $i$ is 
+	
+\begin{equation}
+	R_i = H_g(i) + \Sigma_{k=1}^4 P_k(i) log_2 P_k(i)
+\end{equation}
+
+And the formula for two columns ($i, j$) is
+
+\begin{equation}
+	R_{ij} = H_g(i, j) + \Sigma_{k=1}^{16} P_k(i, j) log_2 P_k(i, j)
+\end{equation}
+
+where $P_k(i)$ is approximated by the observed number of character $k$ divided by the total number of characters in the column. $H_g$ is the expected uncertainty of the alignment in column $i$. Given enough sequences this term will approach the number of bits needed to represent the alphabet of characters multiplied by the number of columns considered (i.e. 2 bits for one column, 4 bits for a pair of columns) but can be approximated to correct for sampling noise for a low number of sequences.
+
+Feature vectors formed from a combination of the mutual information of aligned two columns, and the fraction of pairing nucleotides using the four nearest neighbour columns, both diagonally and anti-diagonally. Nine Gaussian weighted k-nearest neighbour classifiers are built using the AdaBoost algorithm to handle the dimensionality of the feature space. Subsequent layers in the network reduce the number of classifiers by a factor of 3 and inputs are randomly chosen from the previous level. 
+
+Finally, one last classifier is created which takes the input from the single classifier from the previous level along with a thermodynamic consensus matrix. This matrix is created by calculating MFE for each sequence, the elements for which are then aligned, averaged, and weighted proportionally to the number of nonzero prediction probabilities for the given element.
+
+The authors report that for a very low number of aligned sequences (5) the predictions made are almost entirely based on the consensus matrix, but for a larger number of sequences their method enhanced those predicted from the consensus matrix. Notably there method was also able to successfully predict two pseudoknot interactions in a test sequence.
+
+Hamada et al. \cite{hamada2009prediction, sato2009centroidfold} produced CENTROIDfold, another comparative analysis method that can either use the output of CONTRAfold or the McCaskill probability matrix. The main contribution of the paper is a novel $\gamma$-centroid estimator which attempts to maximise the expected number of base pairs in opposition the the maximum likelihood estimate provided by MFE approaches. 
+
+The $\gamma$-centroid measure is defined for a single sequence:
+
+\begin{equation}
+	G_\gamma(\sigma, y) = \gamma TP + TN
+\end{equation}
+
+Where $\gamma$ is a trade off  between the sensitivity and selectivity of the algorithm. From this their method maximises the quantity
+
+\begin{equation}
+\label{eq:gamma-centroid}
+	\hat{y} = \argmax_{y} \sum_{\sigma \in \Omega(x)} G_\gamma(\sigma, y) p(\sigma | x)
+\end{equation}
+
+They also provided several further derivations that both prove the validity of their approach and shows a generalisation of equation \ref{eq:gamma-centroid} for multiply aligned sequences.
+
+They propose that their method also has benefits over the MEA estimator. The MEA estimator as this maximises the expected accuracy with respect to each base, while the $\gamma$-centroid measures the expected accuracy with respect to each base pair. The authors note that this measure has then benefit that the best base pairs are supported by evidence provided by the many sub-optimal structures found in the distribution of potential structures rather than relying on very weak probabilities for many near-optimal candidates in given by the conventional MFE/probabilistic models. 
+
+They demonstrate through their experiments that the estimator performs better than prediction by conventional MFE/ML estimates and also show improvement over the MEA method of CONTRAfold \cite{do2006contrafold}.
+
+
 \subsection{Handling Pseudoknots}
 \label{subsec:secondary-pseudoknots}
 The majority of methods mentioned in the preceding two sections make any realistic attempt at handling pseudoknotted structures within RNA sequences. This is mostly due to the algorithmic time increase required to handle such structures. For example, an early attempt by Rivas and Eddy \cite{rivas1999dynamic} was able to predict a restricted subset of pseudoknots but with the associated time and space complexity of $O(n^6)$ and $O(n^4)$ respectively. Obviously such an approach is intractable for anything but the most short sequences. Despite being hard to predict, these structures are of great biological interest as they often play a key role in biological processes \cite{citation required} such as ... In this section two methods which tackle the pseudoknot prediction from different paradigms are presented.
+
+Shapiro and Wu \cite{shapiro1997predicting} implemented support for predicting basic types of pseudoknots using a massively parallel genetic algorithm previously created by Shapiro \cite{shapiro1994massively}. Their algorithm is carried out on a super computer consisting on 16,384 cores each representing a single candidate solution to the RNA folding problem.
+
+In the original GA paper \cite{shapiro1994massively} the algorithm used stem list which contained all maximally sized stems. Each stem is represented by its start and stop position along with its size and thermodynamic energy parameter. A region list is maintained by each core which contains a sorted list of all stems currently in the structure. The fitness function used was the negative of the free energy associated with each structure. Each processor is initialised by randomly choosing from the stem list. Selection is achieved from sampling from the logical local neighbourhood of adjacent processor cores with toroidal wrap around and taking the top two as parents. Uniform crossover of stems between parents is used and stems are only accepted if there is no conflict. For mutation is achieved by randomly selecting stems from stem table and adding them to the region table.
+
+In the later paper \cite{shapiro1997predicting} they make several adjustments to this approach. Firstly they implemented a new mutation annealing operator where the probability of mutation decreases proportionally to the size of the stem. Secondly they introduced a second stem list called the ``pseudoknot stem list''. Like regular stems, pseudoknots have an energy term associated with them. At each iteration, after the initial structure is formed, possible pseudoknotted structures are added by traversing the structure and computing the free energy terms.
 
 Reeder et al. \cite{reeder2007pknotsrg} produced a method that was largely based on the MFE method by Matthew's et al. \cite{mathews1999expanded} but with added support for what they term \textit{canonical simple recursive pseudoknots}. The note that the majority of known examples of pseudoknots are fairly simple in structure. This allows them to make some simplifying assumptions: only two stems are allowed, bugles and internal loops are disallowed within the pseduoknot and stems at either end of the knot must be maximal. If the stems overlap then one stem is prioritised over another. 
 
@@ -639,7 +695,9 @@ Another more recent attempt at pseudoknot prediction is CyloFold by Bindewald et
 
 Once a list of stems has been obtained a number of simulation runs are performed. Stems are added to the simulation one at a time according to Boltzmann weighted probability. Each stem in the simulation is represented by capsule with length proportional to the length of the sequence. The position of the capsules three dimensions are initialised randomly. Single stranded regions between cylinders are represented as distance constraints between the hemispherical ends of each capsule. Distances are constrained by a minimum and maximum bounds. The existing and newly added capsules then optimised to satisfy distance constraints and minimise collisions. If a newly added cylinder collides with existing stems it is reinitialised several times until a threshold where it is detailed to be a failure. Likewise if after optimisation there the capsule still collides it is removed.
 
-The authors showed that their method offered some improvement on several criteria over existing methods such as pknotsRG. The time complexity of the method is difficult to estimate, but the authors suggest that it is roughly proportional to $O(n^4)$ making it comparable to \cite{reeder2007pknotsrg}. The noted benefits of this method are twofold: 1) it avoid some of the simplifying constraints associated with approaches pknotsRG (but possibly does not solve more complex pseudoknots), and 2) provides an automatic check for distance constraints between structures (steric feasiblity).
+The authors showed that their method offered some improvement on several criteria over existing methods such as pknotsRG. The time complexity of the method is difficult to estimate, but the authors suggest that it is roughly proportional to $O(n^4)$ making it comparable to \cite{reeder2007pknotsrg}. The noted benefits of this method are twofold: 1) it avoid some of the simplifying constraints associated with approaches pknotsRG (but possibly does not solve more complex pseudoknots), and 2) provides an automatic check for distance constraints between structures (steric feasibility).
+
+
 
 \section{RNA tertiary structure prediction}
 \label{sec:rna-tertiary-structure}
