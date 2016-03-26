@@ -701,9 +701,27 @@ The authors showed that their method offered some improvement on several criteri
 
 \section{RNA tertiary structure prediction}
 \label{sec:rna-tertiary-structure}
+While determining the secondary structure of RNA molecules provides valuable insights into their properties, the true goal of RNA folding is the determination of the tertiary structure of the molecule. Tertiary structure not only incorporates the secondary structure but also adds important long range interactions between bases and shows us how it contorts in three dimensions. This provides key insights not only to the molecule's structure, but also its biological function. Like secondary structure, tertiary structure prediction is difficult due to the extraordinary size of the conformational space from which to choose a structure. This section covers several different methods for predicting the tertiary structure of a molecule.
 
+\subsection{Fragment Assembly}
+\label{subsec:fragment-assembly}
 
+Ras and Baker \cite{das2007automated} created FARNA (Fragment Assembly of RNA). FARNA is a fragment assembly method which is \textit{de novo} in its approach and does not utilise experimental data or precomputed secondary structures as input.
 
+FARNA represents a RNA as a collection of trinucleotides with seven corresponding torsion angles and a pucker amplitude. For simplicity the authors only differentiate between pyrimidine and purine bases instead of using separate definitions for each base type. Sample fragments are taken from a single large example of RNA structure represented by \textit{Haloarcula marismortui} \cite{ban2000complete}. Each fragment has a corresponding energy potential specifically designed for RNA and imposed over the centroid of heavy atoms of the base. The potential function favours compactness in the resulting structure but heavily penalises steric clashes. Their potential also includes terms which enforce coplanar base pairing. 
+
+To predict the structure of the RNA sequence fragments are drawn using the metropolis-hastings algorithm. Each draw chooses a random position in the molecule and replaces parameters of the segment with the parameters of a random segment. After the initial burn-in, the fragments are accepted according to the metropolis criterion. Terms weighting coplanarity in the energy function are slowly stepped up over the course of the simulation.
+
+The authors note in their conclusions that the major limitations of their method are the MC algorithm used to sample the conformational space and the potential function. The work in \cite{das2007automated} is limited to sequences containing less than 40 nucleotides. They propose that incorporating secondary structure information may lead to performance gains for longer sequences. More importantly they state that the limiting factor of the model for short sequences is the accuracy of their potential function.
+
+Parisien and Major\cite{parisien2008mc} created the MC-Fold/MC-Sym pipeline for secondary and tertiary structure prediction. In their method the MC-Fold program first generates a collection of sub-optimal secondary structures by combining multiple predefined structural motifs, referred to in the paper as nucleotide cyclic motifs (NCMs). All possible NCMs are enumerated but many potential structures are discarded as infeasible. MC-Fold uses traditional free energy minimisation and a scoring function determine the most likely secondary structures.
+
+The predicted secondary structure is then used as input for the tertiary structure prediction program MC-Sym. MC-Sym uses a predetermined 3D library of motifs using the same premise as secondary structure determination. As the enumeration of all possible 3D fragments is not computationally feasible a Las Vegas algorithm is used to sample potential motifs. The different between a Las Vegas algorithm and a traditional Monte Carlo algorithm is that a Las Vegas algorithm is always determined to produce a valid structure. Each 3D fragment is represented as a full all atom model. The fragments are added such that they optimise the score generated during secondary structure determination.
+
+\subsection{Molecular Dynamics}
+Ding et al. \cite{ding2008ab} took a discrete molecular dynamics (DMD) approach to tertiary RNA structure modelling and created the iFoldRNA web server. In their method they approximate an RNA molecule using a ``bead on a string'' model where the backbone of the nucleotide is represented as simple collection of sugar, phosphate, or base molecules. This gives the final nucleotide model three ``beads'' attached to a ``thread'' of covalent bonds. Angular and dihedral constraints are also included in the model.
+
+The mechanics of the model differ from traditional molecular dynamics models by using only discrete functions as potentials in the simulation. This has the advantages that computation of an atom's velocity does not need to be recomputed at every time step. Only when the molecule jumps in relation to an interaction with a potential does the atom's velocity get kinematically updated. The method in \cite{ding2008ab} used discrete potentials incorporating phosphate-phosphate repulsion, hydrophobic interactions, and base stacking interactions. The free energy of loop structures used in \cite{mathews1999expanded} are also included to push the algorithm towards more compact, less loopy structures. The loop energy change associated with a bond forming is estimated using the metropolis-hastings algorithm.
 
 
 % if have a single appendix:
