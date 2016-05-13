@@ -723,12 +723,48 @@ Parisien and Major\cite{parisien2008mc} created the MC-Fold/MC-Sym pipeline for 
 
 The predicted secondary structure is then used as input for the tertiary structure prediction program MC-Sym. MC-Sym uses a predetermined 3D library of motifs using the same premise as secondary structure determination. As the enumeration of all possible 3D fragments is not computationally feasible a Las Vegas algorithm is used to sample potential motifs. The different between a Las Vegas algorithm and a traditional Monte Carlo algorithm is that a Las Vegas algorithm is always determined to produce a valid structure. Each 3D fragment is represented as a full all atom model. The fragments are added such that they optimise the score generated during secondary structure determination.
 
-Cao and Chen \cite{cao2011physics} modified their secondary structure prediction tool Vfold \cite{cao2005predicting} (reviewed in section \ref{subsec:thermodynamic-models}) to predict tertiary structure using a combination of fragment assembly and molecular dynamical simulation. Vfold first predicts the secondary structure using a coarse grained model of RNA nucleotides. Using the secondary structure they search through a database of tertiary structural motifs for matches closely related to fragments of the 2D structure classified into hairpins, bulges, junctions etc. Based on the coarse grained 3D model built from motif fragments a full-atom model is created and then refined using energy minimisation in the AMBER \cite{case2010amber}  molecular dynamics program.  
+Cao and Chen \cite{cao2011physics} modified their secondary structure prediction tool Vfold \cite{cao2005predicting} (reviewed in section \ref{subsec:thermodynamic-models}) to predict tertiary structure using a combination of fragment assembly and molecular dynamical simulation. Vfold first predicts the secondary structure using a coarse grained model of RNA nucleotides. Using the secondary structure they search through a database of tertiary structural motifs for matches closely related to fragments of the 2D structure classified into hairpins, bulges, junctions etc. Based on the coarse grained 3D model built from motif fragments a full-atom model is created and then refined using energy minimisation in the AMBER \cite{case2010amber}  molecular dynamics program. 
 
-\subsection{Molecular Dynamics}
+\subsection{Folding Simulations}
+An notable attempt at using molecular dynamics for RNA structure prediction is the nucleic acid simulation tool (NAST) \cite{jonikas2009coarse}. NAST uses a coarse-grained representation of RNA nucleotides by approximating individual atoms with a single pseudo-atom in the location of the central C3$'$ atom. The NAST energy function makes the assumption that the geometry of the non-bonded regions in the secondary structure will follow a distribution closely following known RNA structures. Based on this assumption geometries between 2, 3, and 4 sequential nucleotides in known structures are used to create probability distributions for the angle, distance, and dihedral parameters. The energy function ($E$) is then derived based on the Boltzmann relationship:
+
+\begin{equation}
+\label{eq:boltzmann-relation}
+	E(x) = -RT ln P(x)
+\end{equation}
+
+Non-bonded interactions are modelled using the classic Lennard-Jones potential to prevent steric overlap for nucleotides separated by a distance greater than three.
+
+\begin{equation}
+\label{eq:lennard-jones}
+	V_{lj} = 4\epsilon \bigg[ \bigg( \frac{\sigma}{r}^{12} \bigg) - \bigg( \frac{\sigma}{r}^6 \bigg) \bigg]
+\end{equation}
+
+The geometry of the model is further constrained using the known secondary structure. Helices are constrained using one distance, one angle, and two dihedral parameters to help fix the model to the ideal helical shape. Long range tertiary interactions are modelled using and additional term in the energy potential the strength of which is determined by the data source (known crystal structure: strong, experimental data: weak).
+
 Ding et al. \cite{ding2008ab} took a discrete molecular dynamics (DMD) approach to tertiary RNA structure modelling and created the iFoldRNA web server. In their method they approximate an RNA molecule using a ``bead on a string'' model where the backbone of the nucleotide is represented as simple collection of sugar, phosphate, or base molecules. This gives the final nucleotide model three ``beads'' attached to a ``thread'' of covalent bonds. Angular and dihedral constraints are also included in the model.
 
 The mechanics of the model differ from traditional molecular dynamics models by using only discrete functions as potentials in the simulation. This has the advantages that computation of an atom's velocity does not need to be recomputed at every time step. Only when the molecule jumps in relation to an interaction with a potential does the atom's velocity get kinematically updated. The method in \cite{ding2008ab} used discrete potentials incorporating phosphate-phosphate repulsion, hydrophobic interactions, and base stacking interactions. The free energy of loop structures used in \cite{mathews1999expanded} are also included to push the algorithm towards more compact, less loopy structures. The loop energy change associated with a bond forming is estimated using the metropolis-hastings algorithm.
+
+Another folding simulation based on using Monte Carlo sampling in favour of molecular dynamics to sample the conformational space is SimRNA \cite{rother2012template}. SimRNA begins with a coarse-grained representation with three atom per nucleotide. One each for the phosphate group, C4$'$ atom, and a nitrogen atom for the base. The energy function used by SimRNA is similar to equation \ref{eq:boltzmann-relation} with $P(x)$ defined as the ratio of the observed frequency of a parameter value over the expected value assuming a unbiased distribution. 
+
+Short range interactions are represented as virtual bonds with parameters for the distance along the backbone, flat angles, and torsion angles of the nucleotide. Their energy contribution is simple a linear combination of each of the individual terms. Long range interactions are captured from a representative sample of known RNA structures by measuring the spatial neighbours of a nucleotide subunit, computing the occurrence of the nitrogen atom for each combination of base types, mapping the spatial distribution to a grid and binning via a 3D histogram. 
+
+Using the defined energy function, samples are taken from the conformational space using the Metropolis-Hastings algorithm. The probability of accepting a new sample is given by the function:
+
+
+\begin{equation}
+\label{eq:metropolis-criterion}
+f(\Delta E) = 
+  \begin{cases} 
+    1 & \text{if } \Delta E \leq 0 \\
+    e^{-\frac{\Delta E}{kT}} & \text{if } \Delta E > 0
+  \end{cases}
+\end{equation}
+
+The sampling algorithm is combined with simulated annealing by gradually reducing the temperature of the system as sampling progresses. Random modification to the positions and rotations of atoms in the model were used to generate new samples. Some additional complex modifications (such as the simultaneous movement of two backbone atoms) were included to help speed up algorithm progress. Moves are applied with a probability derived from the relative mobility of atoms in a nucleotide. Final reconstruction of a RNA molecule from the reduced representation is done by comparing each coarse nucleotide with a database of known RNA fragments. Final full-atom refinement of the structure can be carried out using the same Monte Carlo procedure, but including additional Lennard-Jones (equation \ref{eq:lennard-jones}) and hydrogen bonding potential terms.
+
+
 
 
 % if have a single appendix:
