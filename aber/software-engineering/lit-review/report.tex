@@ -352,6 +352,9 @@
 % custom includes
 \usepackage{cite}
 \usepackage{amsmath, amssymb}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{subcaption}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
@@ -458,12 +461,55 @@ RNA, literature review, dynamic programming, context free grammars, bioinformati
 
 \section{Introduction}
 \label{sec:intro}
-Ribonucleic acid (RNA) is a fundamental biological macromolecule that play an important part in many biological processes. RNA folding, like DNA and protein folding can be classified into three different categories: primary, secondary, and tertiary structure. The primary structure refers to the sequence of building blocks of RNA. These are the nucleotides guanine, uracil, adenine, and cytosine, commonly abbreviated to the first letter of each molecule (G, U, A, C). While DNA molecules frequently form the eponymous double helix between two strands, RNA molecules are single stranded and form complex structures by folding upon themselves.
 
-\subsection{RNA secondary structure}
+Ribonucleic acid (RNA) is diverse set of fundamental biological macromolecules that play an important part in many biological processes. An understanding of the structure of different types of RNA molecules can further our understanding of the molecular machinery at work inside our body as well as have direct practical applications to modern medicine by controlling protein synthesis, transcription, and virus replication \cite{schlick2010molecular}.
+
+The primary structure of bases in a strand of RNA is fairly easy to obtain experimentally through rapid sequencing methods. Experimental determination of RNA secondary and tertiary RNA structure to an atomistic level of resolution is typically performed using either by X-ray crystallography or NMR spectroscopy. However secondary and tertiary structure determination has a bottleneck due to the diverseness of RNA molecules and the cost of experimental determination methods\cite{ya2014rna}. This leaves a high number of RNA with determined primary structure but little or no information about their the secondary or tertiary structure.
+
+RNA structure prediction is the field of bioinformatics which aims to accurately predict the secondary and tertiary structure of RNA from the known primary structure. This is a difficult procedure due to the non-trivial structures that can be formed by as an RNA molecule folds and binds with itself. Another limitation is the high number of potentially feasible but sub-optimum structures that inhabit the conformational space close to the true structure. Structure prediction also suffers from a ``catch-22'' scenario where the quality of predictions could potentially be made better if only more known structures could be determined. Most approaches, both for secondary and tertiary structure focus are based on predicting the structure which exhibits the minimum of free energy of the chemical structure, but this is still an imperfect simplification.
+
+This paper provides a review many of the methods used to predict both the secondary and tertiary structure of RNA molecules. Section \ref{sec:rna-structure} provides an overview of the chemical structure of RNA from the basic building blocks up to the full 3D structure. Section \ref{sec:rna-secondary-structure} discusses various methods applied to predicting the secondary structure of RNA. Section \ref{sec:rna-tertiary-structure} provides the complementary discussion on the prediction of the tertiary structure of RNA. A summary and discussion of the challenges faced and overcome in both types of structure prediction is provided in section \ref{sec:discussion}. Finally, some concluding remarks as well as some comments of future directions are given in section \ref{sec:conclusion}.
+
+
+\section{RNA Structure}
+\label{sec:rna-structure}
+RNA molecules come in a wide variety of different shapes, sizes, and functions. One of the most important types of RNA is messenger RNA (mRNA) which is responsible for carrying information about the amino acid sequence required to build a protein from DNA strands in the cell nucleus to the ribosome for protein synthesis. However, many types of RNA are non-coding, i.e. they do not play a direct part carrying the coding information for protein translation. Instead they for part of the complex system of cellular machinery. An example of non-coding RNA is ribosomal RNA (rRNA) which act as the catalysts in the ribosome for protein synthesis. Transfer RNA (tRNA) are yet another part of the translation process which delivers an amino acid to the ribosome according to a codon of mRNA. RNAs can also act in a regulatory role by down-regulating gene expression in the translation process. RNA molecules can also act as the genome for viruses, such as Ebola, HIV, and SARS which can utilise proteins to replicate themselves.
+
+RNA is typically found as single stranded molecules in nature where parts of the of the strand is folded upon itself. This is in contrast to DNA which are typically composed of multiple strands which bond with one another. RNA folding, the process by which an RNA strand bonds with itself to form complicated 3D structures, can be classified into three different categories: primary, secondary, and tertiary structure. The remainder of this section defines the different categories of structure and what they mean in terms of RNA folding.
+
+\subsection{Primary Structure}
+\label{subsec:primary-structure}
+
+ The primary structure refers to the sequence of building blocks of RNA. Each strand of RNA is made up of a sequence of organic chemicals called nucleotides. Nucleotides can be split into a three major components: a five carbon sugar ring (ribose), a phosphate group, and a nitrogenous base. The nitrogenous base can be one of four biological compounds: the nucleobases adenine, cytosine, guanine, and uracil, commonly abbreviated to the first letter of each molecule (A, C, G, and U). Nucleotides form the repeating units of a strand of RNA. A collection of nucleotides form a nucleic acid through a phosphodiester bond connecting the 5$'$ carbon on the ribose ring of one nucleotide to the 3$'$ carbon of the next. Typically as strand of RNA is described using the abbreviated bases from the 5$'$ carbon end of the sequence towards the 3$'$ carbon end.
+ 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{img/nucleotide.png}
+\caption{2D chemical structure of a nucleotide (adenosine 5$'$-monophosphate) with the adenine base (lower left), ribose sugar ring (middle) and phosphate group (upper right). 2D chemical structure source: PubChem \cite{adenine2016pubchem}.}
+\label{fig:nucleotide}
+\end{figure}
+ 
+\subsection{Secondary Structure}
 \label{subsec:intro-rna-sec-structure}
 
-The way in which nucleotides in an RNA strand form hydrogen bonds with one each is referred to as the RNA's secondary structure. In RNA molecules bonds are usually formed between the base pairs A-U, C-G, and U-G. The patterns of the structures that are created through base-pairing can be classified into a number of different sub structures. Reference \cite{nowakowski1997rna} provides a comprehensive introduction. Commonly encountered structural motifs frequently used in RNA secondary structure prediction are:
+ Bases can be further split into two categories based on their chemical structure. Purine bases (A and G) contain a two nitrogen rings while pyrimidines (C and U) contain just a single ring. The differences in the structure of the nitrogen base allow hydrogen bonds to form between complementary pairs of nucleotides. The classic Watson-Crick base pairing scheme causes A to bond with U and C to bond with G. Other pairing schemes are possible such as Hoogsteen base pairs where the purine base is rotated and wobble base pairs where G-U base pairing is possible. The type of base pairing is important to structure prediction because different types of base pairs will have different thermodynamic stabilities associated with them which is a major factor in predicting how a molecule will fold.
+ 
+ \begin{figure}[!tbp]
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{img/Base_pair_AU.png}
+    \caption{Chemical structure of an adenine - uracil base pair.}
+    \label{fig:au-base-pair}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{img/Base_pair_GC.png}
+    \caption{Chemical structure of a guanine - cytosine base pair.}
+    \label{fig:gc-base-pair}
+  \end{subfigure}
+  \caption{Watson-Crick base pairing in RNA. A-U and G-C form base pairs using two or three hydrogen bonds (shown as dashed lines) depending on the pair type.}
+\end{figure}
+
+The patterns of the structures that are created through base-pairing can be classified into a number of different structures. Reference \cite{nowakowski1997rna} provides a comprehensive introduction. Commonly encountered structural motifs frequently used in RNA secondary structure prediction are:
 
 \begin{itemize}
 	\item \textbf{Base pair stacks} - The most common structural element. Formed by an RNA strand folding on itself and forming hydrogen bonds between complementary bases. Bonds in base pair stacks form between two parts of the RNA each running in an anti-parallel direction to one another. 
@@ -472,11 +518,75 @@ The way in which nucleotides in an RNA strand form hydrogen bonds with one each 
 	\item \textbf{Bulges} - Similar to loops but with one side having no unpaired nucleotides.
 	\item \textbf{Junctions} - The point at which multiple base pair stacks meet is referred to as a junction.
 	\item \textbf{Pseudoknots} - Pseudoknots are formed between the unpaired nucleotides on a hairpin loop with the unpaired nucleotides on an adjacent strand. So called because the structure shows some resemblance to a mathematical knot. The properties of pseudoknots and similar structures propose a particular challenge to prediction due to the complex, interwoven, long range base pairing.
-	\item \textbf{Kissing hairpins} - Similar to pseudoknots, but directly between the unpaired nucleotides of two hairpin loops.
+	\item \textbf{Kissing hairpins} - A variation of pseudoknots, but directly between the unpaired nucleotides of two hairpin loops.
 \end{itemize}
 
-\subsection{RNA tertiary structure}
+Traditionally secondary RNA structure prediction has focussed on attempting to generate a combination of these structures based on the thermodynamic stability of the structure and the type of base pairs within the structure.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{img/secondary_structure_types.png}
+\caption{Various types of motif present in the secondary structure of RNA molecules. The kissing hairpin pseudoknotted structure exhibits stems, hairpin loops, a junction (top left) and a pseudoknot (top right). All diagrams made with the aid of VARNA \cite{darty2009varna}.}
+\label{fig:secondary-structure-types}
+\end{figure}
+
+\subsection{Tertiary Structure}
 \label{subsec:intro-rna-ter-structure}
+While the secondary structure of an RNA molecule can revel much about it's role, it is the tertiary structure that is the ultimate goal of structure prediction. 3D RNA folding is still very much an open problem in the bioinformatics community, but as will be revealed in the following pages much progress has already been made. The additional spatial dimension brings a wide variety of potential conformations beyond those of two dimensions.
+
+The hydrogen bonds connecting complementary base pairs are not rigidly fixed. Individual base pairs in an RNA strand can exhibit are variety of movements (see figure \ref{fig:base-pair-interactions}). The geometry of the base pairs can be described by create a coordinate system with one axis parallel to the direction of the helical stem, one perpendicular along the direction of the bond, and one perpendicular to the bond itself:
+
+\begin{itemize}
+	\item \textbf{Stretch, Shear, and Stagger} - Each base can be translated in all axes relative to one another.
+
+	\item \textbf{Buckle} - The dihedral rotation along the hydrogen bond causing a kink to occur in the connection between the two bases.
+
+	\item \textbf{Propeller Twist} - The dihedral rotation about the hydrogen bond connecting a pair of bases relative to the normal of each base. The bases appear to twist like a propeller or bow-tie.
+	\item \textbf{Opening} - A scissoring effect rotating the bases about the helical axis.
+\end{itemize}
+
+The bonded base pairs can also move relative together relative to the helical axis. These movements can be one of:
+
+\begin{itemize}
+	\item \textbf{X/Y Displacement} - Translation of the bonded bases in either the $x$ or $y$ directions relative to the $z$ axis.
+	\item \textbf{Inclination} - Given by the angle between the long axis and the helical axis.
+	\item \textbf{Tip} - The complement to inclination. This is the angle between the short axis and the helical axis. 
+\end{itemize}
+
+The geometry of two adjacent pairs of bases will also effect one another. This can be seen in the third part of diagram \ref{fig:base-pair-interactions}.
+
+\begin{itemize}
+	\item \textbf{Shift, Slide, and Rise} - Displacement between two adjacent pairs of bases along one of the three coordinate axes.
+	\item \textbf{Tilt, Roll, and Twist} - Rotation about the same axes as shift, slide, and rise respectively.
+\end{itemize}
+
+Beyond the flexibility of the bonded between base pairs the rest of the nucleotide can exhibit movement in all three dimensions. The ribose sugar ring in a single nucleotide exhibits sugar puckering which introduces non-planarity to the ring structure. This can be parameterised by 5 torsion angles for the bonds between atoms in the ring typically denoted by $\tau_i$ where $i$ is the $i^{th}$ torsion angle starting from the O4$'$ to C1$'$ bond. The glycosidic bond between the ribose sugar and the base can rotate and is typically parametrised by another torsion angle labelled $\chi$. Finally, the backbone of an RNA molecule from the 5$'$ end connected to the phosphate group through the ribose sugar to the 3$'$ end of the molecule is parameterised by a set of 6 torsion angles over each bond (each shown in figure \ref{fig:backbone-torsion-angles}).
+
+Despite the high number of parameters describing just a single nucleotide the space of potential realistic conformations is mercifully much smaller than the space of theoretical values for every parameter. For example, the values that the 6 backbone torsion angles are limited by the need to avoid steric clashes.
+
+Beyond this parameterisation of a single nucleotide in three dimensions, folded RNA molecules also exhibit a variety of structure motifs in three dimensions. These of course include all of structure motifs present in two dimensions and described in the previous section. Higher order tertiary structural components include:
+
+\begin{itemize}
+	\item \textbf{Triplexes and Quadruplexes} - Single stranded portions of RNA can bond with a helical stack through hydrogen bonding with non-Watson-Crick pairs to form a triplex. Triplexes are a common feature in RNA, particularly at the junction between two helical stacks. Quadruplexes, where four nucleotides bond with one another, are also possible.
+	\item \textbf{Coaxial stacking} - The formation of a more stable structure by the creation of a pseudoknot. This is where two single stranded regions bond with one another next to an existing stem.
+	\item \textbf{Tetraloops} - Three dimensional hairpin loop structures capped with four loop nucleotides. These offer a chemically stable structure while offering a site for potential RNA-RNA or RNA-Protein interactions.
+\end{itemize}
+
+ For a more detailed discussion on the conformations of nucleotides in three dimensions the reader is directed to references \cite{neidle2010principles, schlick2010molecular, nowakowski1997rna}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{img/base_pair_interactions.png}
+\caption{Base pair interactions in three dimensions. Top left and bottom left: individual base pair movements relative to one another (top) and relative to the helix (bottom). Top right: possible interactions between two adjacent base pairs. Image source: Olsen et al. Copyright 2001 by Elsevier Inc. \cite{Olson2001229}.}
+\label{fig:base-pair-interactions}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{img/backbone_torsion_angles.png}
+\caption{Nucleic acid backbone torsion angles for a single nucleotide denoted by $\alpha$, $\beta$, $\gamma$, $\delta$, $\epsilon$, and $\zeta$. The torsion angle on glycosidic bond between the ribose sugar and base is also show as the parameter $\chi$. Image source: Stephen Neidle Copyright 2008 by Elsevier Inc. \cite{neidle2010principles}.}
+\label{fig:backbone-torsion-angles}
+\end{figure}
 
 \section{RNA secondary structure prediction}
 \label{sec:rna-secondary-structure}
@@ -704,9 +814,56 @@ The authors showed that their method offered some improvement on several criteri
 
 \section{RNA tertiary structure prediction}
 \label{sec:rna-tertiary-structure}
-While determining the secondary structure of RNA molecules provides valuable insights into their properties, the true goal of RNA folding is the determination of the tertiary structure of the molecule. Tertiary structure not only incorporates the secondary structure but also adds important long range interactions between bases and shows us how it contorts in three dimensions. This provides key insights not only to the molecule's structure, but also its biological function. Like secondary structure, tertiary structure prediction is difficult due to the extraordinary size of the conformational space from which to choose a structure. 
+While determining the secondary structure of RNA molecules provides valuable insights into their properties, the true goal of RNA folding is the determination of the tertiary structure of the molecule. Tertiary structure not only incorporates the secondary structure but also adds important long range interactions between bases and shows us how it contorts in three dimensions. This provides key insights not only to the molecule's final structure, but also its biological function. Like secondary structure, tertiary structure prediction is difficult due to the extraordinary size of the conformational space from which to choose potential structures. 
 
-Broadly speaking the computational approaches to the prediction of the tertiary structure of RNA can be broken into two categories: those based on fragment assembly and those based on molecular dynamics. Fragment assembly approaches the problem by attempting to combine subsections of several nucleotides into the correct final structure. Methods using molecular dynamics attempt to simulate how chains of nucleotides interact in order to fold into the correct structure using physics based potential functions. This section covers several different methods for predicting the tertiary structure of a molecule from both paradigms.
+Broadly speaking the computational approaches to the prediction of the tertiary structure of RNA can be broken into two categories: those based on fragment assembly and those based on folding simulation, although there is some overlap with the two. This section covers several different methods for predicting the tertiary structure of a molecule from both paradigms.
+
+Fragment assembly approaches the problem by attempting to combine subsections of several known portions of RNA sequences into the correct final structure. This typically employs a database of previously determined RNA structure motifs from which to choose from. The resulting structures can be further refined with a folding simulation. The probing of potential structures in fragment assembly can either be carried out as a constrain satisfaction problem (such as with MC-fold/MC-Sym\cite{parisien2008mc}) or by Monte Carlo sampling of candidate structures by the Metropolis-Hastings algorithm. 
+
+The Metropolis-Hastings algorithm generates new candidate solutions by randomly modifying the existing structure by moving or rotating one or more atoms. The energy of the new structure generated by the modification is calculated and the structure is then either accepted or rejected with probability according to the Metropolis criterion:
+
+\begin{equation}
+\label{eq:metropolis-criterion}
+f(\Delta E) = 
+  \begin{cases} 
+    1 & \text{if } \Delta E \leq 0 \\
+    e^{-\frac{\Delta E}{kT}} & \text{if } \Delta E > 0
+  \end{cases}
+\end{equation}
+
+where $\Delta E$ is the change in energy, $T$ is the temperature and $k$ is the Boltzmann constant. The algorithm is often combined with simulated annealing of the temperature parameter as sampling progresses to encourage convergence towards the global optimum. 
+
+Methods using folding simulations attempt to simulate how chains of nucleotides interact in order to fold into the correct structure using physics based potential functions. In contrast with fragment assembly based approaches the conformational space is typically sampled using molecular dynamics. Molecular dynamics approaches represent a molecular structure of a RNA as a three dimensional model. The positions of atoms in the system are updated over time according to potential functions that define the forces acting on both bonded and non-bonded portions of the molecule. For short range non-bonded interactions the Lennard-Jones potential is common which is highly repulsive over a small distance and has an attractive well as the distance increases:
+
+\begin{equation}
+\label{eq:lennard-jones}
+	V_{lj} = 4\epsilon \bigg[ \bigg( \frac{\sigma}{r}^{12} \bigg) - \bigg( \frac{\sigma}{r}^6 \bigg) \bigg]
+\end{equation}
+
+where $r$ is the distance between two given particles and $\sigma$ and $\epsilon$ are parameters governing the distance at which the potential is zero and the depth of the well respectively. Bonded interactions between atoms in a nucleotide are typically represented as a linear combination of different potential energy terms representing the parameters for the bonded distance, angle, and torsion angle with more complicated terms and interactions can be defined if necessary:
+
+\begin{equation}
+\label{eq:bonded-interactions}
+	E_{bonded} = E_{distance} + E_{angle} + E_{torsion}
+\end{equation}
+
+sets of parameters governing the individual contributions of each energy term are application dependant and are typically empirically based. 
+
+\begin{table*}[t]
+\centering
+\caption{Summary of Automated Tertiary Structure Prediction Methods}
+\label{table:tertiary-prediction-papers}
+\begin{tabular}{|p{3cm}|p{2cm}|p{5cm}|l|p{5cm}|}
+\hline
+\textbf{Type}                           & \textbf{Name}               & \textbf{Representation}                                       & \textbf{Paper} & \textbf{Description} \\ \hline
+Folding Simulation                      & NAST                        & Coarse-grained. Single pseudo-atom                            &                & -                    \\ \hline
+Folding Simulation                      & Discrete Molecular Dynamics & Coarse-grained. Three pseudo-atoms. "Bead on a string" model. &                & -                    \\ \hline
+Folding Simulation \& Fragment Assembly & SimRNA                      & Coarse-grained. Three pseudo-atoms. Full atom refinement.     &                &                      \\ \hline
+Fragment Assembly                       & MC-fold/MC-Sym              & Full atom                                                     &                &                      \\ \hline
+Folding Simulation \& Fragment Assembly & FARNA/FARFAR                & Full atom                                                     &                &                      \\ \hline
+Folding Simulation \& Fragment Assembly & Vfold                       & Coarse-grained. Full atom refinement.                         &                &                      \\ \hline
+\end{tabular}
+\end{table*}
 
 \subsection{Fragment Assembly}
 \label{subsec:fragment-assembly}
@@ -721,7 +878,7 @@ The authors note in their conclusions that the major limitations of their method
 
 Parisien and Major\cite{parisien2008mc} created the MC-Fold/MC-Sym pipeline for secondary and tertiary structure prediction. In their method the MC-Fold program first generates a collection of sub-optimal secondary structures by combining multiple predefined structural motifs, referred to in the paper as nucleotide cyclic motifs (NCMs). All possible NCMs are enumerated but many potential structures are discarded as infeasible. MC-Fold uses traditional free energy minimisation and a scoring function determine the most likely secondary structures.
 
-The predicted secondary structure is then used as input for the tertiary structure prediction program MC-Sym. MC-Sym uses a predetermined 3D library of motifs using the same premise as secondary structure determination. As the enumeration of all possible 3D fragments is not computationally feasible a Las Vegas algorithm is used to sample potential motifs. The different between a Las Vegas algorithm and a traditional Monte Carlo algorithm is that a Las Vegas algorithm is always determined to produce a valid structure. Each 3D fragment is represented as a full all atom model. The fragments are added such that they optimise the score generated during secondary structure determination.
+The predicted secondary structure is then used as input for the tertiary structure prediction program MC-Sym. MC-Sym uses a predetermined 3D library of motifs using the same premise as secondary structure determination. As the enumeration of all possible 3D fragments is not computationally feasible a Las Vegas algorithm is used to sample potential motifs. The different between a Las Vegas algorithm and a traditional Monte Carlo algorithm is that a Las Vegas algorithm is always produces a valid candidate structure. Each 3D fragment is represented as a full all atom model. The fragments are added such that they optimise the score generated during secondary structure determination.
 
 Cao and Chen \cite{cao2011physics} modified their secondary structure prediction tool Vfold \cite{cao2005predicting} (reviewed in section \ref{subsec:thermodynamic-models}) to predict tertiary structure using a combination of fragment assembly and molecular dynamical simulation. Vfold first predicts the secondary structure using a coarse grained model of RNA nucleotides. Using the secondary structure they search through a database of tertiary structural motifs for matches closely related to fragments of the 2D structure classified into hairpins, bulges, junctions etc. Based on the coarse grained 3D model built from motif fragments a full-atom model is created and then refined using energy minimisation in the AMBER \cite{case2010amber}  molecular dynamics program. 
 
@@ -733,14 +890,7 @@ An notable attempt at using molecular dynamics for RNA structure prediction is t
 	E(x) = -RT ln P(x)
 \end{equation}
 
-Non-bonded interactions are modelled using the classic Lennard-Jones potential to prevent steric overlap for nucleotides separated by a distance greater than three.
-
-\begin{equation}
-\label{eq:lennard-jones}
-	V_{lj} = 4\epsilon \bigg[ \bigg( \frac{\sigma}{r}^{12} \bigg) - \bigg( \frac{\sigma}{r}^6 \bigg) \bigg]
-\end{equation}
-
-The geometry of the model is further constrained using the known secondary structure. Helices are constrained using one distance, one angle, and two dihedral parameters to help fix the model to the ideal helical shape. Long range tertiary interactions are modelled using and additional term in the energy potential the strength of which is determined by the data source (known crystal structure: strong, experimental data: weak).
+Non-bonded interactions are modelled using the classic Lennard-Jones potential to prevent steric overlap for nucleotides separated by a distance greater than three. The geometry of the model is further constrained using the known secondary structure. Helices are constrained using one distance, one angle, and two dihedral parameters to help fix the model to the ideal helical shape. Long range tertiary interactions are modelled using and additional term in the energy potential the strength of which is determined by the data source (known crystal structure: strong, experimental data: weak).
 
 Ding et al. \cite{ding2008ab} took a discrete molecular dynamics (DMD) approach to tertiary RNA structure modelling and created the iFoldRNA web server. In their method they approximate an RNA molecule using a ``bead on a string'' model where the backbone of the nucleotide is represented as simple collection of sugar, phosphate, or base molecules. This gives the final nucleotide model three ``beads'' attached to a ``thread'' of covalent bonds. Angular and dihedral constraints are also included in the model.
 
@@ -750,21 +900,14 @@ Another folding simulation based on using Monte Carlo sampling in favour of mole
 
 Short range interactions are represented as virtual bonds with parameters for the distance along the backbone, flat angles, and torsion angles of the nucleotide. Their energy contribution is simple a linear combination of each of the individual terms. Long range interactions are captured from a representative sample of known RNA structures by measuring the spatial neighbours of a nucleotide subunit, computing the occurrence of the nitrogen atom for each combination of base types, mapping the spatial distribution to a grid and binning via a 3D histogram. 
 
-Using the defined energy function, samples are taken from the conformational space using the Metropolis-Hastings algorithm. The probability of accepting a new sample is given by the function:
+Using the defined energy function, samples are taken from the conformational space using the Metropolis-Hastings algorithm. The sampling algorithm is combined with simulated annealing to gradually reduce the temperature to help convergence. Random modification to the positions and rotations of atoms in the model were used to generate new samples. Some additional complex modifications (such as the simultaneous movement of two backbone atoms) were included to help speed up algorithm progress. Moves are applied with a probability derived from the relative mobility of atoms in a nucleotide. Final reconstruction of a RNA molecule from the reduced representation is done by comparing each coarse nucleotide with a database of known RNA fragments. Final full-atom refinement of the structure can be carried out using the same Monte Carlo procedure, but including additional Lennard-Jones (equation \ref{eq:lennard-jones}) and hydrogen bonding potential terms.
+
+\section{Discussion}
+\label{sec:discussion}
 
 
-\begin{equation}
-\label{eq:metropolis-criterion}
-f(\Delta E) = 
-  \begin{cases} 
-    1 & \text{if } \Delta E \leq 0 \\
-    e^{-\frac{\Delta E}{kT}} & \text{if } \Delta E > 0
-  \end{cases}
-\end{equation}
-
-The sampling algorithm is combined with simulated annealing by gradually reducing the temperature of the system as sampling progresses. Random modification to the positions and rotations of atoms in the model were used to generate new samples. Some additional complex modifications (such as the simultaneous movement of two backbone atoms) were included to help speed up algorithm progress. Moves are applied with a probability derived from the relative mobility of atoms in a nucleotide. Final reconstruction of a RNA molecule from the reduced representation is done by comparing each coarse nucleotide with a database of known RNA fragments. Final full-atom refinement of the structure can be carried out using the same Monte Carlo procedure, but including additional Lennard-Jones (equation \ref{eq:lennard-jones}) and hydrogen bonding potential terms.
-
-
+\section{Conclusions}
+\label{sec:conclusion}
 
 
 % if have a single appendix:
