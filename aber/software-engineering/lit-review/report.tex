@@ -599,9 +599,16 @@ The challenge of accurately predicting the secondary structure of RNA has a long
 \begin{tabular}{|l|l|l|l|p{5cm}|}
 \hline
 \textbf{Paper}                             & \textbf{Year} & \textbf{Criteria}                     & \textbf{Weighting} & \textbf{Contributions}                                                           \\ \hline
-Nussinov \cite{nussinov1980fast}           & 1980          & Maximum Base Pairing                  & Binary             & Dynamic programming algorithm for base pairs                                     \\ \hline
-Zuker and Stieglar \cite{zuker1981optimal} & 1981          & Minimum Free Energy                   & Thermodynamic      & Minimum free energy algorithm                                                    \\ \hline
+Nussinov \& Jacobson \cite{nussinov1980fast}           & 1980          & Maximum Base Pairing                  & Binary             & Dynamic programming algorithm for computing base pairing                                     \\ \hline
+Zuker \& Stieglar \cite{zuker1981optimal} & 1981          & Minimum Free Energy                   & Thermodynamic      & Minimum free energy (MFE) algorithm                                                    \\ \hline
 McCaskill \cite{mccaskill1990equilibrium}  & 1990          & Partition Function Probability \& MFE & Thermodynamic      & Partition function, base pair probability matrix, melting behaviour description. \\ \hline
+
+Hofacker et al. \cite{hofacker1994fast}  & 1994          & Partition Function Probability \& MFE & Thermodynamic      & Parallelised algorithm, sequence comparison tools, inverse folding tools. \\ \hline
+
+Matthews et al. \cite{mathews1999expanded} & 1999          & Partition Function Probability \& MFE & Thermodynamic      & More advanced thermodynamic parameters. \\ \hline
+
+Deigan et al. \cite{deigan2009accurate} & 2009          & MFE \& SHAPE data & Thermodynamic      & SHAPE chemistry contraints. \\ \hline
+
 \end{tabular}
 \end{table*}
 
@@ -666,7 +673,7 @@ where $i$ is the nucleotide number, $m$ is a parameter that penalises base pairi
 
 The author's report a high degree of accuracy compared with conventional thermodynamic parameters. The author's note that the errors in prediction are not only less, but are generally of a shorter range.
 
-Another method based on the thermodynamic viewpoint is the work of Ding et al. \cite{ding2003statistical, ding2005rna}. Their work can largely been seen as a logical extension of McCaskill's work in \cite{mccaskill1990equilibrium}. Their first paper \cite{ding2003statistical} presents a method for drawing a statistically representative sample from the Boltzmann ensemble of possible secondary structures. This method allows them to gain valuable insights RNA structure from a statistical mechanics point of view. The sampled distribution allows them to calculate information relating to RNA:RNA interaction sites, density of states, and predict alternative structures.
+Another method based on the thermodynamic viewpoint is the work of Ding et al. \cite{ding2003statistical, ding2005rna}. Their work can largely been seen as a logical extension of McCaskill's work in \cite{mccaskill1990equilibrium}. Their first paper \cite{ding2003statistical} presents a method for drawing a statistically representative sample from the Boltzmann ensemble of possible secondary structures. This method allows them to gain valuable insights RNA structure from a statistical mechanics point of view. The sampled distribution allows them to calculate information relating to RNA-RNA interaction sites, density of states, and predict alternative structures.
 
 In \cite{ding2005rna} the author's continue their work to include prediction of the ``best'' secondary structure using the Boltzmann ensemble samples using cluster centroids. They first generate a sample from the ensemble using the method developed in \cite{ding2003statistical}. The samples are then clustered using a top-down method from \cite{rousseeuw1990finding}. They note that they use the CH index to choose the number of clusters and the base pair distance as the distance metric. They define the cluster centroid as the instance which has the shortest possible distance to all others in the in the cluster.
 
@@ -904,10 +911,17 @@ Using the defined energy function, samples are taken from the conformational spa
 
 \section{Discussion}
 \label{sec:discussion}
+RNA structure prediction is a challenging problem to undertake. The space of potential candidate solutions is both large and contains many sub optimal minima. But despite the limitations, much progress has, and continues, to be made in the field. The increase in computational power since the first attempts at prediction where made has certainly aided progress. Perhaps more importantly is the interest in the field that has developed as our understanding of the importance of RNA as a biological entity has increased. The diversity of different proposed solutions, both for 2D and 3D structure, is immense. The progression of refinement of methods from a simple mathematical formulation of the base pairing problem to complex fragment assembly and folding simulation refinement techniques only serves as encouragement for the progress that can still be made in the field. Most notably is the revelation that the rules governing folding of a RNA by MFE are essentially just a special case formulation of a SCFG.
 
+There is however, much work still to be done in the field. There are many hurdles that need to be made in order to bring RNA structure prediction to the same standard are protein structure prediction methods. In the most broad terms, the core issues facing both secondary and tertiary structure prediction in the broadest terms are: the lack of experimentally confirmed data, the inherent inaccuracy present in the models used.
 
-\section{Conclusions}
-\label{sec:conclusion}
+As mentioned in the introduction of this review, one of the reasons why the RNA structure prediction is so desirable is that the experimental determination of the structures to atomic resolution is a slow and costly processes (at least compared to computerised analysis). However, some of the best prediction systems rely on the availability of known RNA structure. Attempting to predict the final structure of RNA from just its primary structure potentially disregards a wealth of information present in other similar sequences. Perhaps there is a ``critical mass'' of representative experimentally confirmed structures required in order to provide a successful database for prediction techniques to be based upon. It certainly appears to be a trend across all of the papers reviewed in the article towards using known structures, or fragments of known structures to infer structure in an undetermined sequence over methods which simulate folding from first principles. Having a wide availability of diverse, known structures would bring the RNA structure prediction problem more into the sights of traditional supervised machine learning approaches which have already had great successes in other fields of bioinformatics. In such a context much focus would have to be put on achieving a high accuracy output due to the many sub optimal structures that closely inhabit the conformational space.
+
+This issue ties in with the major next problem facing progress with RNA structure prediction which is the model used to find the optimum structure. For the longest time many of the most popular secondary structure prediction has centred around find the structure that is thermodynamically the most stable. However, as multiple authors have noted, this technique is limited by the accuracy of the parameters used. Exactly what combination parameters are used is also a continuing topic of discussion. There is also the fact that minimum free energy structure is not necessarily the correct one. More recently secondary structure approaches have branched out in statistical techniques such as finding the maximum expected accuracy structure which has been suggested to perform better than the MFE/CYK formulation. Still, as noted by Rivas \cite{rivas2013four} even the best methods with complicated architectures only achieve around 60\% for the F-measure. Several authors noted a block in prediction accuracy which has yet to be overcome. Tertiary structure prediction is also usually centred around contorting the structure into the most energetically favourable conformation predicted by thermodynamics; either through fragment assembly, folding simulations, or through sampling. This combined with the fact that the conformational landscape is usually highly rugged around the true structure perhaps that better models could be proposed. 
+
+The question then is where to go from here? This is such an essential question that is unlikely to be answered in the near future. The existing models obviously provides a sensible choice, but future work could be directed towards including additional information such as the effects of long range interactions between nucleotides and the effect of RNA-protein or RNA-RNA contacts which are likely to affect the final structure. Successful attempts to include additional experimental data such as SHAPE chemistry have also shown to be successful. Indeed, any technique that can reduce the size of the conformational space and constrain the bounds of the solution is likely to be useful.
+
+Another general trend across the papers reviewed is that models for tertiary structure have drifted towards a more coarse-grained approach. This appears to be partly due to necessity and to a better understanding of what the major contributing factors for folding are. This both speeds up slow predictions and allows for large chains of nucleotides to be folded. However this simplification can often negatively impact the results. There is a trade off between using an accuracy model and speed. Sadly the computational intensity of the scales too fast for even coarse grained models to be quick enough at larger strands lengths. There also seems to have been a trend towards fragment assembly based approaches and a fusion of this with folding simulations. Progress in tertiary structure prediction is most likely going to be orientated towards better databases of known structural motifs combined with some form of coarse or full-atom refinement similar to FARNA. Further developments to refine  the energy potential used to achieve a balance of complexity versus efficiency will no doubt lead to RNA structure prediction reaching maturity comparable to protein structure prediction.
 
 
 % if have a single appendix:
@@ -936,11 +950,8 @@ Using the defined energy function, samples are taken from the conformational spa
 
 
 % use section* for acknowledgment
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
-
+\section*{Acknowledgments}
+The author would like to thank Edel Sherratt for her guidance on writing and for her insightful discussion on the topic of CFGs. Additional thanks should be given to Hannah Robarts for her perspective on papers using thermodynamic approaches and to Sam Nicholls for his general bioinformatics knowledge.
 
 % Can use something like this to put references on a page
 % by themselves when using endfloat and the captionsoff option.
