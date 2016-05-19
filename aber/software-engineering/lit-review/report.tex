@@ -618,38 +618,25 @@ The rest of this section provides an overview of various secondary structure pre
 \begin{table*}[t]
 \centering
 \caption{Summary of Approaches to Secondary Structure Prediction}
-\label{my-label}
-\begin{tabular}{|l|l|p{5cm}|l|p{5cm}|}
+\label{table:summary-secondary-papers}
+\begin{tabular}{|l|l|l|l|l|p{5cm}|}
 \hline
-\textbf{Paper}                             & \textbf{Year} & \textbf{Criteria}                     & \textbf{Weighting} & \textbf{Contributions}                                                           \\ \hline
-Nussinov \& Jacobson \cite{nussinov1980fast}           & 1980          & Maximum Base Pairing                  & Binary             & Dynamic programming algorithm for computing base pairing                                     \\ \hline
-Zuker \& Stieglar \cite{zuker1981optimal} & 1981          & Minimum Free Energy                   & Thermodynamic      & Minimum free energy (MFE) algorithm                                                    \\ \hline
-McCaskill \cite{mccaskill1990equilibrium}  & 1990          & Partition Function Probability \& MFE & Thermodynamic      & Partition function, base pair probability matrix, melting behaviour description. \\ \hline
-
-Hofacker et al. \cite{hofacker1994fast}  & 1994          & Partition Function Probability \& MFE & Thermodynamic      & Parallelised algorithm, sequence comparison tools, inverse folding tools. \\ \hline
-
-Shapiro and Wu \cite{shapiro1997predicting, shapiro1994massively} & 1997 & MFE & Thermodynamic & Parallelised Genetic algorithm. Handles pseudoknots. \\ \hline
-
-Matthews et al. \cite{mathews1999expanded} & 1999          & Partition Function Probability \& MFE & Thermodynamic      & More advanced thermodynamic parameters. \\ \hline
-
-Knudsen \& Hein \cite{knudsen1999rna, knudsen2003pfold} & 1999  & MAP estimate & Probabilistic & Multiple sequence method based on using SCFGs and a MAP estimate for the optimum structure. \\ \hline
-
-Ding et al. \cite{ding2003statistical, ding2005rna} & 2005          & Ensemble Sampling \& Cluster centroids & Thermodynamic      & Clustering of statistical sampling from Boltzmann ensemble. \\ \hline
-
-Cao \& Chen \cite{cao2005predicting} & 2005  & Partition Function, MFE, \& Coarse Grained Model & Thermodynamic      & Coarse grained model. Estimation of the sequence dependance of loop free energy. \\ \hline
-
-Do et al. \cite{do2006contrafold} & 2006 & MEA & Probabilistic & A highly configurable CLLM which proposed using MEA for the optimum structure. \\ \hline
-
-Bindewald \& Shapiro \cite{bindewald2006rna} & 2006 & MFE & Probabilistic & Comparative method using a mutual information measure. \\ \hline
-
-Reeder et al. \cite{reeder2007pknotsrg} & 2006 & MFE & Thermodynamic & Pseudoknot prediction using MFE terms. \\ \hline
-
-Deigan et al. \cite{deigan2009accurate} & 2009          & Partition Function, MFE, \& SHAPE data & Thermodynamic      & SHAPE chemistry contraints. \\ \hline
-
-Hamada et al. \cite{hamada2009prediction, sato2009centroidfold} & 2009 & $\gamma$-centroid & Probabilistic & Centroid based estimator. Can utilise probabilities from either CONTRAfold or McCaskill partition function \\ \hline
-
-Bindewald et al. \cite{bindewald2010cylofold} & 2010 & MFE \& Coarse Grained Model & Thermodynamic & Prediction of pseudoknots by simulated stem folding. \\ \hline
-
+\textbf{Paper}                                                   & \textbf{Year} & \textbf{Name}      & \textbf{Criteria}    & \textbf{Parameterisation} & \textbf{Description}                                                                                       \\ \hline
+Nussinov \& Jacobson \cite{nussinov1980fast}                     & 1980          & Nussinov Algorithm & Maximum Base Pairing & Binary                    & Dynamic programming algorithm for computing base pairing                                                   \\ \hline
+Zuker \& Stieglar \cite{zuker1981optimal}                        & 1981          & Mfold              & MFE                  & Thermodynamic             & Minimum free energy (MFE) algorithm                                                                        \\ \hline
+McCaskill \cite{mccaskill1990equilibrium}                        & 1990          & -                  & MFE                  & Thermodynamic             & Partition function, base pair probability matrix, melting behaviour description.                           \\ \hline
+Hofacker et al. \cite{hofacker1994fast}                          & 1994          & RNAfold            & MFE                  & Thermodynamic             & Parallelised algorithm, sequence comparison tools, inverse folding tools.                                  \\ \hline
+Shapiro \& Wu \cite{shapiro1997predicting, shapiro1994massively} & 1997          & MPGAfold           & MFE                  & Thermodynamic             & Parallelised Genetic algorithm. Handles pseudoknots.                                                       \\ \hline
+Matthews et al. \cite{mathews1999expanded}                       & 1999          & Mfold              & MFE                  & Thermodynamic             & More advanced thermodynamic parameters.                                                                    \\ \hline
+Knudsen \& Hein \cite{knudsen1999rna, knudsen2003pfold}          & 1999          & Pfold              & MAP estimate         & Probabilistic             & Multiple sequence method based on using SCFGs and a MAP estimate for the optimum structure.                \\ \hline
+Ding et al. \cite{ding2003statistical, ding2005rna}              & 2005          & Sfold              & Cluster centroids    & Thermodynamic             & Clustering of statistical sampling from Boltzmann ensemble.                                                \\ \hline
+Cao \& Chen \cite{cao2005predicting}                             & 2005          & Vfold              & MFE                  & Thermodynamic             & Coarse-grained model. Estimation of the sequence dependance of loop free energy.                           \\ \hline
+Do et al. \cite{do2006contrafold}                                & 2006          & CONTRAfold         & MEA                  & Probabilistic             & A highly configurable CLLM which proposed using MEA for the optimum structure.                             \\ \hline
+Bindewald \& Shapiro \cite{bindewald2006rna}                     & 2006          & KNetFold           & MFE                  & Probabilistic             & Comparative method using a mutual information measure.                                                     \\ \hline
+Reeder et al. \cite{reeder2007pknotsrg}                          & 2006          & pknotsRG           & MFE                  & Thermodynamic             & Pseudoknot prediction using MFE terms.                                                                     \\ \hline
+Deigan et al. \cite{deigan2009accurate}                          & 2009          & RNAstructure       & MFE                  & Thermodynamic             & SHAPE chemistry contraints.                                                                                \\ \hline
+Hamada et al. \cite{hamada2009prediction, sato2009centroidfold}  & 2009          & Centroidfold       & $\gamma$-centroid    & Probabilistic             & Centroid based estimator. Can utilise probabilities from either CONTRAfold or McCaskill partition function \\ \hline
+Bindewald et al. \cite{bindewald2010cylofold}                    & 2010          & Cylofold           & MFE                  & Thermodynamic             & Coarse-grained model. Prediction of pseudoknots by simulated stem folding.                                 \\ \hline
 \end{tabular}
 \end{table*}
 
@@ -876,15 +863,22 @@ Sets of parameters governing the individual contributions of each energy term ar
 \centering
 \caption{Summary of Automated Tertiary Structure Prediction Methods}
 \label{table:tertiary-prediction-papers}
-\begin{tabular}{|p{3cm}|p{2cm}|p{3cm}|l|p{5cm}|}
+\begin{tabular}{|l|l|p{1.5cm}|p{3cm}|p{3cm}|p{5cm}|}
 \hline
-\textbf{Type}                           & \textbf{Name}               & \textbf{Representation}                                       & \textbf{Paper} & \textbf{Description} \\ \hline
-Folding Simulation                      & NAST                        & Coarse-grained. Single pseudo-atom                            &  Jonikas et al.\cite{jonikas2009coarse} & Pure MD. Energy functions derived from distributions of known structures. \\ \hline
-Folding Simulation                      & Discrete Molecular Dynamics & Coarse-grained. Three pseudo-atoms. "Bead on a string" model. & Ding et al. \cite{ding2008ab} & MD simulation with discrete potentials. \\ \hline
-Folding Simulation \& Fragment Assembly & SimRNA                      & Coarse-grained. Three pseudo-atoms. Full atom refinement.     &  Rother et al. \cite{rother2012template} &   Uses Monte Carlo for simulation. A fully atomistic reconstruction is then generated from a database and refined via conventional MD. \\ \hline
-Fragment Assembly                       & MC-fold/MC-Sym              & Full atom                                                     &  Parisien and Major\cite{parisien2008mc} &  Uses constraint satisfaction to choose fragments  \\ \hline
-Folding Simulation \& Fragment Assembly & FARNA/FARFAR                & Full atom                                                     &  Ras and Baker \cite{das2007automated}   &   Coarse grained fragment assembly refined in full atom MD simulation.                   \\ \hline
-Folding Simulation \& Fragment Assembly & Vfold                       & Coarse-grained. Full atom refinement.                         &  Cao and Chen \cite{cao2011physics}  &  Combination of both Fragment assembly and MD refinement with AMBER. \\ \hline
+\textbf{Paper}                          & \textbf{Year} & \textbf{Name}               & \textbf{Type}                           & \textbf{Representation}                                       & \textbf{Description}    \\ \hline
+                                                                                                             
+Ras and Baker \cite{das2007automated}   & 2007          & FARNA/ FARFAR                & Folding Simulation \& Fragment Assembly & Full atom                                                     & Coarse grained fragment assembly refined in full atom MD simulation.                                                                 \\ \hline
+
+Ding et al. \cite{ding2008ab}           & 2008          & iFoldRNA & Folding Simulation                      & Coarse-grained. Three pseudo-atoms. "Bead on a string" model. & MD simulation with discrete potentials.                                                                                              \\ \hline
+
+Parisien and Major\cite{parisien2008mc} & 2008          & MC-fold/MC-Sym              & Fragment Assembly                       & Full atom                                                     & Uses constraint satisfaction to choose fragments    \\ \hline
+
+
+Jonikas et al.\cite{jonikas2009coarse}  & 2009          & NAST                        & Folding Simulation                      & Coarse-grained. Single pseudo-atom                            & Pure MD. Energy functions derived from distributions of known structures.                                                            \\ \hline
+
+Cao and Chen \cite{cao2011physics}      & 2011          & Vfold                       & Folding Simulation \& Fragment Assembly & Coarse-grained. Full atom refinement.                         & Combination of both Fragment assembly and MD refinement with AMBER.                                                                  \\ \hline
+
+Rother et al. \cite{rother2012template} & 2012          & SimRNA                      & Folding Simulation \& Fragment Assembly & Coarse-grained. Three pseudo-atoms. Full atom refinement.     & Uses Monte Carlo for simulation. A fully atomistic reconstruction is then generated from a database and refined via conventional MD. \\ \hline
 \end{tabular}
 \end{table*}
 
